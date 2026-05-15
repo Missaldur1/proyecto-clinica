@@ -9,7 +9,6 @@ spring:
     gateway:
       mvc:
         routes:
-
           - id: ms-usuarios
             uri: lb://MS-USUARIOS
             predicates:
@@ -29,6 +28,16 @@ spring:
             uri: lb://MS-FARMACIA
             predicates:
               - Path=/api/medicamentos/**
+
+          - id: ms-reservas
+            uri: lb://MS-RESERVAS
+            predicates:
+              - Path=/api/reservas/**
+
+          - id: ms-examenes
+            uri: lb://MS-EXAMENES
+            predicates:
+              - Path=/api/examenes/**
 
 eureka:
   client:

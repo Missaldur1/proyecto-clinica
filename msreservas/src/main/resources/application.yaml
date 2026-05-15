@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: msreservas
+    name: ms-reservas
 
   datasource:
     url: jdbc:mysql://localhost:3307/db_reservas?createDatabaseIfNotExist=true
