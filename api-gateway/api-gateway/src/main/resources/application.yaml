@@ -1,0 +1,40 @@
+server:
+  port: 8090
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      mvc:
+        routes:
+
+          - id: ms-usuarios
+            uri: lb://MS-USUARIOS
+            predicates:
+              - Path=/api/usuarios/**
+
+          - id: ms-pacientes
+            uri: lb://MS-PACIENTES
+            predicates:
+              - Path=/api/pacientes/**
+
+          - id: ms-medicos
+            uri: lb://MS-MEDICOS
+            predicates:
+              - Path=/api/medicos/**
+
+          - id: ms-farmacia
+            uri: lb://MS-FARMACIA
+            predicates:
+              - Path=/api/medicamentos/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+
+logging:
+  level:
+    root: INFO

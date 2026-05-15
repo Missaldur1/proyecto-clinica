@@ -1,0 +1,35 @@
+package com.clinic.mspacientes.mapper;
+
+import com.clinic.mspacientes.dto.PacienteRequestDTO;
+import com.clinic.mspacientes.dto.PacienteResponseDTO;
+import com.clinic.mspacientes.model.Paciente;
+
+public class PacienteMapper {
+    public static Paciente toEntity(PacienteRequestDTO dto) {
+
+        return Paciente.builder()
+                .rut(dto.getRut())
+                .nombre(dto.getNombre())
+                .apellido(dto.getApellido())
+                .edad(dto.getEdad())
+                .prevision(dto.getPrevision())
+                .telefono(dto.getTelefono())
+                .email(dto.getEmail())
+                .build();
+    }
+
+    public static PacienteResponseDTO toDTO(Paciente paciente) {
+
+        return PacienteResponseDTO.builder()
+                .id(paciente.getId())
+                .rut(paciente.getRut())
+                .nombre(paciente.getNombre())
+                .apellido(paciente.getApellido())
+                .edad(paciente.getEdad())
+                .prevision(paciente.getPrevision())
+                .telefono(paciente.getTelefono())
+                .email(paciente.getEmail())
+                .build();
+    }
+
+}
