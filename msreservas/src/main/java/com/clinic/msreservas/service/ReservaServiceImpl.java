@@ -20,134 +20,135 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class ReservaServiceImpl implements ReservaService {
 
-    private final ReservaRepository repository;
+        private final ReservaRepository repository;
 
-    private final PacienteClient pacienteClient;
+        private final PacienteClient pacienteClient;
 
-    private final MedicoClient medicoClient;
+        private final MedicoClient medicoClient;
 
-    @Override
-    public ReservaResponseDTO crear(ReservaRequestDTO dto) {
+        @Override
+        public ReservaResponseDTO crear(ReservaRequestDTO dto) {
 
-        log.info("Creando reserva para paciente {} y médico {}",
-                dto.getPacienteId(),
-                dto.getMedicoId());
+                log.info("Creando reserva para paciente {} y médico {}",
+                                dto.getPacienteId(),
+                                dto.getMedicoId());
 
-        pacienteClient.buscarPaciente(dto.getPacienteId());
+                pacienteClient.buscarPaciente(dto.getPacienteId());
 
-        medicoClient.buscarMedico(dto.getMedicoId());
+                medicoClient.buscarMedico(dto.getMedicoId());
 
-        boolean existe = repository.existsByMedicoIdAndFechaAndHora(dto.getMedicoId(), dto.getFecha(), dto.getHora());
+                boolean existe = repository.existsByMedicoIdAndFechaAndHora(dto.getMedicoId(), dto.getFecha(),
+                                dto.getHora());
 
-        if (existe) {
+                if (existe) {
 
-            log.warn(
-                    "Intento de reserva duplicada. Médico {} fecha {} hora {}",
-                    dto.getMedicoId(),
-                    dto.getFecha(),
-                    dto.getHora());
+                        log.warn(
+                                        "Intento de reserva duplicada. Médico {} fecha {} hora {}",
+                                        dto.getMedicoId(),
+                                        dto.getFecha(),
+                                        dto.getHora());
 
-            throw new ReservaDuplicadaException();
+                        throw new ReservaDuplicadaException();
+
+                }
+
+                Reserva reserva = ReservaMapper.toEntity(dto);
+
+                Reserva guardada = repository.save(reserva);
+
+                log.info("Reserva creada correctamente ID {}",
+                                guardada.getId());
+
+                return ReservaMapper.toDTO(guardada);
+        }
+
+        @Override
+        public List<ReservaResponseDTO> listar() {
+
+                log.info("Listando reservas");
+
+                return repository.findAll()
+                                .stream()
+                                .map(ReservaMapper::toDTO)
+                                .toList();
 
         }
 
-        Reserva reserva = ReservaMapper.toEntity(dto);
+        @Override
+        public ReservaResponseDTO buscarPorId(
+                        Long id) {
 
-        Reserva guardada = repository.save(reserva);
+                log.info("Buscando reserva ID {}", id);
 
-        log.info("Reserva creada correctamente ID {}",
-                guardada.getId());
+                Reserva reserva = repository.findById(id)
+                                .orElseThrow(() -> {
 
-        return ReservaMapper.toDTO(guardada);
-    }
+                                        log.error("Reserva no encontrada ID {}", id);
 
-    @Override
-    public List<ReservaResponseDTO> listar() {
+                                        return new ReservaNotFoundException();
 
-        log.info("Listando reservas");
+                                });
 
-        return repository.findAll()
-                .stream()
-                .map(ReservaMapper::toDTO)
-                .toList();
+                return ReservaMapper.toDTO(
+                                reserva);
 
-    }
+        }
 
-    @Override
-    public ReservaResponseDTO buscarPorId(
-            Long id) {
+        @Override
+        public ReservaResponseDTO actualizar(
+                        Long id,
+                        ReservaRequestDTO dto) {
 
-        log.info("Buscando reserva ID {}", id);
+                log.info("Actualizando reserva ID {}", id);
 
-        Reserva reserva = repository.findById(id)
-                .orElseThrow(() -> {
+                Reserva reserva = repository.findById(id)
+                                .orElseThrow(() -> {
 
-                    log.error("Reserva no encontrada ID {}", id);
+                                        log.error("Reserva no encontrada ID {}", id);
 
-                    return new ReservaNotFoundException();
+                                        return new ReservaNotFoundException();
 
-                });
+                                });
 
-        return ReservaMapper.toDTO(
-                reserva);
+                reserva.setPacienteId(
+                                dto.getPacienteId());
 
-    }
+                reserva.setMedicoId(
+                                dto.getMedicoId());
 
-    @Override
-    public ReservaResponseDTO actualizar(
-            Long id,
-            ReservaRequestDTO dto) {
+                reserva.setFecha(
+                                dto.getFecha());
 
-        log.info("Actualizando reserva ID {}", id);
+                reserva.setHora(
+                                dto.getHora());
 
-        Reserva reserva = repository.findById(id)
-                .orElseThrow(() -> {
+                reserva.setEstado(
+                                dto.getEstado());
 
-                    log.error("Reserva no encontrada ID {}", id);
+                log.info("Reserva actualizada correctamente");
 
-                    return new ReservaNotFoundException();
+                return ReservaMapper.toDTO(
+                                repository.save(reserva));
 
-                });
+        }
 
-        reserva.setPacienteId(
-                dto.getPacienteId());
+        @Override
+        public void eliminar(Long id) {
 
-        reserva.setMedicoId(
-                dto.getMedicoId());
+                log.info("Eliminando reserva ID {}", id);
 
-        reserva.setFecha(
-                dto.getFecha());
+                Reserva reserva = repository.findById(id)
+                                .orElseThrow(() -> {
 
-        reserva.setHora(
-                dto.getHora());
+                                        log.error("Reserva no encontrada ID {}", id);
 
-        reserva.setEstado(
-                dto.getEstado());
+                                        return new ReservaNotFoundException();
 
-        log.info("Reserva actualizada correctamente");
+                                });
 
-        return ReservaMapper.toDTO(
-                repository.save(reserva));
+                repository.delete(reserva);
 
-    }
+                log.info("Reserva eliminada correctamente");
 
-    @Override
-    public void eliminar(Long id) {
-
-        log.info("Eliminando reserva ID {}", id);
-
-        Reserva reserva = repository.findById(id)
-                .orElseThrow(() -> {
-
-                    log.error("Reserva no encontrada ID {}", id);
-
-                    return new ReservaNotFoundException();
-
-                });
-
-        repository.delete(reserva);
-
-        log.info("Reserva eliminada correctamente");
-
-    }
+        }
 }
