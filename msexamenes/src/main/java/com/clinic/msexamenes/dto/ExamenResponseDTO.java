@@ -1,4 +1,4 @@
-package main.java.com.clinic.msexamenes.dto;
+package com.clinic.msexamenes.dto;
 
 import lombok.*;
 

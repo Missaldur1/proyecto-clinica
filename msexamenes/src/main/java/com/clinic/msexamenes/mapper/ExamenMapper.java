@@ -1,7 +1,7 @@
-package main.java.com.clinic.msexamenes.mapper;
+package com.clinic.msexamenes.mapper;
 
 import com.clinic.msexamenes.dto.*;
-import com.clinic.msexamenes.entity.*;
+import com.clinic.msexamenes.model.*;
 
 public class ExamenMapper {
 

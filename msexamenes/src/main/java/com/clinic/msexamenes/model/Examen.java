@@ -1,4 +1,4 @@
-package main.java.com.clinic.msexamenes.model;
+package com.clinic.msexamenes.model;
 
 import jakarta.persistence.*;
 import lombok.*;
