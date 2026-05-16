@@ -1,5 +1,5 @@
 server:
-  port: 8087
+  port: 8089
 
 spring:
   application:
@@ -33,4 +33,3 @@ eureka:
 logging:
   level:
     root: INFO
-

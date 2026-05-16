@@ -30,6 +30,36 @@ spring:
             predicates:
               - Path=/api/medicamentos/**
 
+          - id: ms-reservas
+            uri: lb://MS-RESERVAS
+            predicates:
+              - Path=/api/reservas/**
+
+          - id: ms-examenes
+            uri: lb://MS-EXAMENES
+            predicates:
+              - Path=/api/examenes/**
+
+          - id: ms-fichas-clinicas
+            uri: lb://MS-FICHAS-CLINICAS
+            predicates:
+              - Path=/api/fichas/**
+
+          - id: ms-recetas
+            uri: lb://MS-RECETAS
+            predicates:
+              - Path=/api/recetas/**
+
+          - id: ms-pagos
+            uri: lb://MS-PAGOS
+            predicates:
+              - Path=/api/pagos/**
+
+          - id: ms-notificaciones
+            uri: lb://MS-NOTIFICACIONES
+            predicates:
+              - Path=/api/notificaciones/**
+
 eureka:
   client:
     service-url:
