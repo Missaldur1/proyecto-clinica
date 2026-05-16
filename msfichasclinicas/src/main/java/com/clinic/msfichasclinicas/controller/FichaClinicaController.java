@@ -23,16 +23,58 @@ public class FichaClinicaController {
 
     @PostMapping
     public ResponseEntity<?> crear(
-    @Valid
-    @RequestBody
-    FichaClinicaRequestDTO dto){
+            @Valid @RequestBody FichaClinicaRequestDTO dto) {
 
         log.info(
-        "POST /api/fichas");
+                "POST /api/fichas");
 
         return ResponseEntity
-        .status(HttpStatus.CREATED)
-        .body(service.crear(dto));
+                .status(HttpStatus.CREATED)
+                .body(service.crear(dto));
+    }
+
+    @GetMapping
+    public ResponseEntity<?> listar() {
+
+        log.info(
+                "GET /api/fichas");
+
+        return ResponseEntity.ok(
+                service.listar());
+
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> buscar(
+            @PathVariable("id") Long id) {
+
+        return ResponseEntity.ok(
+                service.buscarPorId(id));
+
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> actualizar(
+
+            @PathVariable("id") Long id,
+
+            @Valid @RequestBody FichaClinicaRequestDTO dto) {
+
+        return ResponseEntity.ok(
+                service.actualizar(id, dto));
+
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(
+            @PathVariable("id") Long id) {
+
+        service.eliminar(id);
+
+        return ResponseEntity
+                .noContent()
+                .build();
+
     }
 
 }
