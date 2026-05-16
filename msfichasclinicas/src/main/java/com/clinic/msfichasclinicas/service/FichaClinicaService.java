@@ -6,17 +6,17 @@ import com.clinic.msfichasclinicas.dto.*;
 
 public interface FichaClinicaService {
 
-    FichaClinicaResponseDTO crear(
-            FichaClinicaRequestDTO dto);
+        FichaClinicaResponseDTO crear(
+                        FichaClinicaRequestDTO dto);
 
-    List<FichaClinicaResponseDTO> listar();
+        List<FichaClinicaResponseDTO> listar();
 
-    FichaClinicaResponseDTO buscarPorId(Long id);
+        FichaClinicaResponseDTO buscarPorId(Long id);
 
-    FichaClinicaResponseDTO actualizar(
-            Long id,
-            FichaClinicaRequestDTO dto);
+        FichaClinicaResponseDTO actualizar(
+                        Long id,
+                        FichaClinicaRequestDTO dto);
 
-    void eliminar(Long id);
+        void eliminar(Long id);
 
 }

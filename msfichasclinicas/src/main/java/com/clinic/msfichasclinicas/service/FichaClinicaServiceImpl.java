@@ -18,113 +18,113 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class FichaClinicaServiceImpl
-        implements FichaClinicaService {
+                implements FichaClinicaService {
 
-    private final FichaRepository repository;
+        private final FichaRepository repository;
 
-    private final PacienteClient pacienteClient;
+        private final PacienteClient pacienteClient;
 
-    private final MedicoClient medicoClient;
+        private final MedicoClient medicoClient;
 
-    private final ExamenClient examenClient;
+        private final ExamenClient examenClient;
 
-    @Override
-    public FichaClinicaResponseDTO crear(
-            FichaClinicaRequestDTO dto) {
+        @Override
+        public FichaClinicaResponseDTO crear(
+                        FichaClinicaRequestDTO dto) {
 
-        log.info(
-                "Creando ficha clínica");
+                log.info(
+                                "Creando ficha clínica");
 
-        pacienteClient.buscarPaciente(
-                dto.getPacienteId());
+                pacienteClient.buscarPaciente(
+                                dto.getPacienteId());
 
-        medicoClient.buscarMedico(
-                dto.getMedicoId());
+                medicoClient.buscarMedico(
+                                dto.getMedicoId());
 
-        if (dto.getExamenId() != null) {
+                if (dto.getExamenId() != null) {
 
-            examenClient.buscarExamen(
-                    dto.getExamenId());
+                        examenClient.buscarExamen(
+                                        dto.getExamenId());
+
+                }
+
+                FichaClinica ficha = FichaClinicaMapper.toEntity(dto);
+
+                FichaClinica guardada = repository.save(ficha);
+
+                return FichaClinicaMapper
+                                .toDTO(guardada);
 
         }
 
-        FichaClinica ficha = FichaClinicaMapper.toEntity(dto);
+        @Override
+        public List<FichaClinicaResponseDTO> listar() {
 
-        FichaClinica guardada = repository.save(ficha);
+                log.info(
+                                "Listando fichas");
 
-        return FichaClinicaMapper
-                .toDTO(guardada);
+                return repository.findAll()
+                                .stream()
+                                .map(
+                                                FichaClinicaMapper::toDTO)
+                                .toList();
 
-    }
+        }
 
-    @Override
-    public List<FichaClinicaResponseDTO> listar() {
+        @Override
+        public FichaClinicaResponseDTO buscarPorId(Long id) {
 
-        log.info(
-                "Listando fichas");
+                FichaClinica ficha = repository.findById(id)
+                                .orElseThrow(() -> new FichaNotFoundException());
 
-        return repository.findAll()
-                .stream()
-                .map(
-                        FichaClinicaMapper::toDTO)
-                .toList();
+                return FichaClinicaMapper
+                                .toDTO(ficha);
 
-    }
+        }
 
-    @Override
-    public FichaClinicaResponseDTO buscarPorId(Long id) {
+        @Override
+        public FichaClinicaResponseDTO actualizar(
+                        Long id,
+                        FichaClinicaRequestDTO dto) {
 
-        FichaClinica ficha = repository.findById(id)
-                .orElseThrow(() -> new FichaNotFoundException());
+                FichaClinica ficha = repository.findById(id)
+                                .orElseThrow(() -> new FichaNotFoundException());
 
-        return FichaClinicaMapper
-                .toDTO(ficha);
+                ficha.setPacienteId(
+                                dto.getPacienteId());
 
-    }
+                ficha.setMedicoId(
+                                dto.getMedicoId());
 
-    @Override
-    public FichaClinicaResponseDTO actualizar(
-            Long id,
-            FichaClinicaRequestDTO dto) {
+                ficha.setExamenId(
+                                dto.getExamenId());
 
-        FichaClinica ficha = repository.findById(id)
-                .orElseThrow(() -> new FichaNotFoundException());
+                ficha.setDiagnostico(
+                                dto.getDiagnostico());
 
-        ficha.setPacienteId(
-                dto.getPacienteId());
+                ficha.setTratamiento(
+                                dto.getTratamiento());
 
-        ficha.setMedicoId(
-                dto.getMedicoId());
+                ficha.setObservaciones(
+                                dto.getObservaciones());
 
-        ficha.setExamenId(
-                dto.getExamenId());
+                ficha.setFecha(
+                                dto.getFecha());
 
-        ficha.setDiagnostico(
-                dto.getDiagnostico());
+                return FichaClinicaMapper
+                                .toDTO(
+                                                repository.save(ficha));
 
-        ficha.setTratamiento(
-                dto.getTratamiento());
+        }
 
-        ficha.setObservaciones(
-                dto.getObservaciones());
+        @Override
+        public void eliminar(Long id) {
 
-        ficha.setFecha(
-                dto.getFecha());
+                FichaClinica ficha = repository.findById(id)
+                                .orElseThrow(() -> new FichaNotFoundException());
 
-        return FichaClinicaMapper
-                .toDTO(
-                        repository.save(ficha));
+                repository.delete(ficha);
 
-    }
-
-    @Override
-    public void eliminar(Long id) {
-
-        FichaClinica ficha = repository.findById(id)
-                .orElseThrow(() -> new FichaNotFoundException());
-
-        repository.delete(ficha);
-
-    }
+        }
 
 }

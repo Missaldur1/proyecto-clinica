@@ -19,62 +19,62 @@ import jakarta.validation.Valid;
 @Slf4j
 public class FichaClinicaController {
 
-    private final FichaClinicaService service;
+        private final FichaClinicaService service;
 
-    @PostMapping
-    public ResponseEntity<?> crear(
-            @Valid @RequestBody FichaClinicaRequestDTO dto) {
+        @PostMapping
+        public ResponseEntity<?> crear(
+                        @Valid @RequestBody FichaClinicaRequestDTO dto) {
 
-        log.info(
-                "POST /api/fichas");
+                log.info(
+                                "POST /api/fichas");
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(service.crear(dto));
-    }
+                return ResponseEntity
+                                .status(HttpStatus.CREATED)
+                                .body(service.crear(dto));
+        }
 
-    @GetMapping
-    public ResponseEntity<?> listar() {
+        @GetMapping
+        public ResponseEntity<?> listar() {
 
-        log.info(
-                "GET /api/fichas");
+                log.info(
+                                "GET /api/fichas");
 
-        return ResponseEntity.ok(
-                service.listar());
+                return ResponseEntity.ok(
+                                service.listar());
 
-    }
+        }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<?> buscar(
-            @PathVariable("id") Long id) {
+        @GetMapping("/{id}")
+        public ResponseEntity<?> buscar(
+                        @PathVariable("id") Long id) {
 
-        return ResponseEntity.ok(
-                service.buscarPorId(id));
+                return ResponseEntity.ok(
+                                service.buscarPorId(id));
 
-    }
+        }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(
+        @PutMapping("/{id}")
+        public ResponseEntity<?> actualizar(
 
-            @PathVariable("id") Long id,
+                        @PathVariable("id") Long id,
 
-            @Valid @RequestBody FichaClinicaRequestDTO dto) {
+                        @Valid @RequestBody FichaClinicaRequestDTO dto) {
 
-        return ResponseEntity.ok(
-                service.actualizar(id, dto));
+                return ResponseEntity.ok(
+                                service.actualizar(id, dto));
 
-    }
+        }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(
-            @PathVariable("id") Long id) {
+        @DeleteMapping("/{id}")
+        public ResponseEntity<Void> eliminar(
+                        @PathVariable("id") Long id) {
 
-        service.eliminar(id);
+                service.eliminar(id);
 
-        return ResponseEntity
-                .noContent()
-                .build();
+                return ResponseEntity
+                                .noContent()
+                                .build();
 
-    }
+        }
 
 }
