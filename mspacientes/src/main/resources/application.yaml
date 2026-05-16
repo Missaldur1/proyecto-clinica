@@ -6,7 +6,7 @@ spring:
     name: ms-pacientes
 
   datasource:
-    url: jdbc:mysql://localhost:3307/db_pacientes?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3307/db_pacientes?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
     username: root
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver

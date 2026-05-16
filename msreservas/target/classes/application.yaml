@@ -6,7 +6,7 @@ spring:
     name: ms-reservas
 
   datasource:
-    url: jdbc:mysql://localhost:3307/db_reservas?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3307/db_reservas?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
     username: root
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver
