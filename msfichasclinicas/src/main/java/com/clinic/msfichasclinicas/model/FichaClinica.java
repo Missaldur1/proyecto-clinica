@@ -1,4 +1,4 @@
-package com.clinic.msfichas.model;
+package com.clinic.msfichasclinicas.model;
 
 import jakarta.persistence.*;
 import lombok.*;
