@@ -6,7 +6,7 @@ spring:
     name: ms-usuarios
 
   datasource:
-    url: jdbc:mysql://localhost:3307/db_usuarios
+    url: jdbc:mysql://localhost:3307/db_usuarios?createDatabaseIfNotExist=true
     username: root
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver
