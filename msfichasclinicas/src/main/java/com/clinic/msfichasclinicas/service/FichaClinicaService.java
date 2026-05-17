@@ -2,7 +2,8 @@ package com.clinic.msfichasclinicas.service;
 
 import java.util.List;
 
-import com.clinic.msfichasclinicas.dto.*;
+import com.clinic.msfichasclinicas.dto.FichaClinicaRequestDTO;
+import com.clinic.msfichasclinicas.dto.FichaClinicaResponseDTO;
 
 public interface FichaClinicaService {
 

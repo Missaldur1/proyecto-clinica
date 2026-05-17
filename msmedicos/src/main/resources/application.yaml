@@ -6,7 +6,7 @@ spring:
     name: ms-medicos
 
   datasource:
-    url: jdbc:mysql://localhost:3307/db_medicos?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/db_medicos?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
     username: root
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver

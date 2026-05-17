@@ -6,7 +6,7 @@ spring:
     name: ms-farmacia
 
   datasource:
-    url: jdbc:mysql://localhost:3307/db_farmacia
+    url: jdbc:mysql://localhost:3306/db_farmacia?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
     username: root
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver
