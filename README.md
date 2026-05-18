@@ -109,18 +109,63 @@ proyecto-clinica
 Puerto MySQL: 3307
 ```
 
-## Crear las bases de datos
+## Creación Automática de Bases de Datos
 
-```sql
-CREATE DATABASE ms_usuarios;
-CREATE DATABASE ms_pacientes;
-CREATE DATABASE ms_medicos;
-CREATE DATABASE ms_examenes;
-CREATE DATABASE ms_fichas_clinicas;
-CREATE DATABASE ms_recetas;
-CREATE DATABASE ms_pagos;
-CREATE DATABASE ms_notificaciones;
+Las bases de datos NO necesitan crearse manualmente.
+
+Cada microservicio utiliza:
+
+```yaml
+createDatabaseIfNotExist=true
 ```
+
+Ejemplo:
+
+```yaml
+url: jdbc:mysql://localhost:3307/db_notificaciones?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+```
+
+Esto permite que MySQL cree automáticamente la base de datos al iniciar el microservicio.
+
+⚠️ IMPORTANTE:
+
+MySQL/XAMPP debe estar iniciado antes de levantar los microservicios.
+
+---
+
+# 🖥️ Cómo Abrir los Microservicios en VS Code
+
+Cada microservicio debe abrirse y ejecutarse de forma independiente.
+
+## Recomendación
+
+Abrir:
+
+```txt
+Cada microservicio en una pestaña/ventana separada de VS Code
+```
+
+Ejemplo:
+
+```txt
+VS Code 1 → eureka-server
+VS Code 2 → api-gateway
+VS Code 3 → msusuarios
+VS Code 4 → mspacientes
+VS Code 5 → msmedicos
+VS Code 6 → msexamenes
+VS Code 7 → msfichasclinicas
+VS Code 8 → msrecetas
+VS Code 9 → mspagos
+VS Code 10 → msnotificaciones
+```
+
+Esto ayuda a:
+
+* evitar errores de puertos
+* controlar mejor las terminales
+* reducir conflictos
+* identificar errores rápidamente
 
 ---
 
@@ -264,7 +309,119 @@ msUsuarios
 
 ---
 
+# 👨‍💻 Crear Usuario ADMIN Manualmente desde MySQL o phpMyAdmin
+
+## ⚠️ IMPORTANTE
+
+Antes de iniciar sesión por primera vez, se recomienda crear el usuario administrador directamente desde MySQL o phpMyAdmin.
+
+Esto evita problemas iniciales de autenticación y permite obtener el primer token JWT.
+
+---
+
+# 🗄️ Opción 1 — Crear ADMIN desde phpMyAdmin
+
+## 1. Abrir phpMyAdmin
+
+```txt
+http://localhost/phpmyadmin
+```
+
+---
+
+## 2. Abrir base de datos
+
+```txt
+ms_usuarios
+```
+
+---
+
+## 3. Abrir tabla
+
+```txt
+usuarios
+```
+
+---
+
+## 4. Ir a la pestaña SQL
+
+---
+
+## 5. Ejecutar el siguiente script
+
+```sql
+INSERT INTO usuarios (
+    nombre,
+    email,
+    password,
+    rol,
+    activo
+)
+VALUES (
+    'Administrador',
+    'admin@gmail.com',
+    '$2a$10$AvKfNXupTWburBM/tVRcRefoFxgDjrYYLeapPdpXihILzn5Ayj.SC',
+    'ROLE_ADMIN',
+    1
+);
+```
+
+---
+
+# 🔐 Credenciales del Usuario ADMIN
+
+```txt
+Email: admin@gmail.com
+Password: 123456
+```
+
+---
+
+# ⚠️ IMPORTANTE
+
+La contraseña ya está encriptada con BCrypt.
+
+NO debe modificarse manualmente.
+
+---
+
+# 🖥️ Opción 2 — Crear ADMIN desde MySQL Workbench o consola SQL
+
+## Ejecutar:
+
+```sql
+INSERT INTO usuarios (
+    nombre,
+    email,
+    password,
+    rol,
+    activo
+)
+VALUES (
+    'Administrador',
+    'admin@gmail.com',
+    '$2a$10$AvKfNXupTWburBM/tVRcRefoFxgDjrYYLeapPdpXihILzn5Ayj.SC',
+    'ROLE_ADMIN',
+    1
+);
+```
+
+---
+
 # 🔑 Obtener Token JWT
+
+## ⚠️ IMPORTANTE ANTES DE PROBAR
+
+Antes de utilizar cualquier endpoint protegido, el usuario debe:
+
+1. Crear un usuario ADMIN
+2. Iniciar sesión
+3. Obtener el token JWT
+4. Utilizar el token en Postman
+
+---
 
 ## Endpoint
 
@@ -276,7 +433,7 @@ POST http://localhost:8090/auth/login
 
 ```json
 {
-  "email": "misael@gmail.com",
+  "email": "admin@gmail.com",
   "password": "123456"
 }
 ```
@@ -291,7 +448,73 @@ POST http://localhost:8090/auth/login
 
 ---
 
+# 🔐 Cómo Utilizar el Token en Postman
+
+Después de obtener el token:
+
+## 1. Copiar el token
+
+```txt
+TOKEN_JWT
+```
+
+---
+
+## 2. Ir a la pestaña Authorization en Postman
+
+Seleccionar:
+
+```txt
+Bearer Token
+```
+
+---
+
+## 3. Pegar el token
+
+```txt
+TOKEN_JWT
+```
+
+---
+
+## 4. Enviar la petición
+
+Esto permitirá acceder a los endpoints protegidos.
+
+---
+
 # 🧪 Cómo Probar el Sistema en Postman
+
+## Recomendación Importante
+
+Crear:
+
+```txt
+Una pestaña nueva de Postman para cada microservicio
+```
+
+Ejemplo:
+
+```txt
+Pestaña 1 → Login JWT
+Pestaña 2 → Usuarios
+Pestaña 3 → Pacientes
+Pestaña 4 → Médicos
+Pestaña 5 → Exámenes
+Pestaña 6 → Fichas Clínicas
+Pestaña 7 → Recetas
+Pestaña 8 → Pagos
+Pestaña 9 → Notificaciones
+```
+
+Esto facilita:
+
+* reutilizar el token
+* mantener ordenadas las pruebas
+* evitar errores
+
+---
 
 Todas las pruebas se realizan desde:
 
@@ -314,19 +537,47 @@ Puerto:
 ### Endpoint
 
 ```http
-POST /api/usuarios
+POST http://localhost:8090/api/usuarios
 ```
+
+### Explicación
+
+Este microservicio permite:
+
+* registrar usuarios
+* iniciar sesión
+* generar JWT
+* administrar roles
+* proteger endpoints
 
 ### Body
 
 ```json
 {
-  "nombre": "Misael",
-  "email": "misael@gmail.com",
-  "password": "123456",
+  "nombre": "IngreseSuNombreAqui",
+  "email": "ingrese_su_correo_aqui@gmail.com",
+  "password": "IngreseSuPasswordAqui",
   "rol": "ROLE_ADMIN",
   "activo": true
 }
+```
+
+### Explicación de Campos
+
+| Campo    | Descripción                 |
+| -------- | --------------------------- |
+| nombre   | Nombre del usuario          |
+| email    | Correo utilizado para login |
+| password | Contraseña del usuario      |
+| rol      | Rol del sistema             |
+| activo   | Estado del usuario          |
+
+### Roles disponibles
+
+```txt
+ROLE_ADMIN
+ROLE_MEDICO
+ROLE_RECEPCIONISTA
 ```
 
 ---
@@ -334,7 +585,7 @@ POST /api/usuarios
 ## Listar Usuarios
 
 ```http
-GET /api/usuarios
+GET http://localhost:8090/api/usuarios
 ```
 
 ---
@@ -344,7 +595,7 @@ GET /api/usuarios
 ## Crear Paciente
 
 ```http
-POST /api/pacientes
+POST http://localhost:8090/api/pacientes
 ```
 
 ### Body
@@ -367,7 +618,7 @@ POST /api/pacientes
 ## Listar Pacientes
 
 ```http
-GET /api/pacientes
+GET http://localhost:8090/api/pacientes
 ```
 
 ---
@@ -377,7 +628,7 @@ GET /api/pacientes
 ## Crear Médico
 
 ```http
-POST /api/medicos
+POST http://localhost:8090/api/medicos
 ```
 
 ### Body
@@ -399,7 +650,7 @@ POST /api/medicos
 ## Listar Médicos
 
 ```http
-GET /api/medicos
+GET http://localhost:8090/api/medicos
 ```
 
 ---
@@ -409,7 +660,7 @@ GET /api/medicos
 ## Crear Examen
 
 ```http
-POST /api/examenes
+POST http://localhost:8090/api/examenes
 ```
 
 ### Body
@@ -429,8 +680,23 @@ POST /api/examenes
 ## Listar Exámenes
 
 ```http
-GET /api/examenes
+GET http://localhost:8090/api/examenes
 ```
+
+---
+
+# ⚠️ Orden Correcto para las Pruebas Integradas
+
+Para que las relaciones funcionen correctamente se recomienda seguir este orden:
+
+1. Crear Usuario
+2. Crear Paciente
+3. Crear Médico
+4. Crear Examen
+5. Crear Ficha Clínica
+6. Crear Receta
+7. Crear Pago
+8. Crear Notificación
 
 ---
 
@@ -439,7 +705,7 @@ GET /api/examenes
 ## Crear Ficha Clínica
 
 ```http
-POST /api/fichas
+POST http://localhost:8090/api/fichas
 ```
 
 ### Body
@@ -479,7 +745,7 @@ FeignClient
 ## Crear Receta
 
 ```http
-POST /api/recetas
+POST http://localhost:8090/api/recetas
 ```
 
 ### Body
@@ -501,7 +767,7 @@ POST /api/recetas
 ## Listar Recetas
 
 ```http
-GET /api/recetas
+GET http://localhost:8090/api/recetas
 ```
 
 ---
@@ -511,7 +777,7 @@ GET /api/recetas
 ## Crear Pago
 
 ```http
-POST /api/pagos
+POST http://localhost:8090/api/pagos
 ```
 
 ### Body
@@ -532,7 +798,7 @@ POST /api/pagos
 ## Listar Pagos
 
 ```http
-GET /api/pagos
+GET http://localhost:8090/api/pagos
 ```
 
 ---
@@ -542,7 +808,7 @@ GET /api/pagos
 ## Crear Notificación
 
 ```http
-POST /api/notificaciones
+POST http://localhost:8090/api/notificaciones
 ```
 
 ### Body
@@ -562,7 +828,26 @@ POST /api/notificaciones
 ## Listar Notificaciones
 
 ```http
-GET /api/notificaciones
+GET http://localhost:8090/api/notificaciones
+```
+
+---
+
+# ✅ Verificación Final del Sistema
+
+Si todo funciona correctamente:
+
+* Eureka mostrará todos los servicios en estado UP
+* El API Gateway responderá correctamente
+* Los CRUD funcionarán desde Postman
+* Las bases de datos se crearán automáticamente
+* FeignClient validará relaciones entre microservicios
+* JWT permitirá autenticación segura
+
+---
+
+```http
+GET http://localhost:8090/api/notificaciones
 ```
 
 ---
