@@ -381,9 +381,48 @@ Password: 123456
 
 # ⚠️ IMPORTANTE
 
-La contraseña ya está encriptada con BCrypt.
+La contraseña utilizada en el INSERT fue generada previamente utilizando:
 
-NO debe modificarse manualmente.
+```txt
+PasswordGenerator.java en msUsuarios
+```
+
+El proyecto incluye una clase para generar hashes BCrypt automáticamente.
+
+Ejemplo:
+
+```java
+package com.clinic.msusuarios;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+public class PasswordGenerator {
+
+    public static void main(String[] args) {
+
+        BCryptPasswordEncoder encoder =
+                new BCryptPasswordEncoder();
+
+        String password = encoder.encode("123456");
+
+        System.out.println(password);
+    }
+}
+```
+
+Al ejecutar la clase se generará un hash similar a:
+
+```txt
+$2a$10$AvKfNXupTWburBM/tVRcRefoFxgDjrYYLeapPdpXihILzn5Ayj.SC
+```
+
+Ese hash es el que se utiliza en el INSERT SQL.
+
+⚠️ IMPORTANTE:
+
+La contraseña almacenada en MySQL siempre debe estar encriptada con BCrypt.
+
+NO debe guardarse texto plano en la base de datos.
 
 ---
 
