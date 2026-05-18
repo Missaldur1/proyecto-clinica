@@ -999,3 +999,5 @@ Proyecto desarrollado utilizando:
 # 📌 Notas Finales
 
 Este proyecto fue desarrollado con fines académicos y educativos, aplicando buenas prácticas de arquitectura backend moderna mediante microservicios.
+
+Autores del proyecto: Marco Carrasco, Jeannette Figueroa y Misael Rojas
