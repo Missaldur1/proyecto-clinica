@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: ms-pagos
+    name: MS-PAGOS
 
   datasource:
     url: jdbc:mysql://localhost:3306/db_pagos?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC

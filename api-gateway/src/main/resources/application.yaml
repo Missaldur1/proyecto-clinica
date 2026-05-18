@@ -13,7 +13,7 @@ spring:
           - id: ms-usuarios
             uri: lb://MS-USUARIOS
             predicates:
-              - Path=/api/usuarios/**
+              - Path=/api/usuarios/**,/auth/**
 
           - id: ms-pacientes
             uri: lb://MS-PACIENTES

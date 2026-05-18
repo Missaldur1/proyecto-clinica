@@ -1,4 +1,4 @@
-package com.clinic.msusuarios.security.jwt;
+package com.clinic.mspacientes.security.jwt;
 
 import java.io.IOException;
 import java.util.List;
@@ -59,8 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 new UsernamePasswordAuthenticationToken(
                         email,
                         null,
-                        List.of(
-                                new SimpleGrantedAuthority(rol)));
+                        List.of(new SimpleGrantedAuthority(rol)));
 
         SecurityContextHolder.getContext()
                 .setAuthentication(authentication);

@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: ms-recetas
+    name: MS-RECETAS
 
   datasource:
     url: jdbc:mysql://localhost:3306/db_recetas?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC

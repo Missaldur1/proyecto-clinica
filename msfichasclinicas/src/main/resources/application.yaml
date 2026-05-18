@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: ms-fichas-clinicas
+    name: MS-FICHAS-CLINICAS
 
   datasource:
     url: jdbc:mysql://localhost:3306/db_fichas_clinicas?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC

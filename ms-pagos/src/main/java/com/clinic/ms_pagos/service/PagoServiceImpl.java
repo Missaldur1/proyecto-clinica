@@ -44,6 +44,7 @@ public class PagoServiceImpl implements PagoService {
 
         Pago pago = Pago.builder()
                 .pacienteId(dto.getPacienteId())
+                .concepto(dto.getConcepto())
                 .monto(dto.getMonto())
                 .metodoPago(dto.getMetodoPago())
                 .estado(dto.getEstado())
@@ -64,6 +65,7 @@ public class PagoServiceImpl implements PagoService {
                                 "Pago no encontrado"));
 
         pago.setPacienteId(dto.getPacienteId());
+        pago.setConcepto(dto.getConcepto());
         pago.setMonto(dto.getMonto());
         pago.setMetodoPago(dto.getMetodoPago());
         pago.setEstado(dto.getEstado());
@@ -89,6 +91,7 @@ public class PagoServiceImpl implements PagoService {
         return PagoResponseDTO.builder()
                 .id(pago.getId())
                 .pacienteId(pago.getPacienteId())
+                .concepto(pago.getConcepto())
                 .monto(pago.getMonto())
                 .metodoPago(pago.getMetodoPago())
                 .estado(pago.getEstado())

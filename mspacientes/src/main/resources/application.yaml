@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: ms-pacientes
+    name: MS-PACIENTES
 
   datasource:
     url: jdbc:mysql://localhost:3306/db_pacientes?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
