@@ -645,7 +645,7 @@ POST http://localhost:8090/api/pacientes
   "apellido": "Perez",
   "rut": "11111111-1",
   "telefono": "987654321",
-  "correo": "juan@gmail.com",
+  "email": "juan@gmail.com",
   "direccion": "Santiago",
   "edad": 30,
   "prevision": "Fonasa"
