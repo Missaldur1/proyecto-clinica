@@ -1009,3 +1009,671 @@ Proyecto desarrollado utilizando:
 Este proyecto fue desarrollado con fines académicos y educativos, aplicando buenas prácticas de arquitectura backend moderna mediante microservicios.
 
 Autores del proyecto: Marco Carrasco, Jeannette Figueroa y Misael Rojas
+# Sistema de Gestión Clínica — Arquitectura de Microservicios
+
+## Descripción del Proyecto
+
+Este proyecto corresponde a un sistema de gestión clínica desarrollado mediante arquitectura de microservicios utilizando Spring Boot y Spring Cloud.
+
+El objetivo principal del sistema es digitalizar y centralizar distintos procesos clínicos, permitiendo administrar usuarios, pacientes, médicos, exámenes, fichas clínicas, recetas, pagos y notificaciones de manera modular, escalable y segura.
+
+---
+
+# Arquitectura Implementada
+
+El sistema fue desarrollado utilizando arquitectura de microservicios.
+
+Cada microservicio posee responsabilidad independiente y se comunica mediante Spring Cloud.
+
+---
+
+# Microservicios Implementados
+
+| Microservicio    | Función                                |
+| ---------------- | -------------------------------------- |
+| msusuarios       | autenticación y gestión de usuarios    |
+| mspacientes      | administración de pacientes            |
+| msmedicos        | administración de médicos              |
+| msexamenes       | administración de exámenes clínicos    |
+| msfichasclinicas | administración de fichas clínicas      |
+| msrecetas        | administración de recetas médicas      |
+| mspagos          | administración de pagos                |
+| msnotificaciones | administración de notificaciones       |
+| api-gateway      | puerta de entrada del sistema          |
+| eureka-server    | registro y descubrimiento de servicios |
+
+---
+
+# Microservicios Complementarios
+
+Actualmente el proyecto también contiene:
+
+* msfarmacia
+* msreservas
+
+Estos microservicios quedaron como módulos complementarios/en desarrollo.
+
+---
+
+# Tecnologías Utilizadas
+
+## Backend
+
+* Java 21
+* Spring Boot 3.5.x
+* Spring Cloud 2025.x
+* Spring Security
+* JWT
+* Spring Data JPA
+* Hibernate
+* FeignClient
+* Maven
+
+---
+
+## Base de Datos
+
+* MySQL 8.x
+* XAMPP
+
+---
+
+## Herramientas
+
+* VS Code
+* Postman
+* GitHub
+* phpMyAdmin
+
+---
+
+# Arquitectura CSR
+
+Todos los microservicios fueron desarrollados utilizando arquitectura CSR:
+
+* Controller
+* Service
+* Repository
+
+Además se implementó:
+
+* DTOs
+* Bean Validation
+* manejo global de excepciones
+* logs estructurados
+* JWT Authentication
+* Spring Security
+
+---
+
+# DTOs
+
+El proyecto utiliza DTOs para separar entidades internas de las respuestas REST.
+
+Ejemplos:
+
+* UsuarioRequestDTO
+* UsuarioResponseDTO
+* PacienteRequestDTO
+* RecetaResponseDTO
+
+Esto permite:
+
+* controlar datos enviados
+* evitar exponer entidades directamente
+* mejorar seguridad
+* mejorar mantenimiento
+
+---
+
+# Bean Validation
+
+Se implementó Bean Validation para validar datos automáticamente antes de procesarlos.
+
+Validaciones utilizadas:
+
+```java
+@NotBlank
+@NotNull
+@Email
+@Size
+@DecimalMin
+```
+
+Ejemplo:
+
+```txt
+400 Bad Request
+```
+
+cuando un campo obligatorio es enviado vacío.
+
+---
+
+# Manejo Global de Excepciones
+
+El proyecto implementa manejo global de excepciones utilizando:
+
+```java
+@ControllerAdvice
+```
+
+mediante clases:
+
+```txt
+GlobalExceptionHandler
+```
+
+Esto permite retornar respuestas HTTP personalizadas y controladas.
+
+---
+
+# Eureka Server
+
+El proyecto utiliza Eureka Server para registro y descubrimiento automático de microservicios.
+
+Cada microservicio se registra automáticamente en Eureka.
+
+---
+
+## URL Eureka
+
+```txt
+http://localhost:8761
+```
+
+---
+
+# API Gateway
+
+El sistema utiliza API Gateway como punto de entrada único.
+
+Todas las solicitudes del sistema son consumidas mediante el Gateway.
+
+Ejemplo:
+
+```txt
+http://localhost:8090
+```
+
+El Gateway enruta solicitudes automáticamente hacia cada microservicio.
+
+---
+
+# FeignClient
+
+El proyecto implementa comunicación entre microservicios mediante FeignClient.
+
+Ejemplo real:
+
+```txt
+msFichasClinicas valida pacientes, médicos y exámenes antes de registrar información clínica.
+```
+
+Esto permite validación distribuida entre microservicios.
+
+---
+
+# JWT Authentication
+
+El sistema implementa autenticación mediante JWT (JSON Web Token).
+
+El microservicio principal encargado de autenticación es:
+
+```txt
+msusuarios
+```
+
+Spring Security fue implementado principalmente para proteger endpoints críticos y autenticación.
+
+---
+
+# Roles Implementados
+
+| Rol                | Función              |
+| ------------------ | -------------------- |
+| ROLE_ADMIN         | administración total |
+| ROLE_MEDICO        | acceso médico        |
+| ROLE_RECEPCIONISTA | gestión operativa    |
+
+---
+
+# PasswordGenerator
+
+El proyecto incluye una clase:
+
+```txt
+PasswordGenerator.java
+```
+
+utilizada para generar contraseñas encriptadas con BCrypt.
+
+Ejemplo:
+
+```java
+package com.clinic.msusuarios;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+public class PasswordGenerator {
+
+    public static void main(String[] args) {
+
+        BCryptPasswordEncoder encoder =
+                new BCryptPasswordEncoder();
+
+        String password = encoder.encode("123456");
+
+        System.out.println(password);
+    }
+}
+```
+
+Esto se utilizó para crear el primer usuario administrador manualmente desde MySQL/phpMyAdmin.
+
+---
+
+# Configuración MySQL
+
+## Puerto utilizado
+
+```txt
+3307
+```
+
+---
+
+# Creación Automática de Bases de Datos
+
+Las bases de datos se crean automáticamente mediante:
+
+```yaml
+createDatabaseIfNotExist=true
+```
+
+Ejemplo:
+
+```yaml
+url: jdbc:mysql://localhost:3307/db_notificaciones?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
+```
+
+---
+
+# Puertos Utilizados
+
+| Servicio         | Puerto |
+| ---------------- | ------ |
+| Eureka Server    | 8761   |
+| API Gateway      | 8090   |
+| msusuarios       | 8081   |
+| mspacientes      | 8082   |
+| msmedicos        | 8083   |
+| msexamenes       | 8084   |
+| msfichasclinicas | 8085   |
+| msrecetas        | 8086   |
+| mspagos          | 8087   |
+| msnotificaciones | 8088   |
+
+---
+
+# Cómo Abrir los Microservicios
+
+Cada microservicio debe ejecutarse de forma independiente.
+
+Se recomienda abrir:
+
+```txt
+Cada microservicio en una ventana separada de VS Code
+```
+
+Ejemplo:
+
+```txt
+VS Code 1 → eureka-server
+VS Code 2 → api-gateway
+VS Code 3 → msusuarios
+VS Code 4 → mspacientes
+VS Code 5 → msmedicos
+VS Code 6 → msexamenes
+VS Code 7 → msfichasclinicas
+VS Code 8 → msrecetas
+VS Code 9 → mspagos
+VS Code 10 → msnotificaciones
+```
+
+---
+
+# Orden Correcto de Ejecución
+
+## 1. Iniciar MySQL/XAMPP
+
+---
+
+## 2. Levantar Eureka Server
+
+---
+
+## 3. Levantar API Gateway
+
+---
+
+## 4. Levantar microservicios
+
+Orden recomendado:
+
+```txt
+msusuarios
+mspacientes
+msmedicos
+msexamenes
+msfichasclinicas
+msrecetas
+mspagos
+msnotificaciones
+```
+
+---
+
+# Crear Usuario ADMIN Manualmente
+
+## 1. Abrir phpMyAdmin
+
+```txt
+http://localhost/phpmyadmin
+```
+
+---
+
+## 2. Abrir base de datos
+
+```txt
+ms_usuarios
+```
+
+---
+
+## 3. Abrir tabla
+
+```txt
+usuarios
+```
+
+---
+
+## 4. Ejecutar SQL
+
+```sql
+INSERT INTO usuarios (
+    nombre,
+    email,
+    password,
+    rol,
+    activo
+)
+VALUES (
+    'Administrador',
+    'admin@gmail.com',
+    '$2a$10$AvKfNXupTWburBM/tVRcRefoFxgDjrYYLeapPdpXihILzn5Ayj.SC',
+    'ROLE_ADMIN',
+    1
+);
+```
+
+---
+
+# Credenciales ADMIN
+
+```txt
+Email: admin@gmail.com
+Password: 123456
+```
+
+---
+
+# Obtener Token JWT
+
+## Endpoint
+
+```http
+POST /auth/login
+```
+
+---
+
+## URL
+
+```txt
+http://localhost:8090/auth/login
+```
+
+---
+
+## Body
+
+```json
+{
+  "email": "admin@gmail.com",
+  "password": "123456"
+}
+```
+
+---
+
+## Respuesta esperada
+
+```json
+{
+  "token": "JWT_AQUI"
+}
+```
+
+---
+
+# Cómo Utilizar el Token en Postman
+
+## 1. Copiar token JWT
+
+---
+
+## 2. Ir a Authorization
+
+Seleccionar:
+
+```txt
+Bearer Token
+```
+
+---
+
+## 3. Pegar token
+
+---
+
+## 4. Consumir endpoints protegidos
+
+---
+
+# CRUD msusuarios
+
+## Crear Usuario
+
+```http
+POST /api/usuarios
+```
+
+### Body
+
+```json
+{
+  "nombre": "IngreseSuNombreAqui",
+  "email": "ingrese_su_correo_aqui@gmail.com",
+  "password": "IngreseSuPasswordAqui",
+  "rol": "ROLE_ADMIN",
+  "activo": true
+}
+```
+
+---
+
+## Listar Usuarios
+
+```http
+GET /api/usuarios
+```
+
+---
+
+## Buscar Usuario
+
+```http
+GET /api/usuarios/{id}
+```
+
+---
+
+## Actualizar Usuario
+
+```http
+PUT /api/usuarios/{id}
+```
+
+---
+
+## Eliminar Usuario
+
+```http
+DELETE /api/usuarios/{id}
+```
+
+---
+
+# CRUD mspacientes
+
+| Método | Endpoint            |
+| ------ | ------------------- |
+| POST   | /api/pacientes      |
+| GET    | /api/pacientes      |
+| GET    | /api/pacientes/{id} |
+| PUT    | /api/pacientes/{id} |
+| DELETE | /api/pacientes/{id} |
+
+---
+
+# CRUD msmedicos
+
+| Método | Endpoint          |
+| ------ | ----------------- |
+| POST   | /api/medicos      |
+| GET    | /api/medicos      |
+| GET    | /api/medicos/{id} |
+| PUT    | /api/medicos/{id} |
+| DELETE | /api/medicos/{id} |
+
+---
+
+# CRUD msexamenes
+
+| Método | Endpoint           |
+| ------ | ------------------ |
+| POST   | /api/examenes      |
+| GET    | /api/examenes      |
+| GET    | /api/examenes/{id} |
+| PUT    | /api/examenes/{id} |
+| DELETE | /api/examenes/{id} |
+
+---
+
+# CRUD msfichasclinicas
+
+| Método | Endpoint                  |
+| ------ | ------------------------- |
+| POST   | /api/fichas-clinicas      |
+| GET    | /api/fichas-clinicas      |
+| GET    | /api/fichas-clinicas/{id} |
+| PUT    | /api/fichas-clinicas/{id} |
+| DELETE | /api/fichas-clinicas/{id} |
+
+---
+
+# CRUD msrecetas
+
+| Método | Endpoint          |
+| ------ | ----------------- |
+| POST   | /api/recetas      |
+| GET    | /api/recetas      |
+| GET    | /api/recetas/{id} |
+| PUT    | /api/recetas/{id} |
+| DELETE | /api/recetas/{id} |
+
+---
+
+# CRUD mspagos
+
+| Método | Endpoint        |
+| ------ | --------------- |
+| POST   | /api/pagos      |
+| GET    | /api/pagos      |
+| GET    | /api/pagos/{id} |
+| PUT    | /api/pagos/{id} |
+| DELETE | /api/pagos/{id} |
+
+---
+
+# CRUD msnotificaciones
+
+| Método | Endpoint                 |
+| ------ | ------------------------ |
+| POST   | /api/notificaciones      |
+| GET    | /api/notificaciones      |
+| GET    | /api/notificaciones/{id} |
+| PUT    | /api/notificaciones/{id} |
+| DELETE | /api/notificaciones/{id} |
+
+---
+
+# Flujo General del Sistema
+
+1. El usuario inicia sesión.
+2. El sistema genera JWT.
+3. El usuario consume endpoints mediante API Gateway.
+4. Spring Security valida JWT.
+5. Los microservicios procesan solicitudes.
+6. FeignClient permite comunicación entre servicios.
+7. JPA persiste información en MySQL.
+
+---
+
+# Repositorio GitHub
+
+Agregar aquí el enlace del repositorio:
+
+```txt
+https://github.com/Missaldur1/proyecto-clinica.git
+```
+
+---
+
+# Estado Actual del Proyecto
+
+Actualmente el proyecto cuenta con:
+
+* arquitectura de microservicios funcional
+* autenticación JWT
+* CRUD completos
+* persistencia con JPA/Hibernate
+* Bean Validation
+* manejo global de excepciones
+* Eureka Server
+* API Gateway
+* FeignClient
+* comunicación distribuida
+* logs estructurados
+
+
+---
+
+# Autores
+
+* Jeannette Figueroa
+* Marco Carrasco
+* Misael Rojas
