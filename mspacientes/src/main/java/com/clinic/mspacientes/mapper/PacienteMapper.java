@@ -5,6 +5,7 @@ import com.clinic.mspacientes.dto.PacienteResponseDTO;
 import com.clinic.mspacientes.model.Paciente;
 
 public class PacienteMapper {
+    // Convierte datos recibidos desde el DTO hacia la entidad Paciente
     public static Paciente toEntity(PacienteRequestDTO dto) {
 
         return Paciente.builder()
@@ -18,6 +19,7 @@ public class PacienteMapper {
                 .build();
     }
 
+    // Convierte la entidad Paciente hacia un DTO de respuesta
     public static PacienteResponseDTO toDTO(Paciente paciente) {
 
         return PacienteResponseDTO.builder()
