@@ -26,3 +26,13 @@ eureka:
 
   instance:
     prefer-ip-address: true
+
+springdoc:
+  api-docs:
+    enabled: true
+
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+  packages-to-scan: com.clinic.msreservas.controller
