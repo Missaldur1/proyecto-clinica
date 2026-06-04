@@ -35,4 +35,4 @@ springdoc:
     enabled: true
     path: /swagger-ui.html
 
-  packages-to-scan: com.clinic.msreservas.controller
+  packages-to-scan: com.clinic.msfichasclinicas.controller

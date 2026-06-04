@@ -11,17 +11,21 @@ import org.springframework.web.bind.annotation.*;
 import com.clinic.msfichasclinicas.dto.FichaClinicaRequestDTO;
 import com.clinic.msfichasclinicas.service.FichaClinicaService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/fichas")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Fichas Clínicas", description = "Operaciones relacionadas con fichas clínicas")
 public class FichaClinicaController {
 
         private final FichaClinicaService service;
 
         @PostMapping
+        @Operation(summary = "Crear ficha clínica", description = "Registra una nueva ficha clínica")
         public ResponseEntity<?> crear(
                         @Valid @RequestBody FichaClinicaRequestDTO dto) {
 
@@ -34,6 +38,7 @@ public class FichaClinicaController {
         }
 
         @GetMapping
+        @Operation(summary = "Listar fichas", description = "Obtiene todas las fichas clínicas registradas")
         public ResponseEntity<?> listar() {
 
                 log.info(
@@ -45,6 +50,7 @@ public class FichaClinicaController {
         }
 
         @GetMapping("/{id}")
+        @Operation(summary = "Obtener ficha por ID", description = "Retorna una ficha clínica específicada por ID")
         public ResponseEntity<?> buscar(
                         @PathVariable("id") Long id) {
 
@@ -54,6 +60,7 @@ public class FichaClinicaController {
         }
 
         @PutMapping("/{id}")
+        @Operation(summary = "Actualizar ficha por ID", description = "Modifica una ficha clínica existente específicada por ID")
         public ResponseEntity<?> actualizar(
 
                         @PathVariable("id") Long id,
@@ -66,6 +73,7 @@ public class FichaClinicaController {
         }
 
         @DeleteMapping("/{id}")
+        @Operation(summary = "Eliminar ficha por ID", description = "Elimina una ficha clínica específicada por ID")
         public ResponseEntity<Void> eliminar(
                         @PathVariable("id") Long id) {
 
