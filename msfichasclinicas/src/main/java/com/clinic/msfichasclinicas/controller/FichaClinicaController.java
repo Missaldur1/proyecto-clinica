@@ -12,6 +12,8 @@ import com.clinic.msfichasclinicas.dto.FichaClinicaRequestDTO;
 import com.clinic.msfichasclinicas.service.FichaClinicaService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -51,6 +53,10 @@ public class FichaClinicaController {
 
         @GetMapping("/{id}")
         @Operation(summary = "Obtener ficha por ID", description = "Retorna una ficha clínica específicada por ID")
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Reserva encontrada"),
+                        @ApiResponse(responseCode = "404", description = "Reserva no encontrada")
+        })
         public ResponseEntity<?> buscar(
                         @PathVariable("id") Long id) {
 

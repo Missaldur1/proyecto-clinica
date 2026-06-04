@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import com.clinic.msexamenes.dto.*;
 import com.clinic.msexamenes.service.ExamenService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,75 +17,81 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/examenes")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Exámenes", description = "Operaciones relacionadas con exámenes médicos")
 public class ExamenController {
 
-    private final ExamenService service;
+        private final ExamenService service;
 
-    @PostMapping
-    public ResponseEntity<ExamenResponseDTO> crear(
-            @Valid @RequestBody ExamenRequestDTO dto) {
+        @PostMapping
+        @Tag(name = "Crear Examen", description = "Crea un nuevo examen médico")
+        public ResponseEntity<ExamenResponseDTO> crear(
+                        @Valid @RequestBody ExamenRequestDTO dto) {
 
-        log.info(
-                "POST /api/examenes");
+                log.info(
+                                "POST /api/examenes");
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(service.crear(dto));
+                return ResponseEntity
+                                .status(HttpStatus.CREATED)
+                                .body(service.crear(dto));
 
-    }
+        }
 
-    @GetMapping
-    public ResponseEntity<List<ExamenResponseDTO>> listar() {
+        @GetMapping
+        @Tag(name = "Listar Exámenes", description = "Lista todos los exámenes médicos")
+        public ResponseEntity<List<ExamenResponseDTO>> listar() {
 
-        log.info(
-                "GET /api/examenes");
+                log.info(
+                                "GET /api/examenes");
 
-        return ResponseEntity.ok(
-                service.listar());
+                return ResponseEntity.ok(
+                                service.listar());
 
-    }
+        }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<ExamenResponseDTO> buscar(
-            @PathVariable("id") Long id) {
+        @GetMapping("/{id}")
+        @Tag(name = "Buscar Examen por ID", description = "Busca un examen médico por su ID")
+        public ResponseEntity<ExamenResponseDTO> buscar(
+                        @PathVariable("id") Long id) {
 
-        log.info(
-                "GET examen {}", id);
+                log.info(
+                                "GET examen {}", id);
 
-        return ResponseEntity.ok(
-                service.buscarPorId(id));
+                return ResponseEntity.ok(
+                                service.buscarPorId(id));
 
-    }
+        }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ExamenResponseDTO> actualizar(
+        @PutMapping("/{id}")
+        @Tag(name = "Actualizar Examen por ID", description = "Actualiza un examen médico existente por su ID")
+        public ResponseEntity<ExamenResponseDTO> actualizar(
 
-            @PathVariable("id") Long id,
+                        @PathVariable("id") Long id,
 
-            @Valid @RequestBody ExamenRequestDTO dto) {
+                        @Valid @RequestBody ExamenRequestDTO dto) {
 
-        log.info(
-                "PUT examen {}", id);
+                log.info(
+                                "PUT examen {}", id);
 
-        return ResponseEntity.ok(
-                service.actualizar(
-                        id, dto));
+                return ResponseEntity.ok(
+                                service.actualizar(
+                                                id, dto));
 
-    }
+        }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(
-            @PathVariable("id") Long id) {
+        @DeleteMapping("/{id}")
+        @Tag(name = "Eliminar Examen por ID", description = "Elimina un examen médico existente por su ID")
+        public ResponseEntity<Void> eliminar(
+                        @PathVariable("id") Long id) {
 
-        log.info(
-                "DELETE examen {}", id);
+                log.info(
+                                "DELETE examen {}", id);
 
-        service.eliminar(id);
+                service.eliminar(id);
 
-        return ResponseEntity
-                .noContent()
-                .build();
+                return ResponseEntity
+                                .noContent()
+                                .build();
 
-    }
+        }
 
 }

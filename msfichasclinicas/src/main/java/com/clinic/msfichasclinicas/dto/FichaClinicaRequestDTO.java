@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.time.LocalDate;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @Getter
 @Setter
 @NoArgsConstructor
@@ -13,6 +15,7 @@ import java.time.LocalDate;
 public class FichaClinicaRequestDTO {
 
     @NotNull
+    @Schema(description = "ID del paciente asociado", example = "1")
     private Long pacienteId;
 
     @NotNull
@@ -21,9 +24,11 @@ public class FichaClinicaRequestDTO {
     private Long examenId;
 
     @NotBlank
+    @Schema(description = "Diagnóstico médico", example = "Dolor torácico")
     private String diagnostico;
 
     @NotBlank
+    @Schema(description = "Tratamiento indicado", example = "Reposo absoluto durante 7 días")
     private String tratamiento;
 
     private String observaciones;
