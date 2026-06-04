@@ -17,17 +17,20 @@ import com.clinic.msreservas.dto.ReservaRequestDTO;
 import com.clinic.msreservas.dto.ReservaResponseDTO;
 import com.clinic.msreservas.service.ReservaService;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/reservas")
 @RequiredArgsConstructor
+@Tag(name = "Reservas", description = "Operaciones relacionadas con reservas")
 public class ReservaController {
 
         private final ReservaService service;
 
         @PostMapping
+        @Tag(name = "Crear Reservas", description = "Crear una nueva reserva")
         public ResponseEntity<ReservaResponseDTO> crear(
                         @Valid @RequestBody ReservaRequestDTO dto) {
 
@@ -38,6 +41,7 @@ public class ReservaController {
         }
 
         @GetMapping
+        @Tag(name = "Listar Reservas", description = "Listar todas las reservas")
         public ResponseEntity<List<ReservaResponseDTO>> listar() {
 
                 return ResponseEntity.ok(
@@ -46,6 +50,7 @@ public class ReservaController {
         }
 
         @GetMapping("/{id}")
+        @Tag(name = "Buscar Reserva", description = "Buscar una reserva por su ID")
         public ResponseEntity<ReservaResponseDTO> buscar(
                         @PathVariable Long id) {
 
@@ -55,6 +60,7 @@ public class ReservaController {
         }
 
         @PutMapping("/{id}")
+        @Tag(name = "Actualizar Reserva", description = "Actualizar una reserva existente por su ID")
         public ResponseEntity<ReservaResponseDTO> actualizar(
                         @PathVariable Long id,
                         @Valid @RequestBody ReservaRequestDTO dto) {
@@ -65,6 +71,7 @@ public class ReservaController {
         }
 
         @DeleteMapping("/{id}")
+        @Tag(name = "Eliminar Reserva", description = "Eliminar una reserva por su ID")
         public ResponseEntity<Void> eliminar(
                         @PathVariable Long id) {
 
