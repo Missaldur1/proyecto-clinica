@@ -1,6 +1,7 @@
 package com.clinic.msfichasclinicas.mapper;
 
-import com.clinic.msfichasclinicas.dto.*;
+import com.clinic.msfichasclinicas.dto.FichaClinicaRequestDTO;
+import com.clinic.msfichasclinicas.dto.FichaClinicaResponseDTO;
 import com.clinic.msfichasclinicas.model.FichaClinica;
 
 public class FichaClinicaMapper {
@@ -58,7 +59,25 @@ public class FichaClinicaMapper {
                                                 ficha.getFecha())
 
                                 .build();
+        }
 
+        public static void updateEntity(
+                        FichaClinica ficha,
+                        FichaClinicaRequestDTO dto) {
+
+                ficha.setPacienteId(dto.getPacienteId());
+
+                ficha.setMedicoId(dto.getMedicoId());
+
+                ficha.setExamenId(dto.getExamenId());
+
+                ficha.setDiagnostico(dto.getDiagnostico());
+
+                ficha.setTratamiento(dto.getTratamiento());
+
+                ficha.setObservaciones(dto.getObservaciones());
+
+                ficha.setFecha(dto.getFecha());
         }
 
 }

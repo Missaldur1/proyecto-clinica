@@ -1,7 +1,8 @@
 package com.clinic.msreservas.mapper;
 
-import com.clinic.msreservas.dto.*;
-import com.clinic.msreservas.model.*;
+import com.clinic.msreservas.dto.ReservaRequestDTO;
+import com.clinic.msreservas.dto.ReservaResponseDTO;
+import com.clinic.msreservas.model.Reserva;
 
 public class ReservaMapper {
 
@@ -26,6 +27,19 @@ public class ReservaMapper {
                 .hora(reserva.getHora())
                 .estado(reserva.getEstado())
                 .build();
+    }
+
+    // Método para actualizar una entidad existente con los datos de un DTO, manteniendo la lógica de actualización
+    //centralizada en el Mapper
+     public static void updateEntity(
+            Reserva reserva,
+            ReservaRequestDTO dto) {
+
+        reserva.setPacienteId(dto.getPacienteId());
+        reserva.setMedicoId(dto.getMedicoId());
+        reserva.setFecha(dto.getFecha());
+        reserva.setHora(dto.getHora());
+        reserva.setEstado(dto.getEstado());
     }
 
 }

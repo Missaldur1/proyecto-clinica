@@ -7,98 +7,76 @@ import org.springframework.stereotype.Service;
 import com.clinic.msrecetas.dto.RecetaRequestDTO;
 import com.clinic.msrecetas.dto.RecetaResponseDTO;
 import com.clinic.msrecetas.exception.RecetaNotFoundException;
+import com.clinic.msrecetas.mapper.RecetaMapper;
 import com.clinic.msrecetas.model.Receta;
 import com.clinic.msrecetas.repository.RecetaRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RecetaServiceImpl implements RecetaService {
 
-    private final RecetaRepository repository;
+        private final RecetaRepository repository;
 
-    @Override
-    public List<RecetaResponseDTO> listar() {
+        @Override
+        public List<RecetaResponseDTO> listar() {
 
-        return repository.findAll()
-                .stream()
-                .map(this::mapToResponseDTO)
-                .toList();
-    }
+                log.info("Listando recetas");
 
-    @Override
-    public RecetaResponseDTO buscarPorId(Long id) {
+                return repository.findAll()
+                                .stream()
+                                .map(RecetaMapper::toDTO)
+                                .toList();
+        }
 
-        Receta receta = repository.findById(id)
-                .orElseThrow(() ->
-                        new RecetaNotFoundException(
-                                "Receta no encontrada"));
+        @Override
+        public RecetaResponseDTO buscarPorId(Long id) {
 
-        return mapToResponseDTO(receta);
-    }
+                Receta receta = repository.findById(id)
+                                .orElseThrow(() -> new RecetaNotFoundException(
+                                                "Receta no encontrada"));
+                log.info("Buscando receta ID: {}", id);
+                return RecetaMapper.toDTO(receta);
+        }
 
-    @Override
-    public RecetaResponseDTO guardar(
-            RecetaRequestDTO dto) {
+        @Override
+        public RecetaResponseDTO guardar(
+                        RecetaRequestDTO dto) {
+                log.info("Creando receta para paciente ID: {}", dto.getPacienteId());
 
-        Receta receta = Receta.builder()
-                .pacienteId(dto.getPacienteId())
-                .medicoId(dto.getMedicoId())
-                .medicamento(dto.getMedicamento())
-                .dosis(dto.getDosis())
-                .indicaciones(dto.getIndicaciones())
-                .fechaEmision(dto.getFechaEmision())
-                .activa(dto.getActiva())
-                .build();
+                Receta receta = RecetaMapper.toEntity(dto);
+                Receta guardada = repository.save(receta);
 
-        return mapToResponseDTO(repository.save(receta));
-    }
+                log.info("Receta creada correctamente ID: {}", guardada.getId());
+                return RecetaMapper.toDTO(guardada);
+        }
 
-    @Override
-    public RecetaResponseDTO actualizar(
-            Long id,
-            RecetaRequestDTO dto) {
+        @Override
+        public RecetaResponseDTO actualizar(Long id, RecetaRequestDTO dto) {
+                Receta receta = repository.findById(id)
+                                .orElseThrow(() -> new RecetaNotFoundException(
+                                                "Receta no encontrada"));
+                log.info("Actualizando receta ID: {}", id);
+                RecetaMapper.updateEntity(receta, dto);
 
-        Receta receta = repository.findById(id)
-                .orElseThrow(() ->
-                        new RecetaNotFoundException(
-                                "Receta no encontrada"));
+                Receta actualizada = repository.save(receta);
 
-        receta.setPacienteId(dto.getPacienteId());
-        receta.setMedicoId(dto.getMedicoId());
-        receta.setMedicamento(dto.getMedicamento());
-        receta.setDosis(dto.getDosis());
-        receta.setIndicaciones(dto.getIndicaciones());
-        receta.setFechaEmision(dto.getFechaEmision());
-        receta.setActiva(dto.getActiva());
+                log.info("Receta actualizada correctamente");
 
-        return mapToResponseDTO(repository.save(receta));
-    }
+                return RecetaMapper.toDTO(actualizada);
+        }
 
-    @Override
-    public void eliminar(Long id) {
+        @Override
+        public void eliminar(Long id) {
 
-        Receta receta = repository.findById(id)
-                .orElseThrow(() ->
-                        new RecetaNotFoundException(
-                                "Receta no encontrada"));
-
-        repository.delete(receta);
-    }
-
-    private RecetaResponseDTO mapToResponseDTO(
-            Receta receta) {
-
-        return RecetaResponseDTO.builder()
-                .id(receta.getId())
-                .pacienteId(receta.getPacienteId())
-                .medicoId(receta.getMedicoId())
-                .medicamento(receta.getMedicamento())
-                .dosis(receta.getDosis())
-                .indicaciones(receta.getIndicaciones())
-                .fechaEmision(receta.getFechaEmision())
-                .activa(receta.getActiva())
-                .build();
-    }
+                Receta receta = repository.findById(id)
+                                .orElseThrow(() -> new RecetaNotFoundException(
+                                                "Receta no encontrada"));
+                log.info("Eliminando receta ID: {}", id);
+                repository.delete(receta);
+                log.info("Receta eliminada correctamente");
+        }
 }

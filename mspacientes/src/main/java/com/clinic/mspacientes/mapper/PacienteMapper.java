@@ -34,4 +34,18 @@ public class PacienteMapper {
                 .build();
     }
 
+    // Método para actualizar una entidad Paciente existente con datos de un DTO, manteniendo la lógica de actualización centralizada en el Mapper
+    public static void updateEntity(
+            Paciente paciente,
+            PacienteRequestDTO dto) {
+
+        paciente.setRut(dto.getRut());
+        paciente.setNombre(dto.getNombre());
+        paciente.setApellido(dto.getApellido());
+        paciente.setEdad(dto.getEdad());
+        paciente.setPrevision(dto.getPrevision());
+        paciente.setTelefono(dto.getTelefono());
+        paciente.setEmail(dto.getEmail());
+    }
+
 }

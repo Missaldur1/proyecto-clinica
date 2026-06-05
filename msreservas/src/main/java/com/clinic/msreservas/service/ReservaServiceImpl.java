@@ -1,16 +1,20 @@
 package com.clinic.msreservas.service;
 
-import com.clinic.msreservas.client.MedicoClient;
-import com.clinic.msreservas.client.PacienteClient;
-import com.clinic.msreservas.dto.*;
-import com.clinic.msreservas.exception.*;
-import com.clinic.msreservas.mapper.ReservaMapper;
-import com.clinic.msreservas.model.Reserva;
-import com.clinic.msreservas.repository.ReservaRepository;
-
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+
+import com.clinic.msreservas.client.MedicoClient;
+import com.clinic.msreservas.client.PacienteClient;
+import com.clinic.msreservas.dto.ReservaRequestDTO;
+import com.clinic.msreservas.dto.ReservaResponseDTO;
+import com.clinic.msreservas.exception.MedicoNotFoundException;
+import com.clinic.msreservas.exception.PacienteNotFoundException;
+import com.clinic.msreservas.exception.ReservaDuplicadaException;
+import com.clinic.msreservas.exception.ReservaNotFoundException;
+import com.clinic.msreservas.mapper.ReservaMapper;
+import com.clinic.msreservas.model.Reserva;
+import com.clinic.msreservas.repository.ReservaRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,9 +37,36 @@ public class ReservaServiceImpl implements ReservaService {
                                 dto.getPacienteId(),
                                 dto.getMedicoId());
 
-                pacienteClient.buscarPaciente(dto.getPacienteId());
+                // se valida que el paciente y el médico existan en sus respectivos
+                // microservicios antes de crear la reserva
+                try {
 
-                medicoClient.buscarMedico(dto.getMedicoId());
+                        pacienteClient.buscarPaciente(
+                                        dto.getPacienteId());
+
+                } catch (Exception e) {
+
+                        log.error(
+                                        "Paciente {} no encontrado",
+                                        dto.getPacienteId());
+
+                        throw new PacienteNotFoundException();
+                }
+
+                // se valida que el médico exista en su microservicio antes de crear la reserva
+                try {
+
+                        medicoClient.buscarMedico(
+                                        dto.getMedicoId());
+
+                } catch (Exception e) {
+
+                        log.error(
+                                        "Médico {} no encontrado",
+                                        dto.getMedicoId());
+
+                        throw new MedicoNotFoundException();
+                }
 
                 boolean existe = repository.existsByMedicoIdAndFechaAndHora(dto.getMedicoId(), dto.getFecha(),
                                 dto.getHora());
@@ -110,20 +141,7 @@ public class ReservaServiceImpl implements ReservaService {
 
                                 });
 
-                reserva.setPacienteId(
-                                dto.getPacienteId());
-
-                reserva.setMedicoId(
-                                dto.getMedicoId());
-
-                reserva.setFecha(
-                                dto.getFecha());
-
-                reserva.setHora(
-                                dto.getHora());
-
-                reserva.setEstado(
-                                dto.getEstado());
+                ReservaMapper.updateEntity(reserva, dto);
 
                 log.info("Reserva actualizada correctamente");
 

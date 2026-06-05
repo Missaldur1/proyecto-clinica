@@ -19,16 +19,25 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 
 public class PacienteServiceImpl implements PacienteService {
- private final PacienteRepository repository;
+    private final PacienteRepository repository;
 
     @Override
     public PacienteResponseDTO crearPaciente(PacienteRequestDTO dto) {
 
         log.info("Creando paciente con rut: {}", dto.getRut());
 
+        // Convertimos el DTO a entidad utilizando el Mapper
         Paciente paciente = PacienteMapper.toEntity(dto);
 
-        return PacienteMapper.toDTO(repository.save(paciente));
+        // Guardamos el paciente en la base de datos
+        Paciente pacienteGuardado = repository.save(paciente);
+
+        // Agregamos un log para confirmar que el paciente se ha creado correctamente con su ID generado
+        log.info("Paciente creado correctamente con ID {}", pacienteGuardado.getId());
+
+        //Por último, convertimos a DTO y lo retornamos
+        return PacienteMapper.toDTO(pacienteGuardado);
+
     }
 
     @Override
@@ -48,8 +57,7 @@ public class PacienteServiceImpl implements PacienteService {
         log.info("Buscando paciente por id: {}", id);
 
         Paciente paciente = repository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Paciente no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado"));
 
         return PacienteMapper.toDTO(paciente);
     }
@@ -60,31 +68,32 @@ public class PacienteServiceImpl implements PacienteService {
         log.info("Buscando paciente por rut: {}", rut);
 
         Paciente paciente = repository.findByRut(rut)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Paciente no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado"));
 
         return PacienteMapper.toDTO(paciente);
     }
 
+    // Actualización de paciente ahora utilizando Mapper para actualizar solo los
+    // campos permitidos y manteniendo la lógica de actualización centralizada en el
+    // Mapper
     @Override
-    public PacienteResponseDTO actualizarPaciente(Long id,
-                                                  PacienteRequestDTO dto) {
+    public PacienteResponseDTO actualizarPaciente(
+            Long id,
+            PacienteRequestDTO dto) {
 
         log.info("Actualizando paciente id: {}", id);
 
         Paciente paciente = repository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Paciente no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Paciente no encontrado"));
 
-        paciente.setRut(dto.getRut());
-        paciente.setNombre(dto.getNombre());
-        paciente.setEdad(dto.getEdad());
-        paciente.setApellido(dto.getApellido());
-        paciente.setPrevision(dto.getPrevision());
-        paciente.setTelefono(dto.getTelefono());
-        paciente.setEmail(dto.getEmail());
+        PacienteMapper.updateEntity(paciente, dto);
 
-        return PacienteMapper.toDTO(repository.save(paciente));
+        Paciente actualizado = repository.save(paciente);
+
+        log.info("Paciente actualizado correctamente con id: {}", id);
+
+        return PacienteMapper.toDTO(actualizado);
     }
 
     @Override
@@ -93,9 +102,9 @@ public class PacienteServiceImpl implements PacienteService {
         log.info("Eliminando paciente id: {}", id);
 
         Paciente paciente = repository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Paciente no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado"));
 
         repository.delete(paciente);
+        log.info("Paciente eliminado correctamente");
     }
 }

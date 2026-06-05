@@ -37,8 +37,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         // ENCRIPTAR PASSWORD
         usuario.setPassword(
-                passwordEncoder.encode(dto.getPassword())
-        );
+                passwordEncoder.encode(dto.getPassword()));
 
         Usuario guardado = usuarioRepository.save(usuario);
 
@@ -64,35 +63,33 @@ public class UsuarioServiceImpl implements UsuarioService {
         log.info("Buscando usuario con ID: {}", id);
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         return UsuarioMapper.toDTO(usuario);
     }
 
+    //Actualización de usuario ahora utilizando Mapper para actualizar solo los campos permitidos y manteniendo la lógica de encriptación de contraseña
     @Override
-    public UsuarioResponseDTO actualizarUsuario(Long id, UsuarioRequestDTO dto) {
+    public UsuarioResponseDTO actualizarUsuario(
+            Long id,
+            UsuarioRequestDTO dto) {
 
         log.info("Actualizando usuario con ID: {}", id);
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Usuario no encontrado"));
 
-        usuario.setNombre(dto.getNombre());
-        usuario.setEmail(dto.getEmail());
+        UsuarioMapper.updateEntity(usuario, dto);
 
-        // ENCRIPTAR PASSWORD NUEVAMENTE
         usuario.setPassword(
-                passwordEncoder.encode(dto.getPassword())
-        );
-
-        usuario.setRol(dto.getRol());
-        usuario.setActivo(dto.getActivo());
+                passwordEncoder.encode(dto.getPassword()));
 
         Usuario actualizado = usuarioRepository.save(usuario);
 
-        log.info("Usuario actualizado correctamente");
+        log.info(
+                "Usuario actualizado correctamente con ID: {}",
+                actualizado.getId());
 
         return UsuarioMapper.toDTO(actualizado);
     }
@@ -103,8 +100,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         log.info("Eliminando usuario con ID: {}", id);
 
         Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         usuarioRepository.delete(usuario);
 

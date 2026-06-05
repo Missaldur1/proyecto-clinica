@@ -1,97 +1,95 @@
 package com.clinic.msfarmacia.service;
-import com.clinic.msfarmacia.dto.*;
-import com.clinic.msfarmacia.exception.MedicamentoNotFoundException;
-import com.clinic.msfarmacia.model.Medicamento;
-import com.clinic.msfarmacia.repository.MedicamentoRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import org.springframework.stereotype.Service;
+
+import com.clinic.msfarmacia.dto.MedicamentoRequestDTO;
+import com.clinic.msfarmacia.dto.MedicamentoResponseDTO;
+import com.clinic.msfarmacia.exception.MedicamentoNotFoundException;
+import com.clinic.msfarmacia.mapper.MedicamentoMapper;
+import com.clinic.msfarmacia.model.Medicamento;
+import com.clinic.msfarmacia.repository.MedicamentoRepository;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MedicamentoServiceImpl implements MedicamentoService {
 
-    private final MedicamentoRepository repository;
+        private final MedicamentoRepository repository;
 
-    @Override
-    public List<MedicamentoResponseDTO> listar() {
+        @Override
+        public List<MedicamentoResponseDTO> listar() {
+                // Implementación de listado de medicamentos utilizando el Mapper para convertir
+                // las entidades a DTOs
+                log.info("Listando medicamentos");
 
-        return repository.findAll()
-                .stream()
-                .map(this::mapToResponseDTO)
-                .toList();
-    }
+                return repository.findAll()
+                                .stream()
+                                .map(MedicamentoMapper::toDTO)
+                                .toList();
+        }
 
-    @Override
-    public MedicamentoResponseDTO buscarPorId(Long id) {
+        @Override
+        public MedicamentoResponseDTO buscarPorId(Long id) {
 
-        Medicamento medicamento = repository.findById(id)
-                .orElseThrow(() ->
-                        new MedicamentoNotFoundException(
-                                "Medicamento no encontrado"));
+                Medicamento medicamento = repository.findById(id)
+                                .orElseThrow(() -> new MedicamentoNotFoundException(
+                                                "Medicamento no encontrado"));
+                // Implementación de búsqueda por ID utilizando el Mapper para convertir la
+                // entidad a DTO
+                log.info("Buscando medicamento ID: {}", id);
+                return MedicamentoMapper.toDTO(medicamento);
+        }
 
-        return mapToResponseDTO(medicamento);
-    }
+        @Override
+        public MedicamentoResponseDTO guardar(
+                        MedicamentoRequestDTO dto) {
 
-    @Override
-    public MedicamentoResponseDTO guardar(
-            MedicamentoRequestDTO dto) {
+                // Implementación de creación utilizando el Mapper para convertir entre DTOs y
+                // entidades, manteniendo la lógica de negocio en el servicio
+                log.info("Creando medicamento: {}", dto.getNombre());
+                Medicamento medicamento = MedicamentoMapper.toEntity(dto);
 
-        Medicamento medicamento = Medicamento.builder()
-                .nombre(dto.getNombre())
-                .descripcion(dto.getDescripcion())
-                .laboratorio(dto.getLaboratorio())
-                .precio(dto.getPrecio())
-                .stock(dto.getStock())
-                .disponible(dto.getDisponible())
-                .build();
+                Medicamento guardado = repository.save(medicamento);
 
-        return mapToResponseDTO(repository.save(medicamento));
-    }
+                log.info("Medicamento creado correctamente ID: {}", guardado.getId());
+                return MedicamentoMapper.toDTO(guardado);
+        }
 
-    @Override
-    public MedicamentoResponseDTO actualizar(
-            Long id,
-            MedicamentoRequestDTO dto) {
+        @Override
+        public MedicamentoResponseDTO actualizar(
+                        Long id,
+                        MedicamentoRequestDTO dto) {
 
-        Medicamento medicamento = repository.findById(id)
-                .orElseThrow(() ->
-                        new MedicamentoNotFoundException(
-                                "Medicamento no encontrado"));
+                Medicamento medicamento = repository.findById(id)
+                                .orElseThrow(() -> new MedicamentoNotFoundException(
+                                                "Medicamento no encontrado"));
 
-        medicamento.setNombre(dto.getNombre());
-        medicamento.setDescripcion(dto.getDescripcion());
-        medicamento.setLaboratorio(dto.getLaboratorio());
-        medicamento.setPrecio(dto.getPrecio());
-        medicamento.setStock(dto.getStock());
-        medicamento.setDisponible(dto.getDisponible());
+                //Se agregaron logs para seguimiento del proceso de actualización
+                log.info("Actualizando medicamento ID: {}", id);
 
-        return mapToResponseDTO(repository.save(medicamento));
-    }
+                MedicamentoMapper.updateEntity(medicamento, dto);
+                Medicamento actualizado = repository.save(medicamento);
 
-    @Override
-    public void eliminar(Long id) {
+                log.info("Medicamento actualizado correctamente");
+                return MedicamentoMapper.toDTO(actualizado);
+        }
 
-        Medicamento medicamento = repository.findById(id)
-                .orElseThrow(() ->
-                        new MedicamentoNotFoundException(
-                                "Medicamento no encontrado"));
+        @Override
+        public void eliminar(Long id) {
 
-        repository.delete(medicamento);
-    }
+                Medicamento medicamento = repository.findById(id)
+                                .orElseThrow(() -> new MedicamentoNotFoundException(
+                                                "Medicamento no encontrado"));
+                //Se agregaron logs para seguimiento del proceso de eliminación
+                log.info("Eliminando medicamento ID: {}", id);
 
-    private MedicamentoResponseDTO mapToResponseDTO(
-            Medicamento medicamento) {
+                repository.delete(medicamento);
+                log.info("Medicamento eliminado correctamente");
+        }
 
-        return MedicamentoResponseDTO.builder()
-                .id(medicamento.getId())
-                .nombre(medicamento.getNombre())
-                .descripcion(medicamento.getDescripcion())
-                .laboratorio(medicamento.getLaboratorio())
-                .precio(medicamento.getPrecio())
-                .stock(medicamento.getStock())
-                .disponible(medicamento.getDisponible())
-                .build();
-    }
 }

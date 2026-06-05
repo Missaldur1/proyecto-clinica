@@ -5,6 +5,7 @@ import com.clinic.msusuarios.dto.UsuarioResponseDTO;
 import com.clinic.msusuarios.model.Usuario;
 
 public class UsuarioMapper {
+
     public static Usuario toEntity(UsuarioRequestDTO dto) {
 
         return Usuario.builder()
@@ -27,4 +28,14 @@ public class UsuarioMapper {
                 .build();
     }
 
+    // Método para actualizar una entidad Usuario existente con datos de un DTO, manteniendo la lógica de actualización centralizada en el Mapper
+    public static void updateEntity(
+            Usuario usuario,
+            UsuarioRequestDTO dto) {
+
+        usuario.setNombre(dto.getNombre());
+        usuario.setEmail(dto.getEmail());
+        usuario.setRol(dto.getRol());
+        usuario.setActivo(dto.getActivo());
+    }
 }

@@ -4,9 +4,15 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.clinic.msfichasclinicas.client.*;
-import com.clinic.msfichasclinicas.dto.*;
-import com.clinic.msfichasclinicas.exception.*;
+import com.clinic.msfichasclinicas.client.ExamenClient;
+import com.clinic.msfichasclinicas.client.MedicoClient;
+import com.clinic.msfichasclinicas.client.PacienteClient;
+import com.clinic.msfichasclinicas.dto.FichaClinicaRequestDTO;
+import com.clinic.msfichasclinicas.dto.FichaClinicaResponseDTO;
+import com.clinic.msfichasclinicas.exception.ExamenNotFoundException;
+import com.clinic.msfichasclinicas.exception.FichaNotFoundException;
+import com.clinic.msfichasclinicas.exception.MedicoNotFoundException;
+import com.clinic.msfichasclinicas.exception.PacienteNotFoundException;
 import com.clinic.msfichasclinicas.mapper.FichaClinicaMapper;
 import com.clinic.msfichasclinicas.model.FichaClinica;
 import com.clinic.msfichasclinicas.repository.FichaRepository;
@@ -28,26 +34,6 @@ public class FichaClinicaServiceImpl
 
         private final ExamenClient examenClient;
 
-        /* RECOMENDACION PARA MEJORAR
-        
-        @Override
-          public FichaClinica crear(FichaDTO dto) {
-          
-              PacienteDTO paciente =
-                      pacienteClient.obtenerPaciente(
-                              dto.getPacienteId());
-          
-              if (paciente == null) {
-          
-                  throw new PacienteNotFoundException(
-                          "No existe el paciente con ID "
-                                  + dto.getPacienteId());
-              }
-          
-              FichaClinica ficha = mapper.toEntity(dto);
-          
-              return repository.save(ficha);
-          }*/
         @Override
         public FichaClinicaResponseDTO crear(
                         FichaClinicaRequestDTO dto) {
@@ -55,17 +41,55 @@ public class FichaClinicaServiceImpl
                 log.info(
                                 "Creando ficha clínica");
 
-                pacienteClient.buscarPaciente(
-                                dto.getPacienteId());
+                try {
 
-                medicoClient.buscarMedico(
-                                dto.getMedicoId());
+                        pacienteClient.buscarPaciente(
+                                        dto.getPacienteId());
+
+                } catch (Exception e) {
+
+                        log.error(
+                                        "Paciente {} no encontrado",
+                                        dto.getPacienteId());
+
+                        throw new PacienteNotFoundException(
+                                        "No existe el paciente con ID "
+                                                        + dto.getPacienteId());
+                }
+
+                try {
+
+                        medicoClient.buscarMedico(
+                                        dto.getMedicoId());
+
+                } catch (Exception e) {
+
+                        log.error(
+                                        "Médico {} no encontrado",
+                                        dto.getMedicoId());
+
+                        throw new MedicoNotFoundException(
+                                        "No existe el médico con ID "
+                                                        + dto.getMedicoId());
+                }
 
                 if (dto.getExamenId() != null) {
 
-                        examenClient.buscarExamen(
-                                        dto.getExamenId());
+                        try {
 
+                                examenClient.buscarExamen(
+                                                dto.getExamenId());
+
+                        } catch (Exception e) {
+
+                                log.error(
+                                                "Examen {} no encontrado",
+                                                dto.getExamenId());
+
+                                throw new ExamenNotFoundException(
+                                                "No existe el examen con ID "
+                                                                + dto.getExamenId());
+                        }
                 }
 
                 FichaClinica ficha = FichaClinicaMapper.toEntity(dto);
@@ -96,7 +120,7 @@ public class FichaClinicaServiceImpl
 
                 FichaClinica ficha = repository.findById(id)
                                 .orElseThrow(() -> new FichaNotFoundException());
-
+                log.info("Buscando ficha clínica {}", id);
                 return FichaClinicaMapper
                                 .toDTO(ficha);
 
@@ -106,31 +130,14 @@ public class FichaClinicaServiceImpl
         public FichaClinicaResponseDTO actualizar(
                         Long id,
                         FichaClinicaRequestDTO dto) {
-
+                log.info("Actualizando ficha clínica {}", id);
                 FichaClinica ficha = repository.findById(id)
                                 .orElseThrow(() -> new FichaNotFoundException());
 
-                ficha.setPacienteId(
-                                dto.getPacienteId());
-
-                ficha.setMedicoId(
-                                dto.getMedicoId());
-
-                ficha.setExamenId(
-                                dto.getExamenId());
-
-                ficha.setDiagnostico(
-                                dto.getDiagnostico());
-
-                ficha.setTratamiento(
-                                dto.getTratamiento());
-
-                ficha.setObservaciones(
-                                dto.getObservaciones());
-
-                ficha.setFecha(
-                                dto.getFecha());
-
+                FichaClinicaMapper.updateEntity(
+                                ficha,
+                                dto);
+                log.info("Ficha clínica {} actualizada correctamente", id);
                 return FichaClinicaMapper
                                 .toDTO(
                                                 repository.save(ficha));
@@ -139,12 +146,12 @@ public class FichaClinicaServiceImpl
 
         @Override
         public void eliminar(Long id) {
-
+                log.info("Eliminando ficha clínica {}", id);
                 FichaClinica ficha = repository.findById(id)
                                 .orElseThrow(() -> new FichaNotFoundException());
 
                 repository.delete(ficha);
-
+                log.info("Ficha clínica {} eliminada correctamente",id);
         }
 
 }
