@@ -28,6 +28,26 @@ public class FichaClinicaServiceImpl
 
         private final ExamenClient examenClient;
 
+        /* RECOMENDACION PARA MEJORAR
+        
+        @Override
+          public FichaClinica crear(FichaDTO dto) {
+          
+              PacienteDTO paciente =
+                      pacienteClient.obtenerPaciente(
+                              dto.getPacienteId());
+          
+              if (paciente == null) {
+          
+                  throw new PacienteNotFoundException(
+                          "No existe el paciente con ID "
+                                  + dto.getPacienteId());
+              }
+          
+              FichaClinica ficha = mapper.toEntity(dto);
+          
+              return repository.save(ficha);
+          }*/
         @Override
         public FichaClinicaResponseDTO crear(
                         FichaClinicaRequestDTO dto) {
