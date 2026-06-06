@@ -1,5 +1,4 @@
-package com.clinic.msmedicos.config;
-
+package com.clinic.api_gateway.security;
 import java.io.IOException;
 import java.util.List;
 
@@ -20,7 +19,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
 
-    public JwtAuthenticationFilter(JwtService jwtService) {
+    public JwtAuthenticationFilter(
+            JwtService jwtService) {
+
         this.jwtService = jwtService;
     }
 
@@ -41,29 +42,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        String token = authHeader.substring(7);
+        String token =
+                authHeader.substring(7);
 
         if (!jwtService.isTokenValid(token)) {
 
-            filterChain.doFilter(request, response);
+            response.setStatus(401);
+
+            response.getWriter()
+                    .write("Token inválido");
+
             return;
         }
 
-        Claims claims = jwtService.extractAllClaims(token);
+        Claims claims =
+                jwtService.extractAllClaims(token);
 
-        String email = claims.getSubject();
+        String email =
+                claims.getSubject();
 
-        String rol = claims.get("rol", String.class);
+        String rol =
+                claims.get("rol", String.class);
 
         UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(
                         email,
                         null,
-                        List.of(new SimpleGrantedAuthority(rol)));
+                        List.of(
+                                new SimpleGrantedAuthority(
+                                        "ROLE_" + rol)));
 
         SecurityContextHolder.getContext()
                 .setAuthentication(authentication);
 
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(
+                request,
+                response);
     }
 }
