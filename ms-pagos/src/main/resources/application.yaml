@@ -33,3 +33,13 @@ eureka:
 logging:
   level:
     root: INFO
+
+springdoc:
+  api-docs:
+    enabled: true
+
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+  packages-to-scan: com.clinic.ms-pagos.controller
