@@ -1,0 +1,43 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.clinic</groupId>
+    <artifactId>proyecto-clinica</artifactId>
+    <version>1.0.0</version>
+
+    <packaging>pom</packaging>
+
+    <properties>
+
+        <java.version>21</java.version>
+
+        <spring.boot.version>3.5.14</spring.boot.version>
+
+        <spring.cloud.version>2025.0.2</spring.cloud.version>
+
+        <springdoc.version>2.8.9</springdoc.version>
+
+    </properties>
+
+    <modules>
+
+        <module>eureka-server</module>
+        <module>api-gateway</module>
+
+        <module>msusuarios</module>
+        <module>mspacientes</module>
+        <module>msmedicos</module>
+        <module>msfarmacia</module>
+
+        <module>msreservas</module>
+        <module>msexamenes</module>
+        <module>msfichasclinicas</module>
+
+        <module>ms-recetas</module>
+        <module>ms-pagos</module>
+        <module>ms-notificaciones</module>
+
+    </modules>
+
+</project>
