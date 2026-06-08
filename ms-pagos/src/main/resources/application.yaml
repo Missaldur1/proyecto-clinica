@@ -42,4 +42,4 @@ springdoc:
     enabled: true
     path: /swagger-ui.html
 
-  packages-to-scan: com.clinic.ms-pagos.controller
+  packages-to-scan: com.clinic.ms_pagos.controller

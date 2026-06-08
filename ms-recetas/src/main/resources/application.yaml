@@ -42,4 +42,4 @@ springdoc:
     enabled: true
     path: /swagger-ui.html
 
-  packages-to-scan: com.clinic.ms-recetas.controller
+  packages-to-scan: com.clinic.msrecetas.controller

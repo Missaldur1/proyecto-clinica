@@ -36,4 +36,4 @@ springdoc:
     enabled: true
     path: /swagger-ui.html
 
-  packages-to-scan: com.clinic.ms-notificaciones.controller
+  packages-to-scan: com.clinic.msnotificaciones.controller
