@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: MS-EXAMENES
+    name: ms-examenes
 
   datasource:
     url: jdbc:mysql://localhost:3307/db_examenes?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
