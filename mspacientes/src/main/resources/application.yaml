@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: MS-PACIENTES
+    name: ms-pacientes
 
   datasource:
     url: jdbc:mysql://localhost:3307/db_pacientes?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
@@ -30,3 +30,13 @@ eureka:
 logging:
   level:
     root: INFO
+
+springdoc:
+  api-docs:
+    enabled: true
+
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+
+  packages-to-scan: com.clinic.mspacientes.controller
