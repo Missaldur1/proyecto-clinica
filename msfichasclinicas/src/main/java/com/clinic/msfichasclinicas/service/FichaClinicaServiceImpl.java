@@ -118,40 +118,70 @@ public class FichaClinicaServiceImpl
         @Override
         public FichaClinicaResponseDTO buscarPorId(Long id) {
 
-                FichaClinica ficha = repository.findById(id)
-                                .orElseThrow(() -> new FichaNotFoundException());
                 log.info("Buscando ficha clínica {}", id);
-                return FichaClinicaMapper
-                                .toDTO(ficha);
 
+                FichaClinica ficha = repository.findById(id)
+                                .orElseThrow(() -> {
+
+                                        log.error(
+                                                        "Ficha clínica {} no encontrada",
+                                                        id);
+
+                                        return new FichaNotFoundException();
+                                });
+
+                return FichaClinicaMapper.toDTO(ficha);
         }
 
         @Override
         public FichaClinicaResponseDTO actualizar(
                         Long id,
                         FichaClinicaRequestDTO dto) {
+
                 log.info("Actualizando ficha clínica {}", id);
+
                 FichaClinica ficha = repository.findById(id)
-                                .orElseThrow(() -> new FichaNotFoundException());
+                                .orElseThrow(() -> {
+
+                                        log.error(
+                                                        "Ficha clínica {} no encontrada",
+                                                        id);
+
+                                        return new FichaNotFoundException();
+                                });
 
                 FichaClinicaMapper.updateEntity(
                                 ficha,
                                 dto);
-                log.info("Ficha clínica {} actualizada correctamente", id);
-                return FichaClinicaMapper
-                                .toDTO(
-                                                repository.save(ficha));
 
+                log.info(
+                                "Ficha clínica {} actualizada correctamente",
+                                id);
+
+                return FichaClinicaMapper.toDTO(
+                                repository.save(ficha));
         }
 
         @Override
         public void eliminar(Long id) {
+
                 log.info("Eliminando ficha clínica {}", id);
+
                 FichaClinica ficha = repository.findById(id)
-                                .orElseThrow(() -> new FichaNotFoundException());
+                                .orElseThrow(() -> {
+
+                                        log.error(
+                                                        "Ficha clínica {} no encontrada",
+                                                        id);
+
+                                        return new FichaNotFoundException();
+                                });
 
                 repository.delete(ficha);
-                log.info("Ficha clínica {} eliminada correctamente",id);
+
+                log.info(
+                                "Ficha clínica {} eliminada correctamente",
+                                id);
         }
 
 }

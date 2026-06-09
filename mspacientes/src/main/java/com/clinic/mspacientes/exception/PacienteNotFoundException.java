@@ -1,14 +1,15 @@
-package com.clinic.msfichasclinicas.exception;
+package com.clinic.mspacientes.exception;
 
 public class PacienteNotFoundException
         extends RuntimeException {
 
     public PacienteNotFoundException() {
 
-        super("El paciente asociado no existe");
+        super("Paciente no encontrado");
     }
 
-    public PacienteNotFoundException(String mensaje) {
+    public PacienteNotFoundException(
+            String mensaje) {
 
         super(mensaje);
     }

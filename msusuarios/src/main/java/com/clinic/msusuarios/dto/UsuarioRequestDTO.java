@@ -1,5 +1,7 @@
 package com.clinic.msusuarios.dto;
 
+import com.clinic.msusuarios.enums.Rol;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -27,7 +29,7 @@ public class UsuarioRequestDTO {
     private String password;
 
     @NotBlank(message = "El rol es obligatorio")
-    private String rol;
+    private Rol rol;
 
     @NotNull(message = "El estado activo es obligatorio")
     private Boolean activo;

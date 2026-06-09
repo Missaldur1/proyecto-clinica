@@ -1,5 +1,7 @@
 package com.clinic.msusuarios.dto;
 
+import com.clinic.msusuarios.enums.Rol;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +17,6 @@ public class UsuarioResponseDTO {
     private Long id;
     private String nombre;
     private String email;
-    private String rol;
+    private Rol rol;
     private Boolean activo;
 }

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.clinic.mspacientes.dto.PacienteRequestDTO;
 import com.clinic.mspacientes.dto.PacienteResponseDTO;
-import com.clinic.mspacientes.exception.ResourceNotFoundException;
+import com.clinic.mspacientes.exception.PacienteNotFoundException;
 import com.clinic.mspacientes.mapper.PacienteMapper;
 import com.clinic.mspacientes.model.Paciente;
 import com.clinic.mspacientes.repository.PacienteRepository;
@@ -32,10 +32,11 @@ public class PacienteServiceImpl implements PacienteService {
         // Guardamos el paciente en la base de datos
         Paciente pacienteGuardado = repository.save(paciente);
 
-        // Agregamos un log para confirmar que el paciente se ha creado correctamente con su ID generado
+        // Agregamos un log para confirmar que el paciente se ha creado correctamente
+        // con su ID generado
         log.info("Paciente creado correctamente con ID {}", pacienteGuardado.getId());
 
-        //Por último, convertimos a DTO y lo retornamos
+        // Por último, convertimos a DTO y lo retornamos
         return PacienteMapper.toDTO(pacienteGuardado);
 
     }
@@ -57,7 +58,7 @@ public class PacienteServiceImpl implements PacienteService {
         log.info("Buscando paciente por id: {}", id);
 
         Paciente paciente = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado"));
+                .orElseThrow(() -> new PacienteNotFoundException("Paciente no encontrado"));
 
         return PacienteMapper.toDTO(paciente);
     }
@@ -68,7 +69,8 @@ public class PacienteServiceImpl implements PacienteService {
         log.info("Buscando paciente por rut: {}", rut);
 
         Paciente paciente = repository.findByRut(rut)
-                .orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado"));
+                .orElseThrow(
+                        PacienteNotFoundException::new);
 
         return PacienteMapper.toDTO(paciente);
     }
@@ -84,8 +86,8 @@ public class PacienteServiceImpl implements PacienteService {
         log.info("Actualizando paciente id: {}", id);
 
         Paciente paciente = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Paciente no encontrado"));
+                .orElseThrow(
+                        PacienteNotFoundException::new);
 
         PacienteMapper.updateEntity(paciente, dto);
 
@@ -102,7 +104,8 @@ public class PacienteServiceImpl implements PacienteService {
         log.info("Eliminando paciente id: {}", id);
 
         Paciente paciente = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Paciente no encontrado"));
+                .orElseThrow(
+                        PacienteNotFoundException::new);
 
         repository.delete(paciente);
         log.info("Paciente eliminado correctamente");

@@ -5,9 +5,11 @@ public class FichaNotFoundException
 
     public FichaNotFoundException() {
 
-        super(
-                "Ficha clínica no encontrada");
-
+        super("Ficha clínica no encontrada");
     }
 
+    public FichaNotFoundException(String mensaje) {
+
+        super(mensaje);
+    }
 }
