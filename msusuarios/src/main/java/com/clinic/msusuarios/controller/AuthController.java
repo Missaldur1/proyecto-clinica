@@ -20,30 +20,29 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
+        private final UsuarioRepository usuarioRepository;
+        private final PasswordEncoder passwordEncoder;
+        private final JwtService jwtService;
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(
-            @RequestBody LoginRequestDTO request) {
+        @PostMapping("/login")
+        public ResponseEntity<LoginResponseDTO> login(
+                        @RequestBody LoginRequestDTO request) {
 
-        Usuario user = usuarioRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                Usuario user = usuarioRepository.findByEmail(request.getEmail())
+                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        if (!passwordEncoder.matches(
-                request.getPassword(),
-                user.getPassword())) {
+                if (!passwordEncoder.matches(
+                                request.getPassword(),
+                                user.getPassword())) {
 
-            throw new RuntimeException("Contraseña incorrecta");
+                        throw new RuntimeException("Contraseña incorrecta");
+                }
+
+                String token = jwtService.generateToken(
+                                user.getEmail(),
+                                user.getRol());
+
+                return ResponseEntity.ok(
+                                new LoginResponseDTO(token));
         }
-
-        String token = jwtService.generateToken(
-                user.getEmail(),
-                user.getRol());
-
-        return ResponseEntity.ok(
-                new LoginResponseDTO(token));
-    }
 }
-
