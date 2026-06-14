@@ -20,115 +20,139 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class ExamenServiceImpl
-                implements ExamenService {
+        implements ExamenService {
 
-        private final ExamenRepository repository;
+    private final ExamenRepository repository;
 
-        private final PacienteClient pacienteClient;
+    private final PacienteClient pacienteClient;
 
-        @Override
-        public ExamenResponseDTO crear(
-                        ExamenRequestDTO dto) {
+    @Override
+    public ExamenResponseDTO crear(
+            ExamenRequestDTO dto) {
 
-                log.info(
-                                "Creando examen paciente {}",
-                                dto.getPacienteId());
+        log.info(
+                "Creando examen para paciente {}",
+                dto.getPacienteId());
 
-                pacienteClient.buscarPaciente(
-                                dto.getPacienteId());
+        try {
 
-                try {
+            pacienteClient.buscarPaciente(
+                    dto.getPacienteId());
 
-                        pacienteClient.buscarPaciente(
-                                        dto.getPacienteId());
+        } catch (Exception e) {
 
-                } catch (Exception e) {
+            log.error(
+                    "Paciente {} no encontrado",
+                    dto.getPacienteId());
 
-                        log.error(
-                                        "Paciente {} no encontrado",
-                                        dto.getPacienteId());
-
-                        throw new PacienteNotFoundException(
-                                        "Paciente no encontrado");
-                }
-
-                Examen examen = ExamenMapper.toEntity(dto);
-
-                Examen guardado = repository.save(examen);
-
-                log.info(
-                                "Examen creado ID {}",
-                                guardado.getId());
-
-                return ExamenMapper.toDTO(
-                                guardado);
-
+            throw new PacienteNotFoundException(
+                    "Paciente no encontrado");
         }
 
-        @Override
-        public List<ExamenResponseDTO> listar() {
+        Examen examen =
+                ExamenMapper.toEntity(dto);
 
-                log.info(
-                                "Listando exámenes");
+        Examen guardado =
+                repository.save(examen);
 
-                return repository.findAll()
-                                .stream()
-                                .map(ExamenMapper::toDTO)
-                                .toList();
+        log.info(
+                "Examen creado correctamente ID {}",
+                guardado.getId());
 
-        }
+        return ExamenMapper.toDTO(
+                guardado);
+    }
 
-        @Override
-        public ExamenResponseDTO buscarPorId(Long id) {
+    @Override
+    public List<ExamenResponseDTO> listar() {
 
-                log.info(
-                                "Buscando examen {}", id);
+        log.info(
+                "Listando exámenes");
 
-                Examen examen = repository.findById(id)
-                                .orElseThrow(() -> new ExamenNotFoundException());
-                log.info( "Examen encontrado ID {}",
-                                id);
-                return ExamenMapper.toDTO(
-                                examen);
+        return repository.findAll()
+                .stream()
+                .map(ExamenMapper::toDTO)
+                .toList();
+    }
 
-        }
+    @Override
+    public ExamenResponseDTO buscarPorId(
+            Long id) {
 
-        @Override
-        public ExamenResponseDTO actualizar(
-                        Long id,
-                        ExamenRequestDTO dto) {
+        log.info(
+                "Buscando examen ID {}",
+                id);
 
-                log.info(
-                                "Actualizando examen {}", id);
+        Examen examen = repository.findById(id)
+                .orElseThrow(() -> {
 
-                Examen examen = repository.findById(id)
-                                .orElseThrow(() -> new ExamenNotFoundException());
+                    log.error(
+                            "Examen no encontrado ID {}",
+                            id);
 
-                ExamenMapper.updateEntity(
-                                examen,
-                                dto);
-                log.info(
-                                "Examen {} actualizado",
-                                id);
-                return ExamenMapper.toDTO(
-                                repository.save(examen));
+                    return new ExamenNotFoundException();
+                });
 
-        }
+        return ExamenMapper.toDTO(
+                examen);
+    }
 
-        @Override
-        public void eliminar(Long id) {
+    @Override
+    public ExamenResponseDTO actualizar(
+            Long id,
+            ExamenRequestDTO dto) {
 
-                log.info(
-                                "Eliminando examen {}", id);
+        log.info(
+                "Actualizando examen ID {}",
+                id);
 
-                Examen examen = repository.findById(id)
-                                .orElseThrow(() -> new ExamenNotFoundException());
+        Examen examen = repository.findById(id)
+                .orElseThrow(() -> {
 
-                repository.delete(examen);
-                log.info(
-                                "Examen {} eliminado",
-                                id);
+                    log.error(
+                            "Examen no encontrado ID {}",
+                            id);
 
-        }
+                    return new ExamenNotFoundException();
+                });
 
+        ExamenMapper.updateEntity(
+                examen,
+                dto);
+
+        Examen actualizado =
+                repository.save(examen);
+
+        log.info(
+                "Examen actualizado correctamente ID {}",
+                id);
+
+        return ExamenMapper.toDTO(
+                actualizado);
+    }
+
+    @Override
+    public void eliminar(
+            Long id) {
+
+        log.info(
+                "Eliminando examen ID {}",
+                id);
+
+        Examen examen = repository.findById(id)
+                .orElseThrow(() -> {
+
+                    log.error(
+                            "Examen no encontrado ID {}",
+                            id);
+
+                    return new ExamenNotFoundException();
+                });
+
+        repository.delete(examen);
+
+        log.info(
+                "Examen eliminado correctamente ID {}",
+                id);
+    }
 }

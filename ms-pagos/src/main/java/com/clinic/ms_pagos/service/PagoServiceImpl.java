@@ -19,69 +19,114 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class PagoServiceImpl implements PagoService {
 
-        private final PagoRepository repository;
+    private final PagoRepository repository;
 
-        @Override
-        public List<PagoResponseDTO> listar() {
+    @Override
+    public List<PagoResponseDTO> listar() {
 
-                // Se agrega log para seguimiento de la operación de listado de pagos y se
-                // utiliza el mapper para convertir las entidades a DTOs de respuesta
-                log.info("Listando pagos");
+        log.info("Listando pagos");
 
-                return repository.findAll()
-                                .stream()
-                                .map(PagoMapper::toDTO)
-                                .toList();
-        }
+        return repository.findAll()
+                .stream()
+                .map(PagoMapper::toDTO)
+                .toList();
+    }
 
-        @Override
-        public PagoResponseDTO buscarPorId(Long id) {
+    @Override
+    public PagoResponseDTO buscarPorId(Long id) {
 
-                Pago pago = repository.findById(id)
-                                .orElseThrow(() -> new PagoNotFoundException(
-                                                "Pago no encontrado"));
-                log.info("Buscando pago por ID: {}", id);
-                return PagoMapper.toDTO(pago);
-        }
+        log.info("Buscando pago ID: {}", id);
 
-        @Override
-        public PagoResponseDTO guardar(
-                        PagoRequestDTO dto) {
+        Pago pago = repository.findById(id)
+                .orElseThrow(() -> {
 
-                log.info("Registrando pago para paciente ID: {}", dto.getPacienteId());
+                    log.error(
+                            "Pago no encontrado ID {}",
+                            id);
 
-                Pago pago = PagoMapper.toEntity(dto);
+                    return new PagoNotFoundException();
+                });
 
-                Pago guardado = repository.save(pago);
+        return PagoMapper.toDTO(pago);
+    }
 
-                log.info("Pago registrado correctamente ID: {}", guardado.getId());
-                return PagoMapper.toDTO(guardado);
-        }
+    @Override
+    public PagoResponseDTO guardar(
+            PagoRequestDTO dto) {
 
-        @Override
-        public PagoResponseDTO actualizar(
-                        Long id,
-                        PagoRequestDTO dto) {
-                log.info("Actualizando pago ID: {}", id);
-                Pago pago = repository.findById(id)
-                                .orElseThrow(() -> new PagoNotFoundException(
-                                                "Pago no encontrado"));
+        log.info(
+                "Registrando pago para paciente ID: {}",
+                dto.getPacienteId());
 
-                Pago actualizado = repository.save(pago);
+        Pago pago =
+                PagoMapper.toEntity(dto);
 
-                log.info("Pago actualizado correctamente");
+        Pago guardado =
+                repository.save(pago);
 
-                return PagoMapper.toDTO(actualizado);
-        }
+        log.info(
+                "Pago registrado correctamente ID: {}",
+                guardado.getId());
 
-        @Override
-        public void eliminar(Long id) {
+        return PagoMapper.toDTO(
+                guardado);
+    }
 
-                Pago pago = repository.findById(id)
-                                .orElseThrow(() -> new PagoNotFoundException(
-                                                "Pago no encontrado"));
-                log.info("Eliminando pago ID: {}", id);
-                repository.delete(pago);
-                log.info("Pago eliminado correctamente");
-        }
+    @Override
+    public PagoResponseDTO actualizar(
+            Long id,
+            PagoRequestDTO dto) {
+
+        log.info(
+                "Actualizando pago ID: {}",
+                id);
+
+        Pago pago = repository.findById(id)
+                .orElseThrow(() -> {
+
+                    log.error(
+                            "Pago no encontrado ID {}",
+                            id);
+
+                    return new PagoNotFoundException();
+                });
+
+        PagoMapper.updateEntity(
+                pago,
+                dto);
+
+        Pago actualizado =
+                repository.save(pago);
+
+        log.info(
+                "Pago actualizado correctamente ID: {}",
+                id);
+
+        return PagoMapper.toDTO(
+                actualizado);
+    }
+
+    @Override
+    public void eliminar(Long id) {
+
+        log.info(
+                "Eliminando pago ID: {}",
+                id);
+
+        Pago pago = repository.findById(id)
+                .orElseThrow(() -> {
+
+                    log.error(
+                            "Pago no encontrado ID {}",
+                            id);
+
+                    return new PagoNotFoundException();
+                });
+
+        repository.delete(pago);
+
+        log.info(
+                "Pago eliminado correctamente ID: {}",
+                id);
+    }
 }

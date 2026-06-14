@@ -5,11 +5,12 @@ public class ExamenNotFoundException
 
     public ExamenNotFoundException() {
 
-        super(
-                "Examen no encontrado");
-
+        super("Examen no encontrado");
     }
 
-    
+    public ExamenNotFoundException(
+            String mensaje) {
 
+        super(mensaje);
+    }
 }

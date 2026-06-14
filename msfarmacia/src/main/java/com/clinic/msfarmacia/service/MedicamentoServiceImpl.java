@@ -37,8 +37,7 @@ public class MedicamentoServiceImpl implements MedicamentoService {
         public MedicamentoResponseDTO buscarPorId(Long id) {
 
                 Medicamento medicamento = repository.findById(id)
-                                .orElseThrow(() -> new MedicamentoNotFoundException(
-                                                "Medicamento no encontrado"));
+                                .orElseThrow(MedicamentoNotFoundException::new);
                 // Implementación de búsqueda por ID utilizando el Mapper para convertir la
                 // entidad a DTO
                 log.info("Buscando medicamento ID: {}", id);
@@ -66,10 +65,9 @@ public class MedicamentoServiceImpl implements MedicamentoService {
                         MedicamentoRequestDTO dto) {
 
                 Medicamento medicamento = repository.findById(id)
-                                .orElseThrow(() -> new MedicamentoNotFoundException(
-                                                "Medicamento no encontrado"));
+                                .orElseThrow(MedicamentoNotFoundException::new);
 
-                //Se agregaron logs para seguimiento del proceso de actualización
+                // Se agregaron logs para seguimiento del proceso de actualización
                 log.info("Actualizando medicamento ID: {}", id);
 
                 MedicamentoMapper.updateEntity(medicamento, dto);
@@ -83,9 +81,8 @@ public class MedicamentoServiceImpl implements MedicamentoService {
         public void eliminar(Long id) {
 
                 Medicamento medicamento = repository.findById(id)
-                                .orElseThrow(() -> new MedicamentoNotFoundException(
-                                                "Medicamento no encontrado"));
-                //Se agregaron logs para seguimiento del proceso de eliminación
+                                .orElseThrow(MedicamentoNotFoundException::new);
+                // Se agregaron logs para seguimiento del proceso de eliminación
                 log.info("Eliminando medicamento ID: {}", id);
 
                 repository.delete(medicamento);
