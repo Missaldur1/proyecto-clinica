@@ -1,4 +1,5 @@
 package com.clinic.api_gateway.config;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -8,6 +9,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.clinic.api_gateway.security.JwtAuthenticationFilter;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,53 +18,80 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtFilter;
+private final JwtAuthenticationFilter jwtFilter;
 
-    @Bean
-    SecurityFilterChain filterChain(HttpSecurity http)
-            throws Exception {
+@Bean
+SecurityFilterChain filterChain(HttpSecurity http)
+        throws Exception {
 
-        http
-            .csrf(csrf -> csrf.disable())
+    http
+        .csrf(csrf -> csrf.disable())
 
-            .sessionManagement(session ->
-                    session.sessionCreationPolicy(
-                            SessionCreationPolicy.STATELESS))
+        .sessionManagement(session ->
+                session.sessionCreationPolicy(
+                        SessionCreationPolicy.STATELESS))
 
-            .authorizeHttpRequests(auth -> auth
-                    .requestMatchers("/auth/**")
-                    .permitAll()
-                    .anyRequest()
-                    .authenticated())
+        .authorizeHttpRequests(auth -> auth
 
-            .exceptionHandling(ex -> ex
-                    .authenticationEntryPoint(
-                            (request, response, authException) -> {
+                .requestMatchers("/auth/**")
+                .permitAll()
 
-                                log.warn(
-                                        "Acceso rechazado: {} {}",
-                                        request.getMethod(),
-                                        request.getRequestURI());
+                .anyRequest()
+                .authenticated())
 
-                                response.setStatus(401);
+        .exceptionHandling(ex -> ex
 
-                                response.setContentType(
-                                        "application/json");
+                .authenticationEntryPoint(
+                        (request, response, authException) -> {
 
-                                response.getWriter().write("""
-                                {
-                                    "mensaje":"Token requerido o inválido",
-                                    "status":401
-                                }
-                                """);
+                            log.warn(
+                                    "401 Unauthorized: {} {}",
+                                    request.getMethod(),
+                                    request.getRequestURI());
+
+                            response.setStatus(
+                                    HttpServletResponse.SC_UNAUTHORIZED);
+
+                            response.setContentType(
+                                    "application/json");
+
+                            response.getWriter().write("""
+                            {
+                                "status":401,
+                                "error":"Unauthorized",
+                                "message":"Token requerido o inválido"
                             }
-                    )
-            )
+                            """);
+                        })
 
-            .addFilterBefore(
-                    jwtFilter,
-                    UsernamePasswordAuthenticationFilter.class);
+                .accessDeniedHandler(
+                        (request, response, accessDeniedException) -> {
 
-        return http.build();
-    }
+                            log.warn(
+                                    "403 Forbidden: {} {}",
+                                    request.getMethod(),
+                                    request.getRequestURI());
+
+                            response.setStatus(
+                                    HttpServletResponse.SC_FORBIDDEN);
+
+                            response.setContentType(
+                                    "application/json");
+
+                            response.getWriter().write("""
+                            {
+                                "status":403,
+                                "error":"Forbidden",
+                                "message":"No tiene permisos para acceder a este recurso"
+                            }
+                            """);
+                        }))
+
+        .addFilterBefore(
+                jwtFilter,
+                UsernamePasswordAuthenticationFilter.class);
+
+    return http.build();
+}
+
 }

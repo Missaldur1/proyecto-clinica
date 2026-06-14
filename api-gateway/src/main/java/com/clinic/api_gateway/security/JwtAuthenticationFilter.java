@@ -1,4 +1,5 @@
 package com.clinic.api_gateway.security;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -16,67 +17,74 @@ import jakarta.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+private final JwtService jwtService;
 
-    private final JwtService jwtService;
+public JwtAuthenticationFilter(
+        JwtService jwtService) {
 
-    public JwtAuthenticationFilter(
-            JwtService jwtService) {
+    this.jwtService = jwtService;
+}
 
-        this.jwtService = jwtService;
+@Override
+protected void doFilterInternal(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterChain filterChain)
+        throws ServletException, IOException {
+
+    String authHeader =
+            request.getHeader("Authorization");
+
+    if (authHeader == null ||
+            !authHeader.startsWith("Bearer ")) {
+
+        filterChain.doFilter(request, response);
+        return;
     }
 
-    @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain)
-            throws ServletException, IOException {
+    String token =
+            authHeader.substring(7);
 
-        String authHeader =
-                request.getHeader("Authorization");
+    if (!jwtService.isTokenValid(token)) {
 
-        if (authHeader == null ||
-                !authHeader.startsWith("Bearer ")) {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 
-            filterChain.doFilter(request, response);
-            return;
+        response.setContentType("application/json");
+
+        response.getWriter().write("""
+        {
+            "status":401,
+            "error":"Unauthorized",
+            "message":"Token inválido"
         }
+        """);
 
-        String token =
-                authHeader.substring(7);
-
-        if (!jwtService.isTokenValid(token)) {
-
-            response.setStatus(401);
-
-            response.getWriter()
-                    .write("Token inválido");
-
-            return;
-        }
-
-        Claims claims =
-                jwtService.extractAllClaims(token);
-
-        String email =
-                claims.getSubject();
-
-        String rol =
-                claims.get("rol", String.class);
-
-        UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(
-                        email,
-                        null,
-                        List.of(
-                                new SimpleGrantedAuthority(
-                                        "ROLE_" + rol)));
-
-        SecurityContextHolder.getContext()
-                .setAuthentication(authentication);
-
-        filterChain.doFilter(
-                request,
-                response);
+        return;
     }
+
+    Claims claims =
+            jwtService.extractAllClaims(token);
+
+    String email =
+            claims.getSubject();
+
+    String rol =
+            claims.get("rol", String.class);
+
+    UsernamePasswordAuthenticationToken authentication =
+            new UsernamePasswordAuthenticationToken(
+                    email,
+                    null,
+                    List.of(
+                            new SimpleGrantedAuthority(
+                                    "ROLE_" + rol)));
+
+    SecurityContextHolder.getContext()
+            .setAuthentication(authentication);
+
+    filterChain.doFilter(
+            request,
+            response);
+}
+
 }
