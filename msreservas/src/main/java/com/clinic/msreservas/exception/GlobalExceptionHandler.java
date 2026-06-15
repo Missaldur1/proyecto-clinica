@@ -144,24 +144,6 @@ public class GlobalExceptionHandler {
                 return ResponseEntity
                                 .status(HttpStatus.FORBIDDEN)
                                 .body(error);
-        }
-
-        @ExceptionHandler(ReservaBusinessException.class)
-        public ResponseEntity<ErrorResponse> handleBusinessException(
-                        ReservaBusinessException ex,
-                        HttpServletRequest request) {
-
-                ErrorResponse error = ErrorResponse.builder()
-                                .timestamp(LocalDateTime.now())
-                                .status(HttpStatus.BAD_REQUEST.value())
-                                .error("Business Rule Violation")
-                                .message(ex.getMessage())
-                                .path(request.getRequestURI())
-                                .build();
-
-                return ResponseEntity
-                                .status(HttpStatus.BAD_REQUEST)
-                                .body(error);
-        }
+                        }
 
 }
