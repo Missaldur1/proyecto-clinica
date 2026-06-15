@@ -1,6 +1,7 @@
 package com.clinic.msfarmacia.controller;
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -91,7 +92,11 @@ public class MedicamentoController {
     public ResponseEntity<MedicamentoResponseDTO> guardar(
             @Valid @RequestBody MedicamentoRequestDTO dto) {
 
-        return ResponseEntity.ok(service.guardar(dto));
+        // se valida el DTO antes de llamar al servicio, si hay errores de validación se devuelve un 400 automáticamente
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(service.guardar(dto));
+
     }
 
     @PreAuthorize("hasRole('ADMIN')")

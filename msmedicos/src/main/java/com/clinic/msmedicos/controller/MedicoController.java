@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -89,7 +90,7 @@ public class MedicoController {
             @ApiResponse(responseCode = "403", description = "Sin permisos")
     })
     public ResponseEntity<MedicoResponseDTO> guardar(
-            @RequestBody MedicoRequestDTO dto) {
+            @Valid @RequestBody MedicoRequestDTO dto) {
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -113,7 +114,7 @@ public class MedicoController {
     })
     public ResponseEntity<MedicoResponseDTO> actualizar(
             @PathVariable Long id,
-            @RequestBody MedicoRequestDTO dto) {
+            @Valid @RequestBody MedicoRequestDTO dto) {
 
         return ResponseEntity.ok(service.actualizar(id, dto));
     }

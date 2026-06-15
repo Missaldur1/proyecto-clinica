@@ -2,6 +2,7 @@ package com.clinic.msnotificaciones.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -44,7 +45,9 @@ public class NotificacionController {
     public ResponseEntity<NotificacionResponseDTO> guardar(
             @Valid @RequestBody NotificacionRequestDTO dto) {
 
-        return ResponseEntity.ok(service.guardar(dto));
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(service.guardar(dto));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'PACIENTE')")
