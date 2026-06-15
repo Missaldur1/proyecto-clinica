@@ -1,5 +1,7 @@
 package com.clinic.msreservas.service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -8,6 +10,8 @@ import com.clinic.msreservas.client.MedicoClient;
 import com.clinic.msreservas.client.PacienteClient;
 import com.clinic.msreservas.dto.ReservaRequestDTO;
 import com.clinic.msreservas.dto.ReservaResponseDTO;
+import com.clinic.msreservas.exception.FechaReservaInvalidaException;
+import com.clinic.msreservas.exception.HorarioReservaInvalidoException;
 import com.clinic.msreservas.exception.MedicoNotFoundException;
 import com.clinic.msreservas.exception.PacienteNotFoundException;
 import com.clinic.msreservas.exception.ReservaDuplicadaException;
@@ -37,8 +41,28 @@ public class ReservaServiceImpl implements ReservaService {
                                 dto.getPacienteId(),
                                 dto.getMedicoId());
 
-                // se valida que el paciente y el médico existan en sus respectivos
-                // microservicios antes de crear la reserva
+                // RN-001: no permitir fechas pasadas
+                if (dto.getFecha().isBefore(LocalDate.now())) {
+
+                        log.warn(
+                                        "Intento de reserva en fecha pasada {}",
+                                        dto.getFecha());
+
+                        throw new FechaReservaInvalidaException();
+                }
+
+                // RN-002: horario válido
+                if (dto.getHora().isBefore(LocalTime.of(8, 0))
+                                || dto.getHora().isAfter(LocalTime.of(18, 0))) {
+
+                        log.warn(
+                                        "Horario fuera de rango {}",
+                                        dto.getHora());
+
+                        throw new HorarioReservaInvalidoException();
+                }
+
+                // validar paciente
                 try {
 
                         pacienteClient.buscarPaciente(
@@ -53,7 +77,7 @@ public class ReservaServiceImpl implements ReservaService {
                         throw new PacienteNotFoundException();
                 }
 
-                // se valida que el médico exista en su microservicio antes de crear la reserva
+                // validar médico
                 try {
 
                         medicoClient.buscarMedico(
@@ -68,7 +92,10 @@ public class ReservaServiceImpl implements ReservaService {
                         throw new MedicoNotFoundException();
                 }
 
-                boolean existe = repository.existsByMedicoIdAndFechaAndHora(dto.getMedicoId(), dto.getFecha(),
+                // RN-003: evitar doble reserva
+                boolean existe = repository.existsByMedicoIdAndFechaAndHora(
+                                dto.getMedicoId(),
+                                dto.getFecha(),
                                 dto.getHora());
 
                 if (existe) {
@@ -80,17 +107,21 @@ public class ReservaServiceImpl implements ReservaService {
                                         dto.getHora());
 
                         throw new ReservaDuplicadaException();
-
                 }
 
                 Reserva reserva = ReservaMapper.toEntity(dto);
 
+                // RN-004: toda reserva nace pendiente
+                reserva.setEstado("PENDIENTE");
+
                 Reserva guardada = repository.save(reserva);
 
-                log.info("Reserva creada correctamente ID {}",
+                log.info(
+                                "Reserva creada correctamente ID {}",
                                 guardada.getId());
 
-                return ReservaMapper.toDTO(guardada);
+                return ReservaMapper.toDTO(
+                                guardada);
         }
 
         @Override
@@ -103,6 +134,78 @@ public class ReservaServiceImpl implements ReservaService {
                                 .map(ReservaMapper::toDTO)
                                 .toList();
 
+        }
+
+        @Override
+        public ReservaResponseDTO actualizar(
+                        Long id,
+                        ReservaRequestDTO dto) {
+
+                log.info(
+                                "Actualizando reserva ID {}",
+                                id);
+
+                Reserva reserva = repository.findById(id)
+                                .orElseThrow(() -> {
+
+                                        log.error(
+                                                        "Reserva no encontrada ID {}",
+                                                        id);
+
+                                        return new ReservaNotFoundException();
+
+                                });
+
+                // RN-001: no permitir fechas pasadas
+                if (dto.getFecha().isBefore(LocalDate.now())) {
+
+                        log.warn(
+                                        "Intento de actualización con fecha pasada {}",
+                                        dto.getFecha());
+
+                        throw new FechaReservaInvalidaException();
+                }
+
+                // RN-002: horario válido
+                if (dto.getHora().isBefore(LocalTime.of(8, 0))
+                                || dto.getHora().isAfter(LocalTime.of(18, 0))) {
+
+                        log.warn(
+                                        "Horario fuera de rango {}",
+                                        dto.getHora());
+
+                        throw new HorarioReservaInvalidoException();
+                }
+
+                // RN-003: validar disponibilidad
+                boolean existe = repository.existsByMedicoIdAndFechaAndHora(
+                                dto.getMedicoId(),
+                                dto.getFecha(),
+                                dto.getHora());
+
+                if (existe
+                                && (!reserva.getMedicoId().equals(dto.getMedicoId())
+                                                || !reserva.getFecha().equals(dto.getFecha())
+                                                || !reserva.getHora().equals(dto.getHora()))) {
+
+                        log.warn(
+                                        "Intento de actualización a horario ocupado. Médico {} fecha {} hora {}",
+                                        dto.getMedicoId(),
+                                        dto.getFecha(),
+                                        dto.getHora());
+
+                        throw new ReservaDuplicadaException();
+                }
+
+                ReservaMapper.updateEntity(
+                                reserva,
+                                dto);
+
+                log.info(
+                                "Reserva actualizada correctamente");
+
+                return ReservaMapper.toDTO(
+                                repository.save(reserva));
         }
 
         @Override
@@ -122,31 +225,6 @@ public class ReservaServiceImpl implements ReservaService {
 
                 return ReservaMapper.toDTO(
                                 reserva);
-
-        }
-
-        @Override
-        public ReservaResponseDTO actualizar(
-                        Long id,
-                        ReservaRequestDTO dto) {
-
-                log.info("Actualizando reserva ID {}", id);
-
-                Reserva reserva = repository.findById(id)
-                                .orElseThrow(() -> {
-
-                                        log.error("Reserva no encontrada ID {}", id);
-
-                                        return new ReservaNotFoundException();
-
-                                });
-
-                ReservaMapper.updateEntity(reserva, dto);
-
-                log.info("Reserva actualizada correctamente");
-
-                return ReservaMapper.toDTO(
-                                repository.save(reserva));
 
         }
 
