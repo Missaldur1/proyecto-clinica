@@ -55,9 +55,9 @@ public class PacienteController {
 
         log.info("POST /api/pacientes");
 
-        return new ResponseEntity<>(
-                service.crearPaciente(dto),
-                HttpStatus.CREATED);
+        return ResponseEntity
+        .status(HttpStatus.CREATED)
+        .body(service.crearPaciente(dto));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO')")
