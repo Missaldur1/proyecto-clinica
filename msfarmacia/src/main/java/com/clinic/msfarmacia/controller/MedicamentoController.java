@@ -16,24 +16,56 @@ import com.clinic.msfarmacia.dto.MedicamentoRequestDTO;
 import com.clinic.msfarmacia.dto.MedicamentoResponseDTO;
 import com.clinic.msfarmacia.service.MedicamentoService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/api/medicamentos")
 @RequiredArgsConstructor
+@Tag(name = "Medicamentos", description = "Controlador para la gestión de medicamentos")
 public class MedicamentoController {
 
     private final MedicamentoService service;
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO','PACIENTE')")
     @GetMapping
+    @Operation(summary = "Listar medicamentos", description = """
+            Obtiene todos los medicamentos registrados.
+
+            Roles autorizados:
+            - ADMIN
+            - MEDICO
+            - PACIENTE
+            """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Listado obtenido"),
+            @ApiResponse(responseCode = "401", description = "No autenticado"),
+            @ApiResponse(responseCode = "403", description = "Sin permisos")
+    })
     public ResponseEntity<List<MedicamentoResponseDTO>> listar() {
         return ResponseEntity.ok(service.listar());
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO','PACIENTE')")
     @GetMapping("/{id}")
+    @Operation(summary = "Buscar medicamento por ID", description = """
+            Busca un medicamento utilizando su identificador.
+
+            Roles autorizados:
+            - ADMIN
+            - MEDICO
+            - PACIENTE
+            """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Medicamento encontrado"),
+            @ApiResponse(responseCode = "404", description = "Medicamento no encontrado"),
+            @ApiResponse(responseCode = "401", description = "No autenticado"),
+            @ApiResponse(responseCode = "403", description = "Sin permisos")
+    })
     public ResponseEntity<MedicamentoResponseDTO> buscar(
             @PathVariable Long id) {
 
@@ -42,6 +74,20 @@ public class MedicamentoController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
+    @Operation(summary = "Crear medicamento", description = """
+            Registra un nuevo medicamento.
+
+            Roles autorizados:
+            - ADMIN
+            
+            Requiere todos los datos obligatorios.
+             """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Creado correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+            @ApiResponse(responseCode = "401", description = "No autenticado"),
+            @ApiResponse(responseCode = "403", description = "Sin permisos")
+    })
     public ResponseEntity<MedicamentoResponseDTO> guardar(
             @Valid @RequestBody MedicamentoRequestDTO dto) {
 
@@ -50,6 +96,12 @@ public class MedicamentoController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar medicamento", description = """
+            Actualiza los datos de un medicamento existente.
+
+             Roles autorizados:
+            - ADMIN
+             """)
     public ResponseEntity<MedicamentoResponseDTO> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody MedicamentoRequestDTO dto) {
@@ -59,6 +111,12 @@ public class MedicamentoController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar medicamento", description = """
+            Elimina un medicamento registrado.
+
+             Roles autorizados:
+            - ADMIN
+             """)
     public ResponseEntity<Void> eliminar(
             @PathVariable Long id) {
 
