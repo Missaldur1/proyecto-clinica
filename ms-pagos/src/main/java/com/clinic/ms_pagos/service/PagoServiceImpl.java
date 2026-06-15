@@ -1,12 +1,16 @@
 package com.clinic.ms_pagos.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.clinic.ms_pagos.client.PacienteClient;
 import com.clinic.ms_pagos.dto.PagoRequestDTO;
 import com.clinic.ms_pagos.dto.PagoResponseDTO;
+import com.clinic.ms_pagos.exception.PacienteNotFoundException;
 import com.clinic.ms_pagos.exception.PagoNotFoundException;
+import com.clinic.ms_pagos.exception.ReglaNegocioException;
 import com.clinic.ms_pagos.mapper.PagoMapper;
 import com.clinic.ms_pagos.model.Pago;
 import com.clinic.ms_pagos.repository.PagoRepository;
@@ -20,6 +24,8 @@ import lombok.extern.slf4j.Slf4j;
 public class PagoServiceImpl implements PagoService {
 
     private final PagoRepository repository;
+
+    private final PacienteClient pacienteClient;
 
     @Override
     public List<PagoResponseDTO> listar() {
@@ -58,8 +64,42 @@ public class PagoServiceImpl implements PagoService {
                 "Registrando pago para paciente ID: {}",
                 dto.getPacienteId());
 
+        // RN01: validar existencia del paciente
+        try {
+
+            pacienteClient.buscarPaciente(
+                    dto.getPacienteId());
+
+        } catch (Exception e) {
+
+            log.error(
+                    "Paciente {} no encontrado",
+                    dto.getPacienteId());
+
+            throw new PacienteNotFoundException();
+        }
+
+        // RN02: validar monto
+        if (dto.getMonto().doubleValue() <= 0) {
+
+            log.warn(
+                    "Monto inválido {}",
+                    dto.getMonto());
+
+            throw new ReglaNegocioException(
+                    "El monto debe ser mayor a cero");
+        }
+
         Pago pago =
                 PagoMapper.toEntity(dto);
+
+        // RN03: fecha automática
+        pago.setFechaPago(
+                LocalDate.now());
+
+        // RN04: estado inicial
+        pago.setEstado(
+                "PENDIENTE");
 
         Pago guardado =
                 repository.save(pago);
@@ -91,9 +131,34 @@ public class PagoServiceImpl implements PagoService {
                     return new PagoNotFoundException();
                 });
 
+        // RN01: validar existencia del paciente
+        try {
+
+            pacienteClient.buscarPaciente(
+                    dto.getPacienteId());
+
+        } catch (Exception e) {
+
+            log.error(
+                    "Paciente {} no encontrado",
+                    dto.getPacienteId());
+
+            throw new PacienteNotFoundException();
+        }
+
+        // RN02: validar monto
+        if (dto.getMonto().doubleValue() <= 0) {
+
+            throw new ReglaNegocioException(
+                    "El monto debe ser mayor a cero");
+        }
+
         PagoMapper.updateEntity(
                 pago,
                 dto);
+
+        // Mantener fecha original
+        // Mantener estado actual
 
         Pago actualizado =
                 repository.save(pago);
