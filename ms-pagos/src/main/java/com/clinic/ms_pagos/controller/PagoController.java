@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,12 +28,14 @@ public class PagoController {
 
     private final PagoService service;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<PagoResponseDTO>> listar() {
 
         return ResponseEntity.ok(service.listar());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<PagoResponseDTO> buscar(
             @PathVariable Long id) {
@@ -40,6 +43,7 @@ public class PagoController {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PagoResponseDTO> guardar(
             @Valid @RequestBody PagoRequestDTO dto) {
@@ -49,6 +53,7 @@ public class PagoController {
                 .body(service.guardar(dto));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN','PACIENTE')")
     @PutMapping("/{id}")
     public ResponseEntity<PagoResponseDTO> actualizar(
             @PathVariable Long id,
@@ -58,6 +63,7 @@ public class PagoController {
                 service.actualizar(id, dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(
             @PathVariable Long id) {

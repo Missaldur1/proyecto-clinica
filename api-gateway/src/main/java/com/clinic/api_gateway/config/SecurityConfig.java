@@ -18,80 +18,105 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class SecurityConfig {
 
-private final JwtAuthenticationFilter jwtFilter;
+    private final JwtAuthenticationFilter jwtFilter;
 
-@Bean
-SecurityFilterChain filterChain(HttpSecurity http)
-        throws Exception {
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http)
+            throws Exception {
 
-    http
-        .csrf(csrf -> csrf.disable())
+        http
+            .csrf(csrf -> csrf.disable())
 
-        .sessionManagement(session ->
-                session.sessionCreationPolicy(
-                        SessionCreationPolicy.STATELESS))
+            .sessionManagement(session ->
+                    session.sessionCreationPolicy(
+                            SessionCreationPolicy.STATELESS))
 
-        .authorizeHttpRequests(auth -> auth
+            .authorizeHttpRequests(auth -> auth
 
-                .requestMatchers("/auth/**")
-                .permitAll()
+                    .requestMatchers(
+                            "/auth/**",
+                            "/swagger-ui/**",
+                            "/swagger-ui.html",
+                            "/v3/api-docs/**")
+                    .permitAll()
 
-                .anyRequest()
-                .authenticated())
+                    .requestMatchers("/api/usuarios/**")
+                    .hasRole("ADMIN")
 
-        .exceptionHandling(ex -> ex
+                    .requestMatchers(
+                            "/api/pacientes/**",
+                            "/api/medicos/**",
+                            "/api/reservas/**",
+                            "/api/fichas/**",
+                            "/api/examenes/**",
+                            "/api/recetas/**",
+                            "/api/medicamentos/**",
+                            "/api/notificaciones/**")
+                    .hasAnyRole(
+                            "ADMIN",
+                            "MEDICO",
+                            "PACIENTE")
 
-                .authenticationEntryPoint(
-                        (request, response, authException) -> {
+                    .requestMatchers("/api/pagos/**")
+                    .hasAnyRole(
+                            "ADMIN",
+                            "PACIENTE")
 
-                            log.warn(
-                                    "401 Unauthorized: {} {}",
-                                    request.getMethod(),
-                                    request.getRequestURI());
+                    .anyRequest()
+                    .authenticated())
 
-                            response.setStatus(
-                                    HttpServletResponse.SC_UNAUTHORIZED);
+            .exceptionHandling(ex -> ex
 
-                            response.setContentType(
-                                    "application/json");
+                    .authenticationEntryPoint(
+                            (request, response, authException) -> {
 
-                            response.getWriter().write("""
-                            {
-                                "status":401,
-                                "error":"Unauthorized",
-                                "message":"Token requerido o inválido"
-                            }
-                            """);
-                        })
+                                log.warn(
+                                        "401 Unauthorized: {} {}",
+                                        request.getMethod(),
+                                        request.getRequestURI());
 
-                .accessDeniedHandler(
-                        (request, response, accessDeniedException) -> {
+                                response.setStatus(
+                                        HttpServletResponse.SC_UNAUTHORIZED);
 
-                            log.warn(
-                                    "403 Forbidden: {} {}",
-                                    request.getMethod(),
-                                    request.getRequestURI());
+                                response.setContentType(
+                                        "application/json");
 
-                            response.setStatus(
-                                    HttpServletResponse.SC_FORBIDDEN);
+                                response.getWriter().write("""
+                                {
+                                    "status":401,
+                                    "error":"Unauthorized",
+                                    "message":"Token requerido o inválido"
+                                }
+                                """);
+                            })
 
-                            response.setContentType(
-                                    "application/json");
+                    .accessDeniedHandler(
+                            (request, response, accessDeniedException) -> {
 
-                            response.getWriter().write("""
-                            {
-                                "status":403,
-                                "error":"Forbidden",
-                                "message":"No tiene permisos para acceder a este recurso"
-                            }
-                            """);
-                        }))
+                                log.warn(
+                                        "403 Forbidden: {} {}",
+                                        request.getMethod(),
+                                        request.getRequestURI());
 
-        .addFilterBefore(
-                jwtFilter,
-                UsernamePasswordAuthenticationFilter.class);
+                                response.setStatus(
+                                        HttpServletResponse.SC_FORBIDDEN);
 
-    return http.build();
-}
+                                response.setContentType(
+                                        "application/json");
 
+                                response.getWriter().write("""
+                                {
+                                    "status":403,
+                                    "error":"Forbidden",
+                                    "message":"No tiene permisos para acceder a este recurso"
+                                }
+                                """);
+                            }))
+
+            .addFilterBefore(
+                    jwtFilter,
+                    UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
+    }
 }

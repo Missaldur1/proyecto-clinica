@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,12 +27,14 @@ public class MedicoController {
 
     private final MedicoService service;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO', 'PACIENTE')")
     @GetMapping
     public ResponseEntity<List<MedicoResponseDTO>> listar() {
 
         return ResponseEntity.ok(service.listar());
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO', 'PACIENTE')")
     @GetMapping("/{id}")
     public ResponseEntity<MedicoResponseDTO> buscar(
             @PathVariable Long id) {
@@ -39,6 +42,7 @@ public class MedicoController {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<MedicoResponseDTO> guardar(
             @RequestBody MedicoRequestDTO dto) {
@@ -48,6 +52,7 @@ public class MedicoController {
                 .body(service.guardar(dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<MedicoResponseDTO> actualizar(
             @PathVariable Long id,
@@ -56,6 +61,7 @@ public class MedicoController {
         return ResponseEntity.ok(service.actualizar(id, dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(
             @PathVariable Long id) {
