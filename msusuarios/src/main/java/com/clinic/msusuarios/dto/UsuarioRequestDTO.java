@@ -12,10 +12,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
+@Getter 
+
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
+@AllArgsConstructor 
+
 @Builder
 public class UsuarioRequestDTO {
 @NotBlank(message = "El nombre es obligatorio")
