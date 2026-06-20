@@ -2,6 +2,7 @@ package com.clinic.api_gateway.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
@@ -25,97 +26,229 @@ public class SecurityConfig {
             throws Exception {
 
         http
-            .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable())
 
-            .sessionManagement(session ->
-                    session.sessionCreationPolicy(
-                            SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(
+                                SessionCreationPolicy.STATELESS))
 
-            .authorizeHttpRequests(auth -> auth
+                .authorizeHttpRequests(auth -> auth
 
-                    .requestMatchers(
-                            "/auth/**",
-                            "/swagger-ui/**",
-                            "/swagger-ui.html",
-                            "/v3/api-docs/**")
-                    .permitAll()
+                        // Rutas públicas
+                        .requestMatchers(
+                                "/auth/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**")
+                        .permitAll()
 
-                    .requestMatchers("/api/usuarios/**")
-                    .hasAnyRole("ADMIN", "MEDICO")
+                        // USUARIOS
+                        // Crear, editar y eliminar usuarios: solo ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/usuarios/**")
+                        .hasRole("ADMIN")
 
-                    .requestMatchers(
-                            "/api/pacientes/**",
-                            "/api/medicos/**",
-                            "/api/reservas/**",
-                            "/api/fichas/**",
-                            "/api/examenes/**",
-                            "/api/recetas/**",
-                            "/api/medicamentos/**",
-                            "/api/notificaciones/**")
-                    .hasAnyRole(
-                            "ADMIN",
-                            "MEDICO",
-                            "PACIENTE")
+                        .requestMatchers(HttpMethod.PUT, "/api/usuarios/**")
+                        .hasRole("ADMIN")
 
-                    .requestMatchers("/api/pagos/**")
-                    .hasAnyRole(
-                            "ADMIN",
-                            "PACIENTE")
+                        .requestMatchers(HttpMethod.DELETE, "/api/usuarios/**")
+                        .hasRole("ADMIN")
 
-                    .anyRequest()
-                    .authenticated())
+                        // Consultar usuarios: ADMIN y MEDICO
+                        .requestMatchers(HttpMethod.GET, "/api/usuarios/**")
+                        .hasAnyRole("ADMIN", "MEDICO")
 
-            .exceptionHandling(ex -> ex
+                        // PACIENTES
+                        // Crear y eliminar pacientes: ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/pacientes/**")
+                        .hasRole("ADMIN")
 
-                    .authenticationEntryPoint(
-                            (request, response, authException) -> {
+                        .requestMatchers(HttpMethod.DELETE, "/api/pacientes/**")
+                        .hasRole("ADMIN")
 
-                                log.warn(
-                                        "401 Unauthorized: {} {}",
-                                        request.getMethod(),
-                                        request.getRequestURI());
+                        // Actualizar pacientes: ADMIN y MEDICO
+                        .requestMatchers(HttpMethod.PUT, "/api/pacientes/**")
+                        .hasAnyRole("ADMIN", "MEDICO")
 
-                                response.setStatus(
-                                        HttpServletResponse.SC_UNAUTHORIZED);
+                        // Consultar pacientes: ADMIN, MEDICO y PACIENTE
+                        .requestMatchers(HttpMethod.GET, "/api/pacientes/**")
+                        .hasAnyRole("ADMIN", "MEDICO", "PACIENTE")
 
-                                response.setContentType(
-                                        "application/json");
+                        // MEDICOS
+                        // Crear, editar y eliminar médicos: solo ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/medicos/**")
+                        .hasRole("ADMIN")
 
-                                response.getWriter().write("""
-                                {
-                                    "status":401,
-                                    "error":"Unauthorized",
-                                    "message":"Token requerido o inválido"
-                                }
-                                """);
-                            })
+                        .requestMatchers(HttpMethod.PUT, "/api/medicos/**")
+                        .hasRole("ADMIN")
 
-                    .accessDeniedHandler(
-                            (request, response, accessDeniedException) -> {
+                        .requestMatchers(HttpMethod.DELETE, "/api/medicos/**")
+                        .hasRole("ADMIN")
 
-                                log.warn(
-                                        "403 Forbidden: {} {}",
-                                        request.getMethod(),
-                                        request.getRequestURI());
+                        // Consultar médicos: ADMIN, MEDICO y PACIENTE
+                        .requestMatchers(HttpMethod.GET, "/api/medicos/**")
+                        .hasAnyRole("ADMIN", "MEDICO", "PACIENTE")
 
-                                response.setStatus(
-                                        HttpServletResponse.SC_FORBIDDEN);
+                        // RESERVAS
+                        // Crear reservas: ADMIN y PACIENTE
+                        .requestMatchers(HttpMethod.POST, "/api/reservas/**")
+                        .hasAnyRole("ADMIN", "PACIENTE")
 
-                                response.setContentType(
-                                        "application/json");
+                        // Actualizar y eliminar reservas: ADMIN
+                        .requestMatchers(HttpMethod.PUT, "/api/reservas/**")
+                        .hasRole("ADMIN")
 
-                                response.getWriter().write("""
-                                {
-                                    "status":403,
-                                    "error":"Forbidden",
-                                    "message":"No tiene permisos para acceder a este recurso"
-                                }
-                                """);
-                            }))
+                        .requestMatchers(HttpMethod.DELETE, "/api/reservas/**")
+                        .hasRole("ADMIN")
 
-            .addFilterBefore(
-                    jwtFilter,
-                    UsernamePasswordAuthenticationFilter.class);
+                        // Consultar reservas: ADMIN, MEDICO y PACIENTE
+                        .requestMatchers(HttpMethod.GET, "/api/reservas/**")
+                        .hasAnyRole("ADMIN", "MEDICO", "PACIENTE")
+
+                        // FICHAS CLINICAS
+                        // Crear, editar y eliminar fichas: ADMIN y MEDICO
+                        .requestMatchers(HttpMethod.POST, "/api/fichas/**")
+                        .hasAnyRole("ADMIN", "MEDICO")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/fichas/**")
+                        .hasAnyRole("ADMIN", "MEDICO")
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/fichas/**")
+                        .hasAnyRole("ADMIN", "MEDICO")
+
+                        // Consultar fichas: ADMIN, MEDICO y PACIENTE
+                        .requestMatchers(HttpMethod.GET, "/api/fichas/**")
+                        .hasAnyRole("ADMIN", "MEDICO", "PACIENTE")
+
+                        // EXAMENES
+                        // Crear, editar y eliminar exámenes: ADMIN y MEDICO
+                        .requestMatchers(HttpMethod.POST, "/api/examenes/**")
+                        .hasAnyRole("ADMIN", "MEDICO")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/examenes/**")
+                        .hasAnyRole("ADMIN", "MEDICO")
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/examenes/**")
+                        .hasAnyRole("ADMIN", "MEDICO")
+
+                        // Consultar exámenes: ADMIN, MEDICO y PACIENTE
+                        .requestMatchers(HttpMethod.GET, "/api/examenes/**")
+                        .hasAnyRole("ADMIN", "MEDICO", "PACIENTE")
+
+                        // RECETAS
+                        // Crear, editar y eliminar recetas: ADMIN y MEDICO
+                        .requestMatchers(HttpMethod.POST, "/api/recetas/**")
+                        .hasAnyRole("ADMIN", "MEDICO")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/recetas/**")
+                        .hasAnyRole("ADMIN", "MEDICO")
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/recetas/**")
+                        .hasAnyRole("ADMIN", "MEDICO")
+
+                        // Consultar recetas: ADMIN, MEDICO y PACIENTE
+                        .requestMatchers(HttpMethod.GET, "/api/recetas/**")
+                        .hasAnyRole("ADMIN", "MEDICO", "PACIENTE")
+
+                        // MEDICAMENTOS / FARMACIA
+                        // Crear, editar y eliminar medicamentos: ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/medicamentos/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/medicamentos/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/medicamentos/**")
+                        .hasRole("ADMIN")
+
+                        // Consultar medicamentos: ADMIN, MEDICO y PACIENTE
+                        .requestMatchers(HttpMethod.GET, "/api/medicamentos/**")
+                        .hasAnyRole("ADMIN", "MEDICO", "PACIENTE")
+
+                        // PAGOS
+                        // Registrar, editar y eliminar pagos: ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/pagos/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/pagos/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/pagos/**")
+                        .hasRole("ADMIN")
+
+                        // Consultar pagos: ADMIN y PACIENTE
+                        .requestMatchers(HttpMethod.GET, "/api/pagos/**")
+                        .hasAnyRole("ADMIN", "PACIENTE")
+
+                        // NOTIFICACIONES
+                        // Crear, editar y eliminar notificaciones: ADMIN
+                        .requestMatchers(HttpMethod.POST, "/api/notificaciones/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.PUT, "/api/notificaciones/**")
+                        .hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.DELETE, "/api/notificaciones/**")
+                        .hasRole("ADMIN")
+
+                        // Consultar notificaciones: ADMIN, MEDICO y PACIENTE
+                        .requestMatchers(HttpMethod.GET, "/api/notificaciones/**")
+                        .hasAnyRole("ADMIN", "MEDICO", "PACIENTE")
+
+                        // Cualquier otra ruta requiere autenticación
+                        .anyRequest()
+                        .authenticated())
+
+                .exceptionHandling(ex -> ex
+
+                        .authenticationEntryPoint(
+                                (request, response, authException) -> {
+
+                                    log.warn(
+                                            "401 Unauthorized: {} {}",
+                                            request.getMethod(),
+                                            request.getRequestURI());
+
+                                    response.setStatus(
+                                            HttpServletResponse.SC_UNAUTHORIZED);
+
+                                    response.setContentType(
+                                            "application/json");
+
+                                    response.getWriter().write("""
+                                            {
+                                                "status":401,
+                                                "error":"Unauthorized",
+                                                "message":"Token requerido o inválido"
+                                            }
+                                            """);
+                                })
+
+                        .accessDeniedHandler(
+                                (request, response, accessDeniedException) -> {
+
+                                    log.warn(
+                                            "403 Forbidden: {} {}",
+                                            request.getMethod(),
+                                            request.getRequestURI());
+
+                                    response.setStatus(
+                                            HttpServletResponse.SC_FORBIDDEN);
+
+                                    response.setContentType(
+                                            "application/json");
+
+                                    response.getWriter().write("""
+                                            {
+                                                "status":403,
+                                                "error":"Forbidden",
+                                                "message":"No tiene permisos para acceder a este recurso"
+                                            }
+                                            """);
+                                }))
+
+                .addFilterBefore(
+                        jwtFilter,
+                        UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

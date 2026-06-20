@@ -28,16 +28,19 @@ public class NotificacionController {
 
     private final NotificacionService service;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO', 'PACIENTE')")
     @GetMapping
     public ResponseEntity<List<NotificacionResponseDTO>> listar() {
         return ResponseEntity.ok(service.listar());
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO', 'PACIENTE')")
     @GetMapping("/{id}")
-    public ResponseEntity<NotificacionResponseDTO> buscar(@PathVariable Long id) {
-        return ResponseEntity.ok(service.buscarPorId(id));
+    public ResponseEntity<NotificacionResponseDTO> buscar(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                service.buscarPorId(id));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
@@ -46,23 +49,29 @@ public class NotificacionController {
             @Valid @RequestBody NotificacionRequestDTO dto) {
 
         return ResponseEntity
-            .status(HttpStatus.CREATED)
-            .body(service.guardar(dto));
+                .status(HttpStatus.CREATED)
+                .body(service.guardar(dto));
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'PACIENTE')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<NotificacionResponseDTO> actualizar(
             @PathVariable Long id,
             @Valid @RequestBody NotificacionRequestDTO dto) {
 
-        return ResponseEntity.ok(service.actualizar(id, dto));
+        return ResponseEntity.ok(
+                service.actualizar(id, dto));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Long id) {
+
         service.eliminar(id);
-        return ResponseEntity.noContent().build();
+
+        return ResponseEntity
+                .noContent()
+                .build();
     }
 }

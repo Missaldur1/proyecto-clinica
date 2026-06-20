@@ -101,32 +101,48 @@ public class ExamenServiceImpl
     public ExamenResponseDTO actualizar(
             Long id,
             ExamenRequestDTO dto) {
-
+    
         log.info(
                 "Actualizando examen ID {}",
                 id);
-
+    
         Examen examen = repository.findById(id)
                 .orElseThrow(() -> {
-
+    
                     log.error(
                             "Examen no encontrado ID {}",
                             id);
-
+    
                     return new ExamenNotFoundException();
                 });
-
+    
+        // RN-EXA-01: validar que el paciente exista también al actualizar
+        try {
+    
+            pacienteClient.buscarPaciente(
+                    dto.getPacienteId());
+    
+        } catch (Exception e) {
+    
+            log.error(
+                    "Paciente {} no encontrado al actualizar examen",
+                    dto.getPacienteId());
+    
+            throw new PacienteNotFoundException(
+                    "Paciente no encontrado");
+        }
+    
         ExamenMapper.updateEntity(
                 examen,
                 dto);
-
+    
         Examen actualizado =
                 repository.save(examen);
-
+    
         log.info(
                 "Examen actualizado correctamente ID {}",
                 id);
-
+    
         return ExamenMapper.toDTO(
                 actualizado);
     }

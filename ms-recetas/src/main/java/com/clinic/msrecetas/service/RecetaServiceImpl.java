@@ -11,6 +11,7 @@ import com.clinic.msrecetas.dto.RecetaRequestDTO;
 import com.clinic.msrecetas.dto.RecetaResponseDTO;
 import com.clinic.msrecetas.exception.MedicoNotFoundException;
 import com.clinic.msrecetas.exception.PacienteNotFoundException;
+import com.clinic.msrecetas.exception.RecetaInactivaException;
 import com.clinic.msrecetas.exception.RecetaNotFoundException;
 import com.clinic.msrecetas.exception.ReglaNegocioException;
 import com.clinic.msrecetas.mapper.RecetaMapper;
@@ -129,56 +130,95 @@ public class RecetaServiceImpl implements RecetaService {
         public RecetaResponseDTO actualizar(
                         Long id,
                         RecetaRequestDTO dto) {
-
+                        
                 log.info(
                                 "Actualizando receta ID: {}",
                                 id);
-
+                        
                 Receta receta = repository.findById(id)
                                 .orElseThrow(() -> {
-
+                                
                                         log.error(
                                                         "Receta no encontrada ID {}",
                                                         id);
-
+                                
                                         return new RecetaNotFoundException();
                                 });
-
-                // RN: medicamento obligatorio
+                        
+                // RN-REC: no permitir modificar recetas inactivas
+                if (Boolean.FALSE.equals(receta.getActiva())) {
+                
+                        log.warn(
+                                        "Intento de modificación de receta inactiva ID {}",
+                                        id);
+                
+                        throw new RecetaInactivaException();
+                }
+        
+                // RN-REC-01: validar paciente al actualizar
+                try {
+                
+                        pacienteClient.buscarPaciente(
+                                        dto.getPacienteId());
+                
+                } catch (Exception e) {
+                
+                        log.error(
+                                        "Paciente {} no encontrado al actualizar receta",
+                                        dto.getPacienteId());
+                
+                        throw new PacienteNotFoundException();
+                }
+        
+                // RN-REC-02: validar médico al actualizar
+                try {
+                
+                        medicoClient.buscarMedico(
+                                        dto.getMedicoId());
+                
+                } catch (Exception e) {
+                
+                        log.error(
+                                        "Médico {} no encontrado al actualizar receta",
+                                        dto.getMedicoId());
+                
+                        throw new MedicoNotFoundException();
+                }
+        
+                // RN-REC-03: medicamento obligatorio
                 if (dto.getMedicamento() == null
                                 || dto.getMedicamento().trim().isEmpty()) {
-
+                                
                         throw new ReglaNegocioException(
                                         "La receta debe contener un medicamento");
                 }
-
+        
                 receta.setPacienteId(
                                 dto.getPacienteId());
-
+        
                 receta.setMedicoId(
                                 dto.getMedicoId());
-
+        
                 receta.setMedicamento(
                                 dto.getMedicamento());
-
+        
                 receta.setDosis(
                                 dto.getDosis());
-
+        
                 receta.setIndicaciones(
                                 dto.getIndicaciones());
-
-                // NO modificar fechaEmision
-                // receta.setFechaEmision(...)
-
+        
+                // No modificar fechaEmision porque se genera automáticamente al crear
+        
                 receta.setActiva(
                                 dto.getActiva());
-
+        
                 Receta actualizada = repository.save(receta);
-
+        
                 log.info(
                                 "Receta actualizada correctamente ID: {}",
                                 id);
-
+        
                 return RecetaMapper.toDTO(
                                 actualizada);
         }

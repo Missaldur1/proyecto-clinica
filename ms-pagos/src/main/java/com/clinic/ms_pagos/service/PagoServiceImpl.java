@@ -1,5 +1,6 @@
 package com.clinic.ms_pagos.service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -80,7 +81,7 @@ public class PagoServiceImpl implements PagoService {
         }
 
         // RN02: validar monto
-        if (dto.getMonto().doubleValue() <= 0) {
+        if (dto.getMonto().compareTo(BigDecimal.ZERO) <= 0) {
 
             log.warn(
                     "Monto inválido {}",
@@ -147,8 +148,13 @@ public class PagoServiceImpl implements PagoService {
         }
 
         // RN02: validar monto
-        if (dto.getMonto().doubleValue() <= 0) {
-
+        if (dto.getMonto().compareTo(BigDecimal.ZERO) <= 0) {
+                
+            log.warn(
+                    "Monto inválido {} al actualizar pago ID {}",
+                    dto.getMonto(),
+                    id);
+                
             throw new ReglaNegocioException(
                     "El monto debe ser mayor a cero");
         }

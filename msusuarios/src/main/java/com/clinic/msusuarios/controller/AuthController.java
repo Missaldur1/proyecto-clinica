@@ -14,6 +14,7 @@ import com.clinic.msusuarios.model.Usuario;
 import com.clinic.msusuarios.repository.UsuarioRepository;
 import com.clinic.msusuarios.security.jwt.JwtService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -29,7 +30,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(
-            @RequestBody LoginRequestDTO request) {
+            @Valid @RequestBody LoginRequestDTO request) {
 
         Usuario user = usuarioRepository
                 .findByEmail(request.getEmail())

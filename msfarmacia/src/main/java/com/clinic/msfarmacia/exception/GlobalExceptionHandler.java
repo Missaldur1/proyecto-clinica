@@ -16,79 +16,97 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-        @ExceptionHandler(MedicamentoNotFoundException.class)
-        public ResponseEntity<ErrorResponse> handleMedicamentoNotFound(
-                        MedicamentoNotFoundException ex,
-                        HttpServletRequest request) {
+    @ExceptionHandler(MedicamentoNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleMedicamentoNotFound(
+            MedicamentoNotFoundException ex,
+            HttpServletRequest request) {
 
-                ErrorResponse error = ErrorResponse.builder()
-                                .timestamp(LocalDateTime.now())
-                                .status(HttpStatus.NOT_FOUND.value())
-                                .error("Not Found")
-                                .message(ex.getMessage())
-                                .path(request.getRequestURI())
-                                .build();
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.NOT_FOUND.value())
+                .error("Not Found")
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
 
-                return ResponseEntity
-                                .status(HttpStatus.NOT_FOUND)
-                                .body(error);
-        }
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(error);
+    }
 
-        @ExceptionHandler(MethodArgumentNotValidException.class)
-        public ResponseEntity<Map<String, String>> handleValidationErrors(
-                        MethodArgumentNotValidException ex) {
+    @ExceptionHandler(MedicamentoDuplicadoException.class)
+    public ResponseEntity<ErrorResponse> handleMedicamentoDuplicado(
+            MedicamentoDuplicadoException ex,
+            HttpServletRequest request) {
 
-                Map<String, String> errors = new HashMap<>();
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.CONFLICT.value())
+                .error("Conflict")
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
 
-                ex.getBindingResult()
-                                .getAllErrors()
-                                .forEach(error -> {
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(error);
+    }
 
-                                        String field = ((FieldError) error).getField();
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleValidationErrors(
+            MethodArgumentNotValidException ex) {
 
-                                        String message = error.getDefaultMessage();
+        Map<String, String> errors = new HashMap<>();
 
-                                        errors.put(field, message);
-                                });
+        ex.getBindingResult()
+                .getAllErrors()
+                .forEach(error -> {
 
-                return ResponseEntity
-                                .badRequest()
-                                .body(errors);
-        }
+                    String field = ((FieldError) error).getField();
 
-        @ExceptionHandler(Exception.class)
-        public ResponseEntity<ErrorResponse> handleGeneralException(
-                        Exception ex,
-                        HttpServletRequest request) {
+                    String message = error.getDefaultMessage();
 
-                ErrorResponse error = ErrorResponse.builder()
-                                .timestamp(LocalDateTime.now())
-                                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
-                                .error("Internal Server Error")
-                                .message(ex.getMessage())
-                                .path(request.getRequestURI())
-                                .build();
+                    errors.put(field, message);
+                });
 
-                return ResponseEntity
-                                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                                .body(error);
-        }
+        return ResponseEntity
+                .badRequest()
+                .body(errors);
+    }
 
-        @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
-        public ResponseEntity<ErrorResponse> handleAccessDenied(
-                        org.springframework.security.access.AccessDeniedException ex,
-                        HttpServletRequest request) {
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<ErrorResponse> handleAccessDenied(
+            org.springframework.security.access.AccessDeniedException ex,
+            HttpServletRequest request) {
 
-                ErrorResponse error = ErrorResponse.builder()
-                                .timestamp(LocalDateTime.now())
-                                .status(HttpStatus.FORBIDDEN.value())
-                                .error("Forbidden")
-                                .message("No tiene permisos para acceder a este recurso")
-                                .path(request.getRequestURI())
-                                .build();
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.FORBIDDEN.value())
+                .error("Forbidden")
+                .message("No tiene permisos para acceder a este recurso")
+                .path(request.getRequestURI())
+                .build();
 
-                return ResponseEntity
-                                .status(HttpStatus.FORBIDDEN)
-                                .body(error);
-        }
+        return ResponseEntity
+                .status(HttpStatus.FORBIDDEN)
+                .body(error);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleGeneralException(
+            Exception ex,
+            HttpServletRequest request) {
+
+        ErrorResponse error = ErrorResponse.builder()
+                .timestamp(LocalDateTime.now())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error("Internal Server Error")
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(error);
+    }
 }

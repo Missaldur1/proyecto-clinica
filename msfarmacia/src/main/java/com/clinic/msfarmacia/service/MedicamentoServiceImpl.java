@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import com.clinic.msfarmacia.dto.MedicamentoRequestDTO;
 import com.clinic.msfarmacia.dto.MedicamentoResponseDTO;
+import com.clinic.msfarmacia.exception.MedicamentoDuplicadoException;
 import com.clinic.msfarmacia.exception.MedicamentoNotFoundException;
 import com.clinic.msfarmacia.mapper.MedicamentoMapper;
 import com.clinic.msfarmacia.model.Medicamento;
@@ -19,74 +20,118 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class MedicamentoServiceImpl implements MedicamentoService {
 
-        private final MedicamentoRepository repository;
+    private final MedicamentoRepository repository;
 
-        @Override
-        public List<MedicamentoResponseDTO> listar() {
-                // Implementación de listado de medicamentos utilizando el Mapper para convertir
-                // las entidades a DTOs
-                log.info("Listando medicamentos");
+    @Override
+    public List<MedicamentoResponseDTO> listar() {
 
-                return repository.findAll()
-                                .stream()
-                                .map(MedicamentoMapper::toDTO)
-                                .toList();
-        }
+        log.info("Listando medicamentos");
 
-        @Override
-        public MedicamentoResponseDTO buscarPorId(Long id) {
+        return repository.findAll()
+                .stream()
+                .map(MedicamentoMapper::toDTO)
+                .toList();
+    }
 
-                Medicamento medicamento = repository.findById(id)
-                                .orElseThrow(MedicamentoNotFoundException::new);
-                // Implementación de búsqueda por ID utilizando el Mapper para convertir la
-                // entidad a DTO
-                log.info("Buscando medicamento ID: {}", id);
-                return MedicamentoMapper.toDTO(medicamento);
-        }
+    @Override
+    public MedicamentoResponseDTO buscarPorId(Long id) {
 
-        @Override
-        public MedicamentoResponseDTO guardar(
-                        MedicamentoRequestDTO dto) {
+        log.info("Buscando medicamento ID: {}", id);
 
-                // Implementación de creación utilizando el Mapper para convertir entre DTOs y
-                // entidades, manteniendo la lógica de negocio en el servicio
-                log.info("Creando medicamento: {}", dto.getNombre());
-                Medicamento medicamento = MedicamentoMapper.toEntity(dto);
+        Medicamento medicamento = repository.findById(id)
+                .orElseThrow(MedicamentoNotFoundException::new);
 
-                Medicamento guardado = repository.save(medicamento);
+        return MedicamentoMapper.toDTO(medicamento);
+    }
 
-                log.info("Medicamento creado correctamente ID: {}", guardado.getId());
-                return MedicamentoMapper.toDTO(guardado);
-        }
+    @Override
+    public MedicamentoResponseDTO guardar(
+            MedicamentoRequestDTO dto) {
 
-        @Override
-        public MedicamentoResponseDTO actualizar(
-                        Long id,
-                        MedicamentoRequestDTO dto) {
+        log.info("Creando medicamento: {}", dto.getNombre());
 
-                Medicamento medicamento = repository.findById(id)
-                                .orElseThrow(MedicamentoNotFoundException::new);
+        repository.findByNombreIgnoreCaseAndLaboratorioIgnoreCase(
+                dto.getNombre(),
+                dto.getLaboratorio())
+                .ifPresent(medicamento -> {
 
-                // Se agregaron logs para seguimiento del proceso de actualización
-                log.info("Actualizando medicamento ID: {}", id);
+                    log.warn(
+                            "Intento de registro de medicamento duplicado: {} - {}",
+                            dto.getNombre(),
+                            dto.getLaboratorio());
 
-                MedicamentoMapper.updateEntity(medicamento, dto);
-                Medicamento actualizado = repository.save(medicamento);
+                    throw new MedicamentoDuplicadoException(
+                            "Ya existe un medicamento registrado con el nombre "
+                                    + dto.getNombre()
+                                    + " del laboratorio "
+                                    + dto.getLaboratorio());
+                });
 
-                log.info("Medicamento actualizado correctamente");
-                return MedicamentoMapper.toDTO(actualizado);
-        }
+        Medicamento medicamento = MedicamentoMapper.toEntity(dto);
 
-        @Override
-        public void eliminar(Long id) {
+        Medicamento guardado = repository.save(medicamento);
 
-                Medicamento medicamento = repository.findById(id)
-                                .orElseThrow(MedicamentoNotFoundException::new);
-                // Se agregaron logs para seguimiento del proceso de eliminación
-                log.info("Eliminando medicamento ID: {}", id);
+        log.info(
+                "Medicamento creado correctamente ID: {}",
+                guardado.getId());
 
-                repository.delete(medicamento);
-                log.info("Medicamento eliminado correctamente");
-        }
+        return MedicamentoMapper.toDTO(guardado);
+    }
 
+    @Override
+    public MedicamentoResponseDTO actualizar(
+            Long id,
+            MedicamentoRequestDTO dto) {
+
+        log.info("Actualizando medicamento ID: {}", id);
+
+        Medicamento medicamento = repository.findById(id)
+                .orElseThrow(MedicamentoNotFoundException::new);
+
+        repository.findByNombreIgnoreCaseAndLaboratorioIgnoreCase(
+                dto.getNombre(),
+                dto.getLaboratorio())
+                .filter(medicamentoExistente -> !medicamentoExistente.getId().equals(id))
+                .ifPresent(medicamentoExistente -> {
+
+                    log.warn(
+                            "Intento de actualizar medicamento ID {} con datos duplicados: {} - {}",
+                            id,
+                            dto.getNombre(),
+                            dto.getLaboratorio());
+
+                    throw new MedicamentoDuplicadoException(
+                            "Ya existe otro medicamento registrado con el nombre "
+                                    + dto.getNombre()
+                                    + " del laboratorio "
+                                    + dto.getLaboratorio());
+                });
+
+        MedicamentoMapper.updateEntity(
+                medicamento,
+                dto);
+
+        Medicamento actualizado = repository.save(medicamento);
+
+        log.info(
+                "Medicamento actualizado correctamente ID: {}",
+                id);
+
+        return MedicamentoMapper.toDTO(actualizado);
+    }
+
+    @Override
+    public void eliminar(Long id) {
+
+        log.info("Eliminando medicamento ID: {}", id);
+
+        Medicamento medicamento = repository.findById(id)
+                .orElseThrow(MedicamentoNotFoundException::new);
+
+        repository.delete(medicamento);
+
+        log.info(
+                "Medicamento eliminado correctamente ID: {}",
+                id);
+    }
 }

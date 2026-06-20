@@ -16,6 +16,25 @@ import jakarta.servlet.http.HttpServletRequest;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+
+        @ExceptionHandler(RecetaInactivaException.class)
+        public ResponseEntity<ErrorResponse> handleRecetaInactiva(
+                        RecetaInactivaException ex,
+                        HttpServletRequest request) {
+                        
+                ErrorResponse error = ErrorResponse.builder()
+                                .timestamp(LocalDateTime.now())
+                                .status(HttpStatus.BAD_REQUEST.value())
+                                .error("Bad Request")
+                                .message(ex.getMessage())
+                                .path(request.getRequestURI())
+                                .build();
+                        
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(error);
+        }
+
         @ExceptionHandler(RecetaNotFoundException.class)
         public ResponseEntity<ErrorResponse> handleRecetaNotFound(
                         RecetaNotFoundException ex,

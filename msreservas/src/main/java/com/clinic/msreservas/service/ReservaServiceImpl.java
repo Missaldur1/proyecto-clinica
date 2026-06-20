@@ -140,70 +140,100 @@ public class ReservaServiceImpl implements ReservaService {
         public ReservaResponseDTO actualizar(
                         Long id,
                         ReservaRequestDTO dto) {
-
+                        
                 log.info(
                                 "Actualizando reserva ID {}",
                                 id);
-
+                        
                 Reserva reserva = repository.findById(id)
                                 .orElseThrow(() -> {
-
+                                
                                         log.error(
                                                         "Reserva no encontrada ID {}",
                                                         id);
-
+                                
                                         return new ReservaNotFoundException();
-
+                                
                                 });
-
+                        
                 // RN-001: no permitir fechas pasadas
                 if (dto.getFecha().isBefore(LocalDate.now())) {
-
+                
                         log.warn(
                                         "Intento de actualización con fecha pasada {}",
                                         dto.getFecha());
-
+                
                         throw new FechaReservaInvalidaException();
                 }
-
+        
                 // RN-002: horario válido
                 if (dto.getHora().isBefore(LocalTime.of(8, 0))
                                 || dto.getHora().isAfter(LocalTime.of(18, 0))) {
-
+                                
                         log.warn(
                                         "Horario fuera de rango {}",
                                         dto.getHora());
-
+                                
                         throw new HorarioReservaInvalidoException();
                 }
-
+        
+                // Validar paciente al actualizar
+                try {
+                
+                        pacienteClient.buscarPaciente(
+                                        dto.getPacienteId());
+                
+                } catch (Exception e) {
+                
+                        log.error(
+                                        "Paciente {} no encontrado al actualizar reserva",
+                                        dto.getPacienteId());
+                
+                        throw new PacienteNotFoundException();
+                }
+        
+                // Validar médico al actualizar
+                try {
+                
+                        medicoClient.buscarMedico(
+                                        dto.getMedicoId());
+                
+                } catch (Exception e) {
+                
+                        log.error(
+                                        "Médico {} no encontrado al actualizar reserva",
+                                        dto.getMedicoId());
+                
+                        throw new MedicoNotFoundException();
+                }
+        
                 // RN-003: validar disponibilidad
                 boolean existe = repository.existsByMedicoIdAndFechaAndHora(
                                 dto.getMedicoId(),
                                 dto.getFecha(),
                                 dto.getHora());
-
+        
                 if (existe
                                 && (!reserva.getMedicoId().equals(dto.getMedicoId())
                                                 || !reserva.getFecha().equals(dto.getFecha())
                                                 || !reserva.getHora().equals(dto.getHora()))) {
-
+                                                
                         log.warn(
                                         "Intento de actualización a horario ocupado. Médico {} fecha {} hora {}",
                                         dto.getMedicoId(),
                                         dto.getFecha(),
                                         dto.getHora());
-
+                                                
                         throw new ReservaDuplicadaException();
                 }
-
+        
                 ReservaMapper.updateEntity(
                                 reserva,
                                 dto);
-
+        
                 log.info(
                                 "Reserva actualizada correctamente");
-
+        
                 return ReservaMapper.toDTO(
                                 repository.save(reserva));
         }

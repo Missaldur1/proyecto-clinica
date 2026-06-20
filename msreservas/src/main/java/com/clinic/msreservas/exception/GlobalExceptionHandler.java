@@ -128,6 +128,42 @@ public class GlobalExceptionHandler {
                                 .body(error);
         }
 
+        @ExceptionHandler(FechaReservaInvalidaException.class)
+        public ResponseEntity<ErrorResponse> handleFechaReservaInvalida(
+                        FechaReservaInvalidaException ex,
+                        HttpServletRequest request) {
+                        
+                ErrorResponse error = ErrorResponse.builder()
+                                .timestamp(LocalDateTime.now())
+                                .status(HttpStatus.BAD_REQUEST.value())
+                                .error("Bad Request")
+                                .message(ex.getMessage())
+                                .path(request.getRequestURI())
+                                .build();
+                        
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(error);
+        }
+        
+        @ExceptionHandler(HorarioReservaInvalidoException.class)
+        public ResponseEntity<ErrorResponse> handleHorarioReservaInvalido(
+                        HorarioReservaInvalidoException ex,
+                        HttpServletRequest request) {
+                        
+                ErrorResponse error = ErrorResponse.builder()
+                                .timestamp(LocalDateTime.now())
+                                .status(HttpStatus.BAD_REQUEST.value())
+                                .error("Bad Request")
+                                .message(ex.getMessage())
+                                .path(request.getRequestURI())
+                                .build();
+                        
+                return ResponseEntity
+                                .status(HttpStatus.BAD_REQUEST)
+                                .body(error);
+        }
+
         @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
         public ResponseEntity<ErrorResponse> handleAccessDenied(
                         org.springframework.security.access.AccessDeniedException ex,
