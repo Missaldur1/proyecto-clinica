@@ -18,6 +18,10 @@ import com.clinic.msusuarios.dto.UsuarioRequestDTO;
 import com.clinic.msusuarios.dto.UsuarioResponseDTO;
 import com.clinic.msusuarios.service.UsuarioService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,13 +30,27 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/usuarios")
 @RequiredArgsConstructor
 @Slf4j
-
+@Tag(name = "Usuarios", description = "Controlador para la gestión de usuarios")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
+    @Operation(summary = "Crear usuario", description = """
+            Registra un nuevo usuario.
+
+            Roles autorizados:
+            - ADMIN
+
+            Requiere todos los datos obligatorios.
+            """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "201", description = "Creado correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+            @ApiResponse(responseCode = "401", description = "No autenticado"),
+            @ApiResponse(responseCode = "403", description = "Sin permisos")
+    })
     public ResponseEntity<UsuarioResponseDTO> crearUsuario(
             @Valid @RequestBody UsuarioRequestDTO dto) {
 
@@ -44,6 +62,18 @@ public class UsuarioController {
 
     @PreAuthorize("hasAnyRole('ADMIN','MEDICO')")
     @GetMapping
+    @Operation(summary = "Listar usuarios", description = """
+            Obtiene todos los usuarios registrados.
+
+            Roles autorizados:
+            - ADMIN
+            - MEDICO
+            """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Listado obtenido"),
+            @ApiResponse(responseCode = "401", description = "No autenticado"),
+            @ApiResponse(responseCode = "403", description = "Sin permisos")
+    })
     public ResponseEntity<List<UsuarioResponseDTO>> listarUsuarios() {
 
         log.info("GET /api/usuarios");
@@ -53,6 +83,20 @@ public class UsuarioController {
 
     @PreAuthorize("hasAnyRole('ADMIN','MEDICO')")
     @GetMapping("/{id}")
+    @Operation(summary = "Buscar usuario por ID", description = """
+            Busca un usuario utilizando su identificador.
+
+            Roles autorizados:
+            - ADMIN
+            - MEDICO
+            - PACIENTE
+            """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+            @ApiResponse(responseCode = "401", description = "No autenticado"),
+            @ApiResponse(responseCode = "403", description = "Sin permisos")
+    })
     public ResponseEntity<UsuarioResponseDTO> buscarPorId(
             @PathVariable Long id) {
 
@@ -63,6 +107,19 @@ public class UsuarioController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
+    @Operation(summary = "Actualizar usuario", description = """
+            Actualiza los datos de un usuario.
+
+            Roles autorizados:
+            - ADMIN
+            """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Actualizado correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+            @ApiResponse(responseCode = "401", description = "No autenticado"),
+            @ApiResponse(responseCode = "403", description = "Sin permisos")
+    })
     public ResponseEntity<UsuarioResponseDTO> actualizarUsuario(
             @PathVariable Long id,
             @Valid @RequestBody UsuarioRequestDTO dto) {
@@ -75,6 +132,18 @@ public class UsuarioController {
 
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar usuario", description = """
+            Elimina un usuario existente.
+
+            Roles autorizados:
+            - ADMIN
+            """)
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Eliminado correctamente"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+            @ApiResponse(responseCode = "401", description = "No autenticado"),
+            @ApiResponse(responseCode = "403", description = "Sin permisos")
+    })
     public ResponseEntity<Void> eliminarUsuario(
             @PathVariable Long id) {
 

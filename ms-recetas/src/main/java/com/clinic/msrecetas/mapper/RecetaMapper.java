@@ -15,7 +15,6 @@ public class RecetaMapper {
                 .medicamento(dto.getMedicamento())
                 .dosis(dto.getDosis())
                 .indicaciones(dto.getIndicaciones())
-                .fechaEmision(dto.getFechaEmision())
                 .activa(dto.getActiva())
                 .build();
     }
@@ -44,7 +43,8 @@ public class RecetaMapper {
         receta.setMedicamento(dto.getMedicamento());
         receta.setDosis(dto.getDosis());
         receta.setIndicaciones(dto.getIndicaciones());
-        receta.setFechaEmision(dto.getFechaEmision());
         receta.setActiva(dto.getActiva());
+
+        // NO modificar fechaEmision
     }
 }

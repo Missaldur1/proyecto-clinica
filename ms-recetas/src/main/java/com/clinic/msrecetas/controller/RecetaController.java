@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,12 +28,14 @@ public class RecetaController {
 
     private final RecetaService service;
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO')")
     @GetMapping
     public ResponseEntity<List<RecetaResponseDTO>> listar() {
 
         return ResponseEntity.ok(service.listar());
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO')")
     @GetMapping("/{id}")
     public ResponseEntity<RecetaResponseDTO> buscar(
             @PathVariable Long id) {
@@ -40,6 +43,7 @@ public class RecetaController {
         return ResponseEntity.ok(service.buscarPorId(id));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO', 'PACIENTE')")
     @PostMapping
     public ResponseEntity<RecetaResponseDTO> guardar(
             @Valid @RequestBody RecetaRequestDTO dto) {
@@ -49,6 +53,7 @@ public class RecetaController {
                 .body(service.guardar(dto));
     }
 
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO')")
     @PutMapping("/{id}")
     public ResponseEntity<RecetaResponseDTO> actualizar(
             @PathVariable Long id,
@@ -58,6 +63,7 @@ public class RecetaController {
                 service.actualizar(id, dto));
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(
             @PathVariable Long id) {

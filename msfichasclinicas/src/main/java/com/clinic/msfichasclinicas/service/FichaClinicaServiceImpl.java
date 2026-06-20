@@ -118,40 +118,124 @@ public class FichaClinicaServiceImpl
         @Override
         public FichaClinicaResponseDTO buscarPorId(Long id) {
 
-                FichaClinica ficha = repository.findById(id)
-                                .orElseThrow(() -> new FichaNotFoundException());
                 log.info("Buscando ficha clínica {}", id);
-                return FichaClinicaMapper
-                                .toDTO(ficha);
 
+                FichaClinica ficha = repository.findById(id)
+                                .orElseThrow(() -> {
+
+                                        log.error(
+                                                        "Ficha clínica {} no encontrada",
+                                                        id);
+
+                                        return new FichaNotFoundException();
+                                });
+
+                return FichaClinicaMapper.toDTO(ficha);
         }
 
         @Override
         public FichaClinicaResponseDTO actualizar(
                         Long id,
                         FichaClinicaRequestDTO dto) {
+                        
                 log.info("Actualizando ficha clínica {}", id);
+                        
                 FichaClinica ficha = repository.findById(id)
-                                .orElseThrow(() -> new FichaNotFoundException());
-
+                                .orElseThrow(() -> {
+                                
+                                        log.error(
+                                                        "Ficha clínica {} no encontrada",
+                                                        id);
+                                
+                                        return new FichaNotFoundException();
+                                });
+                        
+                // RN-FIC-01: validar paciente al actualizar
+                try {
+                
+                        pacienteClient.buscarPaciente(
+                                        dto.getPacienteId());
+                
+                } catch (Exception e) {
+                
+                        log.error(
+                                        "Paciente {} no encontrado al actualizar ficha clínica",
+                                        dto.getPacienteId());
+                
+                        throw new PacienteNotFoundException(
+                                        "No existe el paciente con ID "
+                                                        + dto.getPacienteId());
+                }
+        
+                // RN-FIC-02: validar médico al actualizar
+                try {
+                
+                        medicoClient.buscarMedico(
+                                        dto.getMedicoId());
+                
+                } catch (Exception e) {
+                
+                        log.error(
+                                        "Médico {} no encontrado al actualizar ficha clínica",
+                                        dto.getMedicoId());
+                
+                        throw new MedicoNotFoundException(
+                                        "No existe el médico con ID "
+                                                        + dto.getMedicoId());
+                }
+        
+                // RN-FIC-03: validar examen al actualizar, solo si viene informado
+                if (dto.getExamenId() != null) {
+                
+                        try {
+                        
+                                examenClient.buscarExamen(
+                                                dto.getExamenId());
+                        
+                        } catch (Exception e) {
+                        
+                                log.error(
+                                                "Examen {} no encontrado al actualizar ficha clínica",
+                                                dto.getExamenId());
+                        
+                                throw new ExamenNotFoundException(
+                                                "No existe el examen con ID "
+                                                                + dto.getExamenId());
+                        }
+                }
+        
                 FichaClinicaMapper.updateEntity(
                                 ficha,
                                 dto);
-                log.info("Ficha clínica {} actualizada correctamente", id);
-                return FichaClinicaMapper
-                                .toDTO(
-                                                repository.save(ficha));
-
+        
+                log.info(
+                                "Ficha clínica {} actualizada correctamente",
+                                id);
+        
+                return FichaClinicaMapper.toDTO(
+                                repository.save(ficha));
         }
 
         @Override
         public void eliminar(Long id) {
+
                 log.info("Eliminando ficha clínica {}", id);
+
                 FichaClinica ficha = repository.findById(id)
-                                .orElseThrow(() -> new FichaNotFoundException());
+                                .orElseThrow(() -> {
+
+                                        log.error(
+                                                        "Ficha clínica {} no encontrada",
+                                                        id);
+
+                                        return new FichaNotFoundException();
+                                });
 
                 repository.delete(ficha);
-                log.info("Ficha clínica {} eliminada correctamente",id);
+
+                log.info(
+                                "Ficha clínica {} eliminada correctamente",
+                                id);
         }
 
 }

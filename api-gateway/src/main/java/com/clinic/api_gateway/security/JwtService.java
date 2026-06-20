@@ -1,5 +1,4 @@
-package com.clinic.mspacientes.security.jwt;
-
+package com.clinic.api_gateway.security;
 import javax.crypto.SecretKey;
 
 import org.springframework.stereotype.Service;
@@ -10,8 +9,7 @@ import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JwtService {
-
-    private static final String SECRET =
+private static final String SECRET =
             "miclavedeseguridadsupersecretaparajwtclinic";
 
     private final SecretKey key =

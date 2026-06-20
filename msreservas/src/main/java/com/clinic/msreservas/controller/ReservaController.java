@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,6 +30,7 @@ public class ReservaController {
 
         private final ReservaService service;
 
+        @PreAuthorize("hasAnyRole('ADMIN','PACIENTE')")
         @PostMapping
         @Tag(name = "Crear Reservas", description = "Crear una nueva reserva")
         public ResponseEntity<ReservaResponseDTO> crear(
@@ -40,6 +42,7 @@ public class ReservaController {
 
         }
 
+        @PreAuthorize("hasAnyRole('ADMIN','MEDICO')")
         @GetMapping
         @Tag(name = "Listar Reservas", description = "Listar todas las reservas")
         public ResponseEntity<List<ReservaResponseDTO>> listar() {
@@ -49,6 +52,7 @@ public class ReservaController {
 
         }
 
+        @PreAuthorize("hasAnyRole('ADMIN','MEDICO','PACIENTE')")
         @GetMapping("/{id}")
         @Tag(name = "Buscar Reserva", description = "Buscar una reserva por su ID")
         public ResponseEntity<ReservaResponseDTO> buscar(
@@ -59,6 +63,7 @@ public class ReservaController {
 
         }
 
+        @PreAuthorize("hasAnyRole('ADMIN','MEDICO')")
         @PutMapping("/{id}")
         @Tag(name = "Actualizar Reserva", description = "Actualizar una reserva existente por su ID")
         public ResponseEntity<ReservaResponseDTO> actualizar(
@@ -70,6 +75,7 @@ public class ReservaController {
 
         }
 
+        @PreAuthorize("hasAnyRole('ADMIN','MEDICO')")
         @DeleteMapping("/{id}")
         @Tag(name = "Eliminar Reserva", description = "Eliminar una reserva por su ID")
         public ResponseEntity<Void> eliminar(

@@ -1,5 +1,7 @@
 package com.clinic.msusuarios.dto;
 
+import com.clinic.msusuarios.enums.Rol;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,18 +18,20 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class UsuarioRequestDTO {
-@NotBlank(message = "El nombre es obligatorio")
+
+    @NotBlank(message = "El nombre es obligatorio")
     private String nombre;
 
     @Email(message = "Formato email inválido")
     @NotBlank(message = "El email es obligatorio")
     private String email;
 
+    @NotBlank(message = "La contraseña es obligatoria")
     @Size(min = 6, message = "La contraseña debe tener mínimo 6 caracteres")
     private String password;
 
-    @NotBlank(message = "El rol es obligatorio")
-    private String rol;
+    @NotNull(message = "El rol es obligatorio")
+    private Rol rol;
 
     @NotNull(message = "El estado activo es obligatorio")
     private Boolean activo;

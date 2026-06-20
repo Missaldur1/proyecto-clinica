@@ -6,44 +6,125 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@ControllerAdvice
+import jakarta.servlet.http.HttpServletRequest;
+
+@RestControllerAdvice
 public class GlobalExceptionHandler {
-    @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<?> handleNotFound(ResourceNotFoundException ex) {
 
-        Map<String, Object> body = new HashMap<>();
+        @ExceptionHandler(Exception.class)
+        public ResponseEntity<ErrorResponse> handleGeneralException(
+                        Exception ex,
+                        HttpServletRequest request) {
 
-        body.put("timestamp", LocalDateTime.now());
-        body.put("mensaje", ex.getMessage());
-        body.put("status", 404);
+                ErrorResponse error = ErrorResponse.builder()
+                                .timestamp(LocalDateTime.now())
+                                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                                .error("Internal Server Error")
+                                .message(ex.getMessage())
+                                .path(request.getRequestURI())
+                                .build();
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
-    }
+                return ResponseEntity
+                                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body(error);
+        }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> handleValidation(MethodArgumentNotValidException ex) {
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+        public ResponseEntity<Map<String, String>> handleValidationErrors(
+                        MethodArgumentNotValidException ex) {
 
-        Map<String, String> errores = new HashMap<>();
+                Map<String, String> errors = new HashMap<>();
 
-        ex.getBindingResult().getFieldErrors()
-                .forEach(error ->
-                        errores.put(error.getField(), error.getDefaultMessage()));
+                ex.getBindingResult()
+                                .getAllErrors()
+                                .forEach(error -> {
 
-        return ResponseEntity.badRequest().body(errores);
-    }
+                                        String field = ((FieldError) error).getField();
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<?> handleGeneral(Exception ex) {
+                                        String message = error.getDefaultMessage();
 
-        Map<String, Object> body = new HashMap<>();
+                                        errors.put(field, message);
+                                });
 
-        body.put("mensaje", ex.getMessage());
-        body.put("status", 500);
+                return ResponseEntity
+                                .badRequest()
+                                .body(errors);
+        }
 
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(body);
-    }
+        @ExceptionHandler(UsuarioNotFoundException.class)
+        public ResponseEntity<ErrorResponse> handleUsuarioNotFound(
+                        UsuarioNotFoundException ex,
+                        HttpServletRequest request) {
+
+                ErrorResponse error = ErrorResponse.builder()
+                                .timestamp(LocalDateTime.now())
+                                .status(HttpStatus.NOT_FOUND.value())
+                                .error("Not Found")
+                                .message(ex.getMessage())
+                                .path(request.getRequestURI())
+                                .build();
+
+                return ResponseEntity
+                                .status(HttpStatus.NOT_FOUND)
+                                .body(error);
+        }
+
+        @ExceptionHandler(EmailAlreadyExistsException.class)
+        public ResponseEntity<ErrorResponse> handleEmailAlreadyExists(
+                        EmailAlreadyExistsException ex,
+                        HttpServletRequest request) {
+
+                ErrorResponse error = ErrorResponse.builder()
+                                .timestamp(LocalDateTime.now())
+                                .status(HttpStatus.CONFLICT.value())
+                                .error("Conflict")
+                                .message(ex.getMessage())
+                                .path(request.getRequestURI())
+                                .build();
+
+                return ResponseEntity
+                                .status(HttpStatus.CONFLICT)
+                                .body(error);
+        }
+
+        @ExceptionHandler(InvalidCredentialsException.class)
+        public ResponseEntity<ErrorResponse> handleInvalidCredentials(
+                        InvalidCredentialsException ex,
+                        HttpServletRequest request) {
+
+                ErrorResponse error = ErrorResponse.builder()
+                                .timestamp(LocalDateTime.now())
+                                .status(HttpStatus.UNAUTHORIZED.value())
+                                .error("Unauthorized")
+                                .message(ex.getMessage())
+                                .path(request.getRequestURI())
+                                .build();
+
+                return ResponseEntity
+                                .status(HttpStatus.UNAUTHORIZED)
+                                .body(error);
+        }
+
+        @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+        public ResponseEntity<ErrorResponse> handleAccessDenied(
+                        org.springframework.security.access.AccessDeniedException ex,
+                        HttpServletRequest request) {
+
+                ErrorResponse error = ErrorResponse.builder()
+                                .timestamp(LocalDateTime.now())
+                                .status(HttpStatus.FORBIDDEN.value())
+                                .error("Forbidden")
+                                .message("No tiene permisos para acceder a este recurso")
+                                .path(request.getRequestURI())
+                                .build();
+
+                return ResponseEntity
+                                .status(HttpStatus.FORBIDDEN)
+                                .body(error);
+        }
 }

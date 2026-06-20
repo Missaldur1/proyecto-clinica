@@ -9,10 +9,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.clinic.msusuarios.dto.LoginRequestDTO;
 import com.clinic.msusuarios.dto.LoginResponseDTO;
+import com.clinic.msusuarios.exception.InvalidCredentialsException;
 import com.clinic.msusuarios.model.Usuario;
 import com.clinic.msusuarios.repository.UsuarioRepository;
 import com.clinic.msusuarios.security.jwt.JwtService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -20,29 +22,33 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-        private final UsuarioRepository usuarioRepository;
-        private final PasswordEncoder passwordEncoder;
-        private final JwtService jwtService;
+    private final UsuarioRepository usuarioRepository;
 
-        @PostMapping("/login")
-        public ResponseEntity<LoginResponseDTO> login(
-                        @RequestBody LoginRequestDTO request) {
+    private final PasswordEncoder passwordEncoder;
 
-                Usuario user = usuarioRepository.findByEmail(request.getEmail())
-                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    private final JwtService jwtService;
 
-                if (!passwordEncoder.matches(
-                                request.getPassword(),
-                                user.getPassword())) {
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponseDTO> login(
+            @Valid @RequestBody LoginRequestDTO request) {
 
-                        throw new RuntimeException("Contraseña incorrecta");
-                }
+        Usuario user = usuarioRepository
+                .findByEmail(request.getEmail())
+                .orElseThrow(
+                        InvalidCredentialsException::new);
 
-                String token = jwtService.generateToken(
-                                user.getEmail(),
-                                user.getRol());
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                user.getPassword())) {
 
-                return ResponseEntity.ok(
-                                new LoginResponseDTO(token));
+            throw new InvalidCredentialsException();
         }
+
+        String token = jwtService.generateToken(
+                user.getEmail(),
+                user.getRol().name());
+
+        return ResponseEntity.ok(
+                new LoginResponseDTO(token));
+    }
 }

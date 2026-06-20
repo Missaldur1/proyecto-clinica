@@ -1,7 +1,6 @@
 package com.clinic.ms_pagos.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
@@ -31,10 +30,4 @@ public class PagoRequestDTO {
 
     @NotBlank(message = "El método de pago es obligatorio")
     private String metodoPago;
-
-    @NotBlank(message = "El estado es obligatorio")
-    private String estado;
-
-    @NotNull(message = "La fecha de pago es obligatoria")
-    private LocalDate fechaPago;
 }

@@ -7,16 +7,16 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
-
+    //se deja config basica ya que el filtro estará en apigateway y este microservicio
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http)
+    SecurityFilterChain securityFilterChain(
+            HttpSecurity http)
             throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable())
-
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll());
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth ->
+                    auth.anyRequest().permitAll());
 
         return http.build();
     }

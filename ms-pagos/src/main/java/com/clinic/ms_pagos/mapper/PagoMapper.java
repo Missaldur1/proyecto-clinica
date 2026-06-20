@@ -6,17 +6,14 @@ import com.clinic.ms_pagos.model.Pago;
 
 public class PagoMapper {
 
-    public static Pago toEntity(
+    public static void updateEntity(
+            Pago pago,
             PagoRequestDTO dto) {
 
-        return Pago.builder()
-                .pacienteId(dto.getPacienteId())
-                .concepto(dto.getConcepto())
-                .monto(dto.getMonto())
-                .metodoPago(dto.getMetodoPago())
-                .estado(dto.getEstado())
-                .fechaPago(dto.getFechaPago())
-                .build();
+        pago.setPacienteId(dto.getPacienteId());
+        pago.setConcepto(dto.getConcepto());
+        pago.setMonto(dto.getMonto());
+        pago.setMetodoPago(dto.getMetodoPago());
     }
 
     public static PagoResponseDTO toDTO(
@@ -33,15 +30,14 @@ public class PagoMapper {
                 .build();
     }
 
-    public static void updateEntity(
-            Pago pago,
+    public static Pago toEntity(
             PagoRequestDTO dto) {
 
-        pago.setPacienteId(dto.getPacienteId());
-        pago.setConcepto(dto.getConcepto());
-        pago.setMonto(dto.getMonto());
-        pago.setMetodoPago(dto.getMetodoPago());
-        pago.setEstado(dto.getEstado());
-        pago.setFechaPago(dto.getFechaPago());
+        return Pago.builder()
+                .pacienteId(dto.getPacienteId())
+                .concepto(dto.getConcepto())
+                .monto(dto.getMonto())
+                .metodoPago(dto.getMetodoPago())
+                .build();
     }
 }
