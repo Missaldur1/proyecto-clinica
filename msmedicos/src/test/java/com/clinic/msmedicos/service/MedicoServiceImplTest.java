@@ -49,6 +49,7 @@ class MedicoServiceImplTest {
     @Test
     void guardar_debeCrearMedicoCuandoRutYCorreoNoExisten() {
 
+        // ARRANGE: preparar datos válidos y simular que RUT y correo no existen
         when(repository.findByRut("22222222-2"))
                 .thenReturn(Optional.empty());
 
@@ -62,8 +63,10 @@ class MedicoServiceImplTest {
                     return medico;
                 });
 
+        // ACT: ejecutar el método real del service
         MedicoResponseDTO response = service.guardar(request);
 
+        // ASSERT: verificar que el médico creado tenga los datos esperados
         assertNotNull(response);
         assertEquals(1L, response.getId());
         assertEquals("22222222-2", response.getRut());
@@ -74,14 +77,21 @@ class MedicoServiceImplTest {
         assertEquals("ana.perez@clinica.cl", response.getCorreo());
         assertEquals(true, response.getDisponible());
 
+        // VERIFY: comprobar validaciones de duplicidad y guardado
         verify(repository).findByRut("22222222-2");
         verify(repository).findByCorreo("ana.perez@clinica.cl");
         verify(repository).save(any(Medico.class));
+
+        // Caso hipotético QA:
+        // Si se esperaba crear un médico válido y se obtiene error de duplicidad,
+        // QA debe reportar que la validación de RUT o correo puede estar bloqueando
+        // registros válidos.
     }
 
     @Test
     void guardar_debeLanzarExcepcionCuandoRutYaExiste() {
 
+        // ARRANGE: preparar un médico existente con el mismo RUT
         Medico medicoExistente = new Medico();
         medicoExistente.setId(1L);
         medicoExistente.setRut("22222222-2");
@@ -89,6 +99,7 @@ class MedicoServiceImplTest {
         when(repository.findByRut("22222222-2"))
                 .thenReturn(Optional.of(medicoExistente));
 
+        // ACT + ASSERT: ejecutar el método y verificar excepción por RUT duplicado
         MedicoDuplicadoException exception = assertThrows(
                 MedicoDuplicadoException.class,
                 () -> service.guardar(request));
@@ -97,14 +108,20 @@ class MedicoServiceImplTest {
                 "Ya existe un médico registrado con el RUT 22222222-2",
                 exception.getMessage());
 
+        // VERIFY: comprobar que no se validó correo ni se guardó el médico
         verify(repository).findByRut("22222222-2");
         verify(repository, never()).findByCorreo("ana.perez@clinica.cl");
         verify(repository, never()).save(any(Medico.class));
+
+        // Caso hipotético QA:
+        // Si el sistema permite registrar dos médicos con el mismo RUT,
+        // QA debe reportar una falla en la regla de negocio de duplicidad por RUT.
     }
 
     @Test
     void guardar_debeLanzarExcepcionCuandoCorreoYaExiste() {
 
+        // ARRANGE: simular que el RUT no existe, pero el correo sí existe
         Medico medicoExistente = new Medico();
         medicoExistente.setId(1L);
         medicoExistente.setCorreo("ana.perez@clinica.cl");
@@ -115,6 +132,7 @@ class MedicoServiceImplTest {
         when(repository.findByCorreo("ana.perez@clinica.cl"))
                 .thenReturn(Optional.of(medicoExistente));
 
+        // ACT + ASSERT: ejecutar el método y verificar excepción por correo duplicado
         MedicoDuplicadoException exception = assertThrows(
                 MedicoDuplicadoException.class,
                 () -> service.guardar(request));
@@ -123,14 +141,20 @@ class MedicoServiceImplTest {
                 "Ya existe un médico registrado con el correo ana.perez@clinica.cl",
                 exception.getMessage());
 
+        // VERIFY: comprobar que se validó RUT y correo, pero no se guardó
         verify(repository).findByRut("22222222-2");
         verify(repository).findByCorreo("ana.perez@clinica.cl");
         verify(repository, never()).save(any(Medico.class));
+
+        // Caso hipotético QA:
+        // Si el sistema permite registrar dos médicos con el mismo correo,
+        // QA debe reportar una falla en la regla de negocio de duplicidad por correo.
     }
 
     @Test
     void buscarPorId_debeRetornarMedicoCuandoExiste() {
 
+        // ARRANGE: preparar un médico existente en el repositorio simulado
         Medico medico = new Medico();
         medico.setId(1L);
         medico.setRut("22222222-2");
@@ -144,27 +168,45 @@ class MedicoServiceImplTest {
         when(repository.findById(1L))
                 .thenReturn(Optional.of(medico));
 
+        // ACT: ejecutar búsqueda por ID
         MedicoResponseDTO response = service.buscarPorId(1L);
 
+        // ASSERT: verificar que la respuesta corresponda al médico esperado
         assertNotNull(response);
         assertEquals(1L, response.getId());
         assertEquals("22222222-2", response.getRut());
         assertEquals("Ana", response.getNombre());
         assertEquals("Cardiología", response.getEspecialidad());
 
+        // VERIFY: comprobar que se consultó el repositorio por ID
         verify(repository).findById(1L);
+
+        // Caso hipotético QA:
+        // Si se busca un médico existente y el sistema responde no encontrado,
+        // QA debe reportar una falla en la búsqueda por ID.
     }
 
     @Test
     void buscarPorId_debeLanzarExcepcionCuandoMedicoNoExiste() {
 
+        // ARRANGE: simular que no existe médico con ID 99
         when(repository.findById(99L))
                 .thenReturn(Optional.empty());
 
-        assertThrows(
+        // ACT + ASSERT: ejecutar búsqueda y verificar excepción
+        MedicoNotFoundException exception = assertThrows(
                 MedicoNotFoundException.class,
                 () -> service.buscarPorId(99L));
 
+        assertEquals(
+                "Médico no encontrado con id: 99",
+                exception.getMessage());
+
+        // VERIFY: comprobar que se consultó el repositorio por ID
         verify(repository).findById(99L);
+
+        // Caso hipotético QA:
+        // Si se busca un médico inexistente y el sistema responde 200 OK,
+        // QA debe reportar que no se está manejando correctamente el caso no encontrado.
     }
 }
