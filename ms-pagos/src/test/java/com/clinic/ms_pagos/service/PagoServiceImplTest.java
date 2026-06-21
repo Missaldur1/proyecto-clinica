@@ -50,6 +50,10 @@ class PagoServiceImplTest {
     @Test
     void guardar_debeCrearPagoCuandoDatosSonValidos() {
 
+        // ARRANGE: preparar datos válidos y configurar mocks
+        when(pacienteClient.buscarPaciente(1L))
+                .thenReturn(new Object());
+
         when(repository.save(any(Pago.class)))
                 .thenAnswer(invocation -> {
                     Pago pago = invocation.getArgument(0);
@@ -57,8 +61,10 @@ class PagoServiceImplTest {
                     return pago;
                 });
 
+        // ACT: ejecutar el método real del service
         PagoResponseDTO response = service.guardar(request);
 
+        // ASSERT: verificar que la respuesta tenga los datos esperados
         assertNotNull(response);
         assertEquals(1L, response.getId());
         assertEquals(1L, response.getPacienteId());
@@ -68,15 +74,26 @@ class PagoServiceImplTest {
         assertEquals("PENDIENTE", response.getEstado());
         assertEquals(LocalDate.now(), response.getFechaPago());
 
+        // VERIFY: comprobar que se consultó el paciente y se guardó el pago
         verify(pacienteClient).buscarPaciente(1L);
         verify(repository).save(any(Pago.class));
+
+        // Caso hipotético QA:
+        // Si se esperaba estado PENDIENTE y se obtiene null,
+        // QA debe reportar que el service no está asignando correctamente
+        // el estado inicial al crear un pago.
     }
 
     @Test
     void guardar_debeLanzarExcepcionCuandoMontoEsCero() {
 
+        // ARRANGE: preparar un request con monto inválido igual a cero
         request.setMonto(BigDecimal.ZERO);
 
+        when(pacienteClient.buscarPaciente(1L))
+                .thenReturn(new Object());
+
+        // ACT + ASSERT: ejecutar el método y verificar que lance excepción
         ReglaNegocioException exception = assertThrows(
                 ReglaNegocioException.class,
                 () -> service.guardar(request));
@@ -85,15 +102,25 @@ class PagoServiceImplTest {
                 "El monto debe ser mayor a cero",
                 exception.getMessage());
 
+        // VERIFY: comprobar que se validó el paciente, pero no se guardó el pago
         verify(pacienteClient).buscarPaciente(1L);
         verify(repository, never()).save(any(Pago.class));
+
+        // Caso hipotético QA:
+        // Si el sistema permite guardar un pago con monto 0,
+        // QA debe reportar una falla en la regla de negocio del monto mínimo.
     }
 
     @Test
     void guardar_debeLanzarExcepcionCuandoMontoEsNegativo() {
 
+        // ARRANGE: preparar un request con monto inválido negativo
         request.setMonto(new BigDecimal("-1000"));
 
+        when(pacienteClient.buscarPaciente(1L))
+                .thenReturn(new Object());
+
+        // ACT + ASSERT: ejecutar el método y verificar que lance excepción
         ReglaNegocioException exception = assertThrows(
                 ReglaNegocioException.class,
                 () -> service.guardar(request));
@@ -102,7 +129,12 @@ class PagoServiceImplTest {
                 "El monto debe ser mayor a cero",
                 exception.getMessage());
 
+        // VERIFY: comprobar que se validó el paciente, pero no se guardó el pago
         verify(pacienteClient).buscarPaciente(1L);
         verify(repository, never()).save(any(Pago.class));
+
+        // Caso hipotético QA:
+        // Si el sistema permite guardar un pago con monto negativo,
+        // QA debe reportar que no se está aplicando la validación de monto.
     }
 }

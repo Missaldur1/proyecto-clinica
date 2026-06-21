@@ -57,6 +57,7 @@ class ReservaServiceImplTest {
     @Test
     void crear_debeCrearReservaCuandoDatosSonValidos() {
 
+        // ARRANGE: preparar datos válidos y configurar mocks
         when(pacienteClient.buscarPaciente(1L))
                 .thenReturn(new Object());
 
@@ -76,8 +77,10 @@ class ReservaServiceImplTest {
                     return reserva;
                 });
 
+        // ACT: ejecutar el método real del service
         ReservaResponseDTO response = service.crear(request);
 
+        // ASSERT: verificar que la reserva creada tenga los datos esperados
         assertNotNull(response);
         assertEquals(1L, response.getId());
         assertEquals(1L, response.getPacienteId());
@@ -86,6 +89,7 @@ class ReservaServiceImplTest {
         assertEquals(request.getHora(), response.getHora());
         assertEquals("PENDIENTE", response.getEstado());
 
+        // VERIFY: comprobar llamadas a Feign Clients y Repository
         verify(pacienteClient).buscarPaciente(1L);
         verify(medicoClient).buscarMedico(2L);
         verify(repository).existsByMedicoIdAndFechaAndHora(
@@ -93,13 +97,19 @@ class ReservaServiceImplTest {
                 request.getFecha(),
                 request.getHora());
         verify(repository).save(any(Reserva.class));
+
+        // Caso hipotético QA:
+        // Si se esperaba crear la reserva y se obtiene una excepción,
+        // QA debe reportar que una validación está bloqueando reservas válidas.
     }
 
     @Test
     void crear_debeLanzarExcepcionCuandoFechaEsPasada() {
 
+        // ARRANGE: preparar una reserva con fecha pasada
         request.setFecha(LocalDate.now().minusDays(1));
 
+        // ACT + ASSERT: ejecutar el método y verificar que lance excepción
         FechaReservaInvalidaException exception = assertThrows(
                 FechaReservaInvalidaException.class,
                 () -> service.crear(request));
@@ -108,16 +118,23 @@ class ReservaServiceImplTest {
                 "No se pueden crear reservas en fechas pasadas",
                 exception.getMessage());
 
+        // VERIFY: comprobar que no se consultaron dependencias externas ni se guardó
         verify(pacienteClient, never()).buscarPaciente(1L);
         verify(medicoClient, never()).buscarMedico(2L);
         verify(repository, never()).save(any(Reserva.class));
+
+        // Caso hipotético QA:
+        // Si el sistema permite guardar reservas con fecha pasada,
+        // QA debe reportar una falla en la regla de negocio de fecha.
     }
 
     @Test
     void crear_debeLanzarExcepcionCuandoHorarioEstaFueraDeRango() {
 
+        // ARRANGE: preparar una reserva con horario fuera del rango permitido
         request.setHora(LocalTime.of(20, 30));
 
+        // ACT + ASSERT: ejecutar el método y verificar que lance excepción
         HorarioReservaInvalidoException exception = assertThrows(
                 HorarioReservaInvalidoException.class,
                 () -> service.crear(request));
@@ -126,14 +143,20 @@ class ReservaServiceImplTest {
                 "Horario fuera del rango de atención",
                 exception.getMessage());
 
+        // VERIFY: comprobar que no se consultaron dependencias externas ni se guardó
         verify(pacienteClient, never()).buscarPaciente(1L);
         verify(medicoClient, never()).buscarMedico(2L);
         verify(repository, never()).save(any(Reserva.class));
+
+        // Caso hipotético QA:
+        // Si el sistema permite reservar fuera del horario de atención,
+        // QA debe reportar que la validación horaria no está funcionando.
     }
 
     @Test
     void crear_debeLanzarExcepcionCuandoReservaEstaDuplicada() {
 
+        // ARRANGE: preparar mocks para simular una reserva ya existente
         when(pacienteClient.buscarPaciente(1L))
                 .thenReturn(new Object());
 
@@ -146,6 +169,7 @@ class ReservaServiceImplTest {
                 request.getHora()))
                 .thenReturn(true);
 
+        // ACT + ASSERT: ejecutar el método y verificar que lance excepción
         ReservaDuplicadaException exception = assertThrows(
                 ReservaDuplicadaException.class,
                 () -> service.crear(request));
@@ -154,6 +178,8 @@ class ReservaServiceImplTest {
                 "Horario ya reservado",
                 exception.getMessage());
 
+        // VERIFY: comprobar que se validaron paciente, médico y duplicidad,
+        // pero no se guardó la reserva
         verify(pacienteClient).buscarPaciente(1L);
         verify(medicoClient).buscarMedico(2L);
         verify(repository).existsByMedicoIdAndFechaAndHora(
@@ -161,5 +187,9 @@ class ReservaServiceImplTest {
                 request.getFecha(),
                 request.getHora());
         verify(repository, never()).save(any(Reserva.class));
+
+        // Caso hipotético QA:
+        // Si el sistema permite crear dos reservas con el mismo médico,
+        // fecha y hora, QA debe reportar falla en la validación de duplicidad.
     }
 }

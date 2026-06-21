@@ -1,20 +1,21 @@
 package com.clinic.msrecetas.service;
 
-import java.time.LocalDate;
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.util.Optional;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.clinic.msrecetas.client.MedicoClient;
@@ -57,6 +58,7 @@ class RecetaServiceImplTest {
     @Test
     void guardar_debeCrearRecetaCuandoDatosSonValidos() {
 
+        // ARRANGE: preparar datos válidos y simular que paciente y médico existen
         when(pacienteClient.buscarPaciente(1L))
                 .thenReturn(new Object());
 
@@ -70,8 +72,10 @@ class RecetaServiceImplTest {
                     return receta;
                 });
 
+        // ACT: ejecutar el método real del service
         RecetaResponseDTO response = service.guardar(request);
 
+        // ASSERT: verificar que la receta creada tenga los datos esperados
         assertNotNull(response);
         assertEquals(1L, response.getId());
         assertEquals(1L, response.getPacienteId());
@@ -82,14 +86,20 @@ class RecetaServiceImplTest {
         assertEquals(LocalDate.now(), response.getFechaEmision());
         assertEquals(true, response.getActiva());
 
+        // VERIFY: comprobar llamadas a Feign Clients y Repository
         verify(pacienteClient).buscarPaciente(1L);
         verify(medicoClient).buscarMedico(2L);
         verify(repository).save(any(Receta.class));
+
+        // Caso hipotético QA:
+        // Si se esperaba crear una receta válida y se obtiene error de paciente o médico,
+        // QA debe reportar que la validación remota puede estar bloqueando recetas válidas.
     }
 
     @Test
     void guardar_debeLanzarExcepcionCuandoMedicamentoEstaVacio() {
 
+        // ARRANGE: preparar una receta con medicamento vacío
         request.setMedicamento("");
 
         when(pacienteClient.buscarPaciente(1L))
@@ -98,6 +108,7 @@ class RecetaServiceImplTest {
         when(medicoClient.buscarMedico(2L))
                 .thenReturn(new Object());
 
+        // ACT + ASSERT: ejecutar guardado y verificar excepción por regla de negocio
         ReglaNegocioException exception = assertThrows(
                 ReglaNegocioException.class,
                 () -> service.guardar(request));
@@ -106,14 +117,20 @@ class RecetaServiceImplTest {
                 "La receta debe contener un medicamento",
                 exception.getMessage());
 
+        // VERIFY: comprobar que se validó paciente y médico, pero no se guardó
         verify(pacienteClient).buscarPaciente(1L);
         verify(medicoClient).buscarMedico(2L);
         verify(repository, never()).save(any(Receta.class));
+
+        // Caso hipotético QA:
+        // Si el sistema permite guardar una receta sin medicamento,
+        // QA debe reportar una falla en la regla de negocio de medicamento obligatorio.
     }
 
     @Test
     void actualizar_debeLanzarExcepcionCuandoRecetaEstaInactiva() {
 
+        // ARRANGE: preparar una receta existente marcada como inactiva
         Receta recetaInactiva = new Receta();
         recetaInactiva.setId(1L);
         recetaInactiva.setPacienteId(1L);
@@ -127,13 +144,20 @@ class RecetaServiceImplTest {
         when(repository.findById(1L))
                 .thenReturn(Optional.of(recetaInactiva));
 
+        // ACT + ASSERT: ejecutar actualización y verificar excepción por receta inactiva
         RecetaInactivaException exception = assertThrows(
                 RecetaInactivaException.class,
                 () -> service.actualizar(1L, request));
 
         assertNotNull(exception);
 
+        // VERIFY: comprobar que se buscó la receta, pero no se guardó la actualización
         verify(repository).findById(1L);
         verify(repository, never()).save(any(Receta.class));
+
+        // Caso hipotético QA:
+        // Si el sistema permite modificar una receta inactiva,
+        // QA debe reportar que no se está respetando la regla de bloqueo
+        // para recetas cerradas o desactivadas.
     }
 }

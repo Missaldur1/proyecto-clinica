@@ -49,6 +49,7 @@ class PacienteServiceImplTest {
     @Test
     void crearPaciente_debeCrearPacienteCuandoRutNoExiste() {
 
+        // ARRANGE: preparar datos válidos y simular que el RUT no existe
         when(repository.findByRut("11111111-1"))
                 .thenReturn(Optional.empty());
 
@@ -59,8 +60,10 @@ class PacienteServiceImplTest {
                     return paciente;
                 });
 
+        // ACT: ejecutar el método real del service
         PacienteResponseDTO response = service.crearPaciente(request);
 
+        // ASSERT: verificar que el paciente creado tenga los datos esperados
         assertNotNull(response);
         assertEquals(1L, response.getId());
         assertEquals("11111111-1", response.getRut());
@@ -71,20 +74,34 @@ class PacienteServiceImplTest {
         assertEquals("912345678", response.getTelefono());
         assertEquals("juan.perez@correo.cl", response.getEmail());
 
+        // VERIFY: comprobar que se consultó el RUT y se guardó el paciente
         verify(repository).findByRut("11111111-1");
         verify(repository).save(any(Paciente.class));
+
+        // Caso hipotético QA:
+        // Si se esperaba crear un paciente nuevo y el sistema responde error,
+        // QA debe reportar que la validación de RUT podría estar bloqueando
+        // registros válidos.
     }
 
     @Test
     void crearPaciente_debeLanzarExcepcionCuandoRutYaExiste() {
 
+        // ARRANGE: preparar un paciente existente con el mismo RUT
         Paciente pacienteExistente = new Paciente();
         pacienteExistente.setId(1L);
         pacienteExistente.setRut("11111111-1");
+        pacienteExistente.setNombre("Juan");
+        pacienteExistente.setApellido("Pérez");
+        pacienteExistente.setEdad(30);
+        pacienteExistente.setPrevision("FONASA");
+        pacienteExistente.setTelefono("912345678");
+        pacienteExistente.setEmail("juan.perez@correo.cl");
 
         when(repository.findByRut("11111111-1"))
                 .thenReturn(Optional.of(pacienteExistente));
 
+        // ACT + ASSERT: ejecutar el método y verificar que lance excepción
         PacienteDuplicadoException exception = assertThrows(
                 PacienteDuplicadoException.class,
                 () -> service.crearPaciente(request));
@@ -93,13 +110,19 @@ class PacienteServiceImplTest {
                 "Ya existe un paciente registrado con el RUT 11111111-1",
                 exception.getMessage());
 
+        // VERIFY: comprobar que se consultó el RUT, pero no se guardó
         verify(repository).findByRut("11111111-1");
         verify(repository, never()).save(any(Paciente.class));
+
+        // Caso hipotético QA:
+        // Si el sistema permite registrar dos pacientes con el mismo RUT,
+        // QA debe reportar una falla en la regla de negocio de duplicidad.
     }
 
     @Test
     void buscarPorId_debeRetornarPacienteCuandoExiste() {
 
+        // ARRANGE: preparar un paciente existente en el repositorio simulado
         Paciente paciente = new Paciente();
         paciente.setId(1L);
         paciente.setRut("11111111-1");
@@ -113,22 +136,36 @@ class PacienteServiceImplTest {
         when(repository.findById(1L))
                 .thenReturn(Optional.of(paciente));
 
+        // ACT: ejecutar búsqueda por ID
         PacienteResponseDTO response = service.buscarPorId(1L);
 
+        // ASSERT: verificar que la respuesta corresponda al paciente esperado
         assertNotNull(response);
         assertEquals(1L, response.getId());
         assertEquals("11111111-1", response.getRut());
         assertEquals("Juan", response.getNombre());
+        assertEquals("Pérez", response.getApellido());
+        assertEquals(30, response.getEdad());
+        assertEquals("FONASA", response.getPrevision());
+        assertEquals("912345678", response.getTelefono());
+        assertEquals("juan.perez@correo.cl", response.getEmail());
 
+        // VERIFY: comprobar que se consultó el repositorio por ID
         verify(repository).findById(1L);
+
+        // Caso hipotético QA:
+        // Si se busca un paciente existente y el sistema responde 404,
+        // QA debe reportar una falla en la búsqueda por ID.
     }
 
     @Test
     void buscarPorId_debeLanzarExcepcionCuandoPacienteNoExiste() {
 
+        // ARRANGE: simular que no existe paciente con el ID indicado
         when(repository.findById(99L))
                 .thenReturn(Optional.empty());
 
+        // ACT + ASSERT: ejecutar búsqueda y verificar excepción
         PacienteNotFoundException exception = assertThrows(
                 PacienteNotFoundException.class,
                 () -> service.buscarPorId(99L));
@@ -137,6 +174,11 @@ class PacienteServiceImplTest {
                 "Paciente no encontrado",
                 exception.getMessage());
 
+        // VERIFY: comprobar que se consultó el repositorio por ID
         verify(repository).findById(99L);
+
+        // Caso hipotético QA:
+        // Si se busca un paciente inexistente y el sistema responde 200 OK,
+        // QA debe reportar que no se está manejando correctamente el caso no encontrado.
     }
 }
