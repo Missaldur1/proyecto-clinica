@@ -36,6 +36,6 @@ public class MedicoResponseDTO {
     @Schema(description = "Número de teléfono", example = "912345678")
     private String telefono;
 
-    @Schema(description = "Disponibilidad del médico", example = "true")
+    @Schema(description = "Indica si el médico está disponible para recibir reservas", example = "true")
     private Boolean disponible;
 }

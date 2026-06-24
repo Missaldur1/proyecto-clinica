@@ -44,6 +44,6 @@ public class MedicoRequestDTO {
     private String telefono;
 
     @NotNull(message = "Debe indicar disponibilidad")
-    @Schema(description = "Disponibilidad del médico", example = "true")
+    @Schema(description = "Indica si el médico está disponible para recibir reservas", example = "true")
     private Boolean disponible;
 }
