@@ -20,129 +20,131 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class MedicoServiceImpl implements MedicoService {
 
-    private final MedicoRepository repository;
+        private final MedicoRepository repository;
 
-    @Override
-    public List<MedicoResponseDTO> listar() {
+        @Override
+        public List<MedicoResponseDTO> listar() {
 
-        log.info("Listando médicos");
+                log.info("Listando médicos");
 
-        return repository.findAll()
-                .stream()
-                .map(MedicoMapper::toDTO)
-                .toList();
-    }
+                return repository.findAll()
+                                .stream()
+                                .map(MedicoMapper::toDTO)
+                                .toList();
+        }
 
-    @Override
-    public MedicoResponseDTO buscarPorId(Long id) {
+        @Override
+        public MedicoResponseDTO buscarPorId(Long id) {
 
-        log.info("Buscando médico ID: {}", id);
+                log.info("Buscando médico ID: {}", id);
 
-        Medico medico = repository.findById(id)
-                .orElseThrow(() -> new MedicoNotFoundException(id));
+                Medico medico = repository.findById(id)
+                                .orElseThrow(() -> new MedicoNotFoundException(id));
 
-        return MedicoMapper.toDTO(medico);
-    }
+                return MedicoMapper.toDTO(medico);
+        }
 
-    @Override
-    public MedicoResponseDTO guardar(MedicoRequestDTO dto) {
+        @Override
+        public MedicoResponseDTO guardar(MedicoRequestDTO dto) {
 
-        log.info("Creando médico rut: {}", dto.getRut());
+                log.info("Creando médico rut: {}", dto.getRut());
 
-        repository.findByRut(dto.getRut())
-                .ifPresent(medico -> {
+                repository.findByRut(dto.getRut())
+                                .ifPresent(medico -> {
 
-                    log.warn(
-                            "Intento de registro con RUT duplicado: {}",
-                            dto.getRut());
+                                        log.warn(
+                                                        "Intento de registro con RUT duplicado: {}",
+                                                        dto.getRut());
 
-                    throw new MedicoDuplicadoException(
-                            "Ya existe un médico registrado con el RUT " + dto.getRut());
-                });
+                                        throw new MedicoDuplicadoException(
+                                                        "Ya existe un médico registrado con el RUT " + dto.getRut());
+                                });
 
-        repository.findByCorreo(dto.getCorreo())
-                .ifPresent(medico -> {
+                repository.findByCorreo(dto.getCorreo())
+                                .ifPresent(medico -> {
 
-                    log.warn(
-                            "Intento de registro con correo duplicado: {}",
-                            dto.getCorreo());
+                                        log.warn(
+                                                        "Intento de registro con correo duplicado: {}",
+                                                        dto.getCorreo());
 
-                    throw new MedicoDuplicadoException(
-                            "Ya existe un médico registrado con el correo " + dto.getCorreo());
-                });
+                                        throw new MedicoDuplicadoException(
+                                                        "Ya existe un médico registrado con el correo "
+                                                                        + dto.getCorreo());
+                                });
 
-        Medico medico = MedicoMapper.toEntity(dto);
+                Medico medico = MedicoMapper.toEntity(dto);
 
-        Medico guardado = repository.save(medico);
+                Medico guardado = repository.save(medico);
 
-        log.info(
-                "Médico creado correctamente ID: {}",
-                guardado.getId());
+                log.info(
+                                "Médico creado correctamente ID: {}",
+                                guardado.getId());
 
-        return MedicoMapper.toDTO(guardado);
-    }
+                return MedicoMapper.toDTO(guardado);
+        }
 
-    @Override
-    public MedicoResponseDTO actualizar(
-            Long id,
-            MedicoRequestDTO dto) {
+        @Override
+        public MedicoResponseDTO actualizar(
+                        Long id,
+                        MedicoRequestDTO dto) {
 
-        log.info("Actualizando médico ID: {}", id);
+                log.info("Actualizando médico ID: {}", id);
 
-        Medico medico = repository.findById(id)
-                .orElseThrow(() -> new MedicoNotFoundException(id));
+                Medico medico = repository.findById(id)
+                                .orElseThrow(() -> new MedicoNotFoundException(id));
 
-        repository.findByRut(dto.getRut())
-                .filter(medicoExistente -> !medicoExistente.getId().equals(id))
-                .ifPresent(medicoExistente -> {
+                repository.findByRut(dto.getRut())
+                                .filter(medicoExistente -> !medicoExistente.getId().equals(id))
+                                .ifPresent(medicoExistente -> {
 
-                    log.warn(
-                            "Intento de actualizar médico ID {} con RUT duplicado {}",
-                            id,
-                            dto.getRut());
+                                        log.warn(
+                                                        "Intento de actualizar médico ID {} con RUT duplicado {}",
+                                                        id,
+                                                        dto.getRut());
 
-                    throw new MedicoDuplicadoException(
-                            "Ya existe otro médico registrado con el RUT " + dto.getRut());
-                });
+                                        throw new MedicoDuplicadoException(
+                                                        "Ya existe otro médico registrado con el RUT " + dto.getRut());
+                                });
 
-        repository.findByCorreo(dto.getCorreo())
-                .filter(medicoExistente -> !medicoExistente.getId().equals(id))
-                .ifPresent(medicoExistente -> {
+                repository.findByCorreo(dto.getCorreo())
+                                .filter(medicoExistente -> !medicoExistente.getId().equals(id))
+                                .ifPresent(medicoExistente -> {
 
-                    log.warn(
-                            "Intento de actualizar médico ID {} con correo duplicado {}",
-                            id,
-                            dto.getCorreo());
+                                        log.warn(
+                                                        "Intento de actualizar médico ID {} con correo duplicado {}",
+                                                        id,
+                                                        dto.getCorreo());
 
-                    throw new MedicoDuplicadoException(
-                            "Ya existe otro médico registrado con el correo " + dto.getCorreo());
-                });
+                                        throw new MedicoDuplicadoException(
+                                                        "Ya existe otro médico registrado con el correo "
+                                                                        + dto.getCorreo());
+                                });
 
-        MedicoMapper.updateEntity(
-                medico,
-                dto);
+                MedicoMapper.updateEntity(
+                                medico,
+                                dto);
 
-        Medico actualizado = repository.save(medico);
+                Medico actualizado = repository.save(medico);
 
-        log.info(
-                "Médico actualizado correctamente ID: {}",
-                id);
+                log.info(
+                                "Médico actualizado correctamente ID: {}",
+                                id);
 
-        return MedicoMapper.toDTO(actualizado);
-    }
+                return MedicoMapper.toDTO(actualizado);
+        }
 
-    @Override
-    public void eliminar(Long id) {
+        @Override
+        public void eliminar(Long id) {
 
-        log.info("Intentando eliminar médico ID: {}", id);
+                log.info("Intentando eliminar médico ID: {}", id);
 
-        Medico medico = repository.findById(id)
-                .orElseThrow(() -> new MedicoNotFoundException(id));
+                Medico medico = repository.findById(id)
+                                .orElseThrow(() -> new MedicoNotFoundException(id));
 
-        repository.delete(medico);
+                repository.delete(medico);
 
-        log.info(
-                "Médico eliminado correctamente ID: {}",
-                id);
-    }
+                log.info(
+                                "Médico eliminado correctamente ID: {}",
+                                id);
+        }
 }

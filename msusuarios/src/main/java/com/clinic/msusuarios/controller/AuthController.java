@@ -14,41 +14,58 @@ import com.clinic.msusuarios.model.Usuario;
 import com.clinic.msusuarios.repository.UsuarioRepository;
 import com.clinic.msusuarios.security.jwt.JwtService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "Autenticación", description = "Operaciones relacionadas con autenticación y generación de JWT")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UsuarioRepository usuarioRepository;
+        private final UsuarioRepository usuarioRepository;
 
-    private final PasswordEncoder passwordEncoder;
+        private final PasswordEncoder passwordEncoder;
 
-    private final JwtService jwtService;
+        private final JwtService jwtService;
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(
-            @Valid @RequestBody LoginRequestDTO request) {
+        @Operation(summary = "Iniciar sesión", description = """
+                        Autentica un usuario utilizando email y contraseña.
 
-        Usuario user = usuarioRepository
-                .findByEmail(request.getEmail())
-                .orElseThrow(
-                        InvalidCredentialsException::new);
+                        Si las credenciales son válidas,
+                        retorna un JWT para consumir los
+                        endpoints protegidos.
+                        """)
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Autenticación exitosa"),
+                        @ApiResponse(responseCode = "401", description = "Credenciales inválidas"),
+                        @ApiResponse(responseCode = "400", description = "Datos inválidos")
+        })
+        @PostMapping("/login")
+        public ResponseEntity<LoginResponseDTO> login(
+                        @Valid @RequestBody LoginRequestDTO request) {
 
-        if (!passwordEncoder.matches(
-                request.getPassword(),
-                user.getPassword())) {
+                Usuario user = usuarioRepository
+                                .findByEmail(request.getEmail())
+                                .orElseThrow(
+                                                InvalidCredentialsException::new);
 
-            throw new InvalidCredentialsException();
+                if (!passwordEncoder.matches(
+                                request.getPassword(),
+                                user.getPassword())) {
+
+                        throw new InvalidCredentialsException();
+                }
+
+                String token = jwtService.generateToken(
+                                user.getEmail(),
+                                user.getRol().name());
+
+                return ResponseEntity.ok(
+                                new LoginResponseDTO(token));
         }
-
-        String token = jwtService.generateToken(
-                user.getEmail(),
-                user.getRol().name());
-
-        return ResponseEntity.ok(
-                new LoginResponseDTO(token));
-    }
 }

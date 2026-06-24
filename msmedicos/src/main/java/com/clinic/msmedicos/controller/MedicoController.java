@@ -19,6 +19,7 @@ import com.clinic.msmedicos.dto.MedicoResponseDTO;
 import com.clinic.msmedicos.service.MedicoService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,116 +29,116 @@ import lombok.RequiredArgsConstructor;
 @RestController
 @RequestMapping("/api/medicos")
 @RequiredArgsConstructor
-@Tag(name = "Medicos", description = "Controlador para la gestión de médicos")
+@Tag(name = "Médicos", description = "Operaciones relacionadas con la gestión de médicos")
 public class MedicoController {
 
-    private final MedicoService service;
+        private final MedicoService service;
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO', 'PACIENTE')")
-    @GetMapping
-    @Operation(summary = "Listar médicos", description = """
-            Obtiene todos los médicos registrados.
+        @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO', 'PACIENTE')")
+        @GetMapping
+        @Operation(summary = "Listar médicos", description = """
+                        Obtiene todos los médicos registrados.
 
-            Roles autorizados:
-            - ADMIN
-            - MEDICO
-            - PACIENTE
-            """)
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Listado obtenido"),
-            @ApiResponse(responseCode = "401", description = "No autenticado"),
-            @ApiResponse(responseCode = "403", description = "Sin permisos")
-    })
-    public ResponseEntity<List<MedicoResponseDTO>> listar() {
+                        Roles autorizados:
+                        - ADMIN
+                        - MEDICO
+                        - PACIENTE
+                        """)
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Listado obtenido"),
+                        @ApiResponse(responseCode = "401", description = "No autenticado"),
+                        @ApiResponse(responseCode = "403", description = "Sin permisos")
+        })
+        public ResponseEntity<List<MedicoResponseDTO>> listar() {
 
-        return ResponseEntity.ok(service.listar());
-    }
+                return ResponseEntity.ok(service.listar());
+        }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO', 'PACIENTE')")
-    @GetMapping("/{id}")
-    @Operation(summary = "Buscar médico por ID", description = """
-            Busca un médico utilizando su identificador.
+        @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO', 'PACIENTE')")
+        @GetMapping("/{id}")
+        @Operation(summary = "Buscar médico por ID", description = """
+                        Busca un médico utilizando su identificador.
 
-            Roles autorizados:
-            - ADMIN
-            - MEDICO
-            - PACIENTE
-            """)
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Médico encontrado"),
-            @ApiResponse(responseCode = "404", description = "Médico no encontrado"),
-            @ApiResponse(responseCode = "401", description = "No autenticado"),
-            @ApiResponse(responseCode = "403", description = "Sin permisos")
-    })
-    public ResponseEntity<MedicoResponseDTO> buscar(
-            @PathVariable Long id) {
+                        Roles autorizados:
+                        - ADMIN
+                        - MEDICO
+                        - PACIENTE
+                        """)
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Médico encontrado"),
+                        @ApiResponse(responseCode = "404", description = "Médico no encontrado"),
+                        @ApiResponse(responseCode = "401", description = "No autenticado"),
+                        @ApiResponse(responseCode = "403", description = "Sin permisos")
+        })
+        public ResponseEntity<MedicoResponseDTO> buscar(
+                        @Parameter(description = "ID del médico", example = "1") @PathVariable Long id) {
 
-        return ResponseEntity.ok(service.buscarPorId(id));
-    }
+                return ResponseEntity.ok(service.buscarPorId(id));
+        }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
-    @Operation(summary = "Crear médico", description = """
-            Registra un nuevo médico.
+        @PreAuthorize("hasRole('ADMIN')")
+        @PostMapping
+        @Operation(summary = "Crear médico", description = """
+                        Registra un nuevo médico.
 
-            Roles autorizados:
-            - ADMIN
-            """)
-    @ApiResponses({
-            @ApiResponse(responseCode = "201", description = "Creado correctamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-            @ApiResponse(responseCode = "401", description = "No autenticado"),
-            @ApiResponse(responseCode = "403", description = "Sin permisos")
-    })
-    public ResponseEntity<MedicoResponseDTO> guardar(
-            @Valid @RequestBody MedicoRequestDTO dto) {
+                        Roles autorizados:
+                        - ADMIN
+                        """)
+        @ApiResponses({
+                        @ApiResponse(responseCode = "201", description = "Creado correctamente"),
+                        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+                        @ApiResponse(responseCode = "401", description = "No autenticado"),
+                        @ApiResponse(responseCode = "403", description = "Sin permisos")
+        })
+        public ResponseEntity<MedicoResponseDTO> guardar(
+                        @Valid @RequestBody MedicoRequestDTO dto) {
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(service.guardar(dto));
-    }
+                return ResponseEntity
+                                .status(HttpStatus.CREATED)
+                                .body(service.guardar(dto));
+        }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{id}")
-     @Operation(summary = "Actualizar médico", description = """
-            Actualiza los datos de un médico.
+        @PreAuthorize("hasRole('ADMIN')")
+        @PutMapping("/{id}")
+        @Operation(summary = "Actualizar médico", description = """
+                        Actualiza los datos de un médico.
 
-            Roles autorizados:
-            - ADMIN
-            """)
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Actualizado correctamente"),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos"),
-            @ApiResponse(responseCode = "404", description = "Médico no encontrado"),
-            @ApiResponse(responseCode = "401", description = "No autenticado"),
-            @ApiResponse(responseCode = "403", description = "Sin permisos")
-    })
-    public ResponseEntity<MedicoResponseDTO> actualizar(
-            @PathVariable Long id,
-            @Valid @RequestBody MedicoRequestDTO dto) {
+                        Roles autorizados:
+                        - ADMIN
+                        """)
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Actualizado correctamente"),
+                        @ApiResponse(responseCode = "400", description = "Datos inválidos"),
+                        @ApiResponse(responseCode = "404", description = "Médico no encontrado"),
+                        @ApiResponse(responseCode = "401", description = "No autenticado"),
+                        @ApiResponse(responseCode = "403", description = "Sin permisos")
+        })
+        public ResponseEntity<MedicoResponseDTO> actualizar(
+                        @Parameter(description = "ID del médico", example = "1") @PathVariable Long id,
+                        @Valid @RequestBody MedicoRequestDTO dto) {
 
-        return ResponseEntity.ok(service.actualizar(id, dto));
-    }
+                return ResponseEntity.ok(service.actualizar(id, dto));
+        }
 
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{id}")
-     @Operation(summary = "Eliminar médico", description = """
-            Elimina un médico existente.
+        @PreAuthorize("hasRole('ADMIN')")
+        @DeleteMapping("/{id}")
+        @Operation(summary = "Eliminar médico", description = """
+                        Elimina un médico existente.
 
-            Roles autorizados:
-            - ADMIN
-            """)
-    @ApiResponses({
-            @ApiResponse(responseCode = "204", description = "Eliminado correctamente"),
-            @ApiResponse(responseCode = "404", description = "Médico no encontrado"),
-            @ApiResponse(responseCode = "401", description = "No autenticado"),
-            @ApiResponse(responseCode = "403", description = "Sin permisos")
-    })
-    public ResponseEntity<Void> eliminar(
-            @PathVariable Long id) {
+                        Roles autorizados:
+                        - ADMIN
+                        """)
+        @ApiResponses({
+                        @ApiResponse(responseCode = "204", description = "Eliminado correctamente"),
+                        @ApiResponse(responseCode = "404", description = "Médico no encontrado"),
+                        @ApiResponse(responseCode = "401", description = "No autenticado"),
+                        @ApiResponse(responseCode = "403", description = "Sin permisos")
+        })
+        public ResponseEntity<Void> eliminar(
+                        @Parameter(description = "ID del médico", example = "1") @PathVariable Long id) {
 
-        service.eliminar(id);
+                service.eliminar(id);
 
-        return ResponseEntity.noContent().build();
-    }
+                return ResponseEntity.noContent().build();
+        }
 }
