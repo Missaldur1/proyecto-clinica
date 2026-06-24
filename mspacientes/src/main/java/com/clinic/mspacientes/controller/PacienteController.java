@@ -121,7 +121,7 @@ public class PacienteController {
                         @ApiResponse(responseCode = "403", description = "Sin permisos")
         })
         public ResponseEntity<PacienteResponseDTO> buscarPorRut(
-                        @PathVariable String rut) {
+                        @Parameter(description = "RUT del paciente", example = "12345678-9") @PathVariable String rut) {
 
                 log.info("GET /api/pacientes/rut/{}", rut);
 
@@ -144,7 +144,7 @@ public class PacienteController {
                         @ApiResponse(responseCode = "403", description = "Sin permisos")
         })
         public ResponseEntity<PacienteResponseDTO> actualizarPaciente(
-                        @PathVariable Long id,
+                        @Parameter(description = "ID del paciente", example = "1") @PathVariable Long id,
                         @Valid @RequestBody PacienteRequestDTO dto) {
 
                 log.info("PUT /api/pacientes/{}", id);
@@ -167,7 +167,7 @@ public class PacienteController {
                         @ApiResponse(responseCode = "403", description = "Sin permisos")
         })
         public ResponseEntity<Void> eliminarPaciente(
-                        @PathVariable Long id) {
+                        @Parameter(description = "ID del paciente", example = "1") @PathVariable Long id) {
 
                 log.info("DELETE /api/pacientes/{}", id);
 
