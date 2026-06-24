@@ -1,6 +1,6 @@
 spring:
   application:
-    name: ms-usuarios
+    name: ms-recetas
   profiles:
     default: dev
 
@@ -16,4 +16,4 @@ springdoc:
     enabled: true
     path: /swagger-ui.html
 
-  packages-to-scan: com.clinic.msusuarios.controller
+  packages-to-scan: com.clinic.msrecetas.controller
