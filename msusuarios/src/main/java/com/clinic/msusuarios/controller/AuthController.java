@@ -22,33 +22,33 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UsuarioRepository usuarioRepository;
+        private final UsuarioRepository usuarioRepository;
 
-    private final PasswordEncoder passwordEncoder;
+        private final PasswordEncoder passwordEncoder;
 
-    private final JwtService jwtService;
+        private final JwtService jwtService;
 
-    @PostMapping("/login")
-    public ResponseEntity<LoginResponseDTO> login(
-            @Valid @RequestBody LoginRequestDTO request) {
+        @PostMapping("/login")
+        public ResponseEntity<LoginResponseDTO> login(
+                        @Valid @RequestBody LoginRequestDTO request) {
 
-        Usuario user = usuarioRepository
-                .findByEmail(request.getEmail())
-                .orElseThrow(
-                        InvalidCredentialsException::new);
+                Usuario user = usuarioRepository
+                                .findByEmail(request.getEmail())
+                                .orElseThrow(
+                                                InvalidCredentialsException::new);
 
-        if (!passwordEncoder.matches(
-                request.getPassword(),
-                user.getPassword())) {
+                if (!passwordEncoder.matches(
+                                request.getPassword(),
+                                user.getPassword())) {
 
-            throw new InvalidCredentialsException();
+                        throw new InvalidCredentialsException();
+                }
+
+                String token = jwtService.generateToken(
+                                user.getEmail(),
+                                user.getRol().name());
+
+                return ResponseEntity.ok(
+                                new LoginResponseDTO(token));
         }
-
-        String token = jwtService.generateToken(
-                user.getEmail(),
-                user.getRol().name());
-
-        return ResponseEntity.ok(
-                new LoginResponseDTO(token));
-    }
 }
