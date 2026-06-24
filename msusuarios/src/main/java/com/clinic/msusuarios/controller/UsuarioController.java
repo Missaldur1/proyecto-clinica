@@ -19,6 +19,7 @@ import com.clinic.msusuarios.dto.UsuarioResponseDTO;
 import com.clinic.msusuarios.service.UsuarioService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -89,7 +90,8 @@ public class UsuarioController {
                         @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
         })
         public ResponseEntity<UsuarioResponseDTO> buscarPorId(
-                        @PathVariable Long id) {
+
+                        @Parameter(description = "ID único del usuario", example = "1") @PathVariable Long id) {
 
                 log.info("GET /api/usuarios/{}", id);
 
@@ -112,7 +114,7 @@ public class UsuarioController {
                         @ApiResponse(responseCode = "403", description = "Sin permisos")
         })
         public ResponseEntity<UsuarioResponseDTO> actualizarUsuario(
-                        @PathVariable Long id,
+                        @Parameter(description = "ID único del usuario", example = "1") @PathVariable Long id,
                         @Valid @RequestBody UsuarioRequestDTO dto) {
 
                 log.info("PUT /api/usuarios/{}", id);
@@ -136,7 +138,7 @@ public class UsuarioController {
                         @ApiResponse(responseCode = "403", description = "Sin permisos")
         })
         public ResponseEntity<Void> eliminarUsuario(
-                        @PathVariable Long id) {
+                        @Parameter(description = "ID único del usuario", example = "1") @PathVariable Long id) {
 
                 log.info("DELETE /api/usuarios/{}", id);
 
