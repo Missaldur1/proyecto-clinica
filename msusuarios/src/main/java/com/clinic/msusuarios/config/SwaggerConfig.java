@@ -11,36 +11,37 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
-    @Bean
-    public OpenAPI customOpenAPI() {
+        @Bean
+        public OpenAPI customOpenAPI() {
 
-        return new OpenAPI()
+                return new OpenAPI()
 
-                .info(
-                        new Info()
+                                .info(
+                                                new Info()
 
-                                .title("Microservicio Usuarios")
+                                                                .title("Microservicio Usuarios")
 
-                                .description("""
-                                        Microservicio encargado de:
+                                                                .description("""
+                                                                                Microservicio encargado de:
 
-                                        - Gestión de usuarios
-                                        - Registro de usuarios
-                                        - Autenticación
-                                        - Administración de perfiles
-                                        - Seguridad del sistema
-                                        """)
+                                                                                - Gestión de usuarios
+                                                                                - Registro de usuarios
+                                                                                - Autenticación
+                                                                                - Administración de perfiles
+                                                                                - Seguridad del sistema
+                                                                                """)
 
-                                .version("1.0.0")
+                                                                .version("1.0.0")
 
-                                .contact(
-                                        new Contact()
-                                                .name("Proyecto Clínica")
-                                                .email("admin@clinica.local"))
+                                                                .contact(
+                                                                                new Contact()
+                                                                                                .name("Proyecto Clínica")
+                                                                                                .email("admin@clinica.local"))
 
-                                .license(
-                                        new License()
-                                                .name("Uso Académico")));
-    }
+                                                                .license(
+                                                                                new License()
+                                                                                                .name("Uso Académico")));
+
+        }
 
 }

@@ -14,9 +14,14 @@ import com.clinic.msusuarios.model.Usuario;
 import com.clinic.msusuarios.repository.UsuarioRepository;
 import com.clinic.msusuarios.security.jwt.JwtService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+@Tag(name = "Autenticación", description = "Operaciones relacionadas con autenticación y generación de JWT")
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -28,6 +33,18 @@ public class AuthController {
 
         private final JwtService jwtService;
 
+        @Operation(summary = "Iniciar sesión", description = """
+                        Autentica un usuario utilizando email y contraseña.
+
+                        Si las credenciales son válidas,
+                        retorna un JWT para consumir los
+                        endpoints protegidos.
+                        """)
+        @ApiResponses({
+                        @ApiResponse(responseCode = "200", description = "Autenticación exitosa"),
+                        @ApiResponse(responseCode = "401", description = "Credenciales inválidas"),
+                        @ApiResponse(responseCode = "400", description = "Datos inválidos")
+        })
         @PostMapping("/login")
         public ResponseEntity<LoginResponseDTO> login(
                         @Valid @RequestBody LoginRequestDTO request) {
