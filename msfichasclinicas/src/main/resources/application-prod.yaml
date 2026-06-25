@@ -1,19 +1,28 @@
+server:
+  port: ${SERVER_PORT:8087}
+
 spring:
-  application:
-    name: ms-recetas
-  profiles:
-    default: dev
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
-logging:
-  level:
-    root: INFO
+  jpa:
+    hibernate:
+      ddl-auto: validate
 
-springdoc:
-  api-docs:
-    enabled: true
+    show-sql: false
 
-  swagger-ui:
-    enabled: true
-    path: /swagger-ui.html
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: false
 
-  packages-to-scan: com.clinic.msrecetas.controller
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL:http://localhost:8761/eureka/}
+
+  instance:
+    prefer-ip-address: true
