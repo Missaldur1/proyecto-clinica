@@ -18,6 +18,9 @@ import com.clinic.msexamenes.dto.ExamenRequestDTO;
 import com.clinic.msexamenes.dto.ExamenResponseDTO;
 import com.clinic.msexamenes.service.ExamenService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -27,86 +30,107 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/examenes")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Exámenes", description = "Operaciones relacionadas con exámenes médicos")
+@Tag(name = "Exámenes", description = "Operaciones relacionadas con la gestión de exámenes médicos")
 public class ExamenController {
 
-        private final ExamenService service;
+    private final ExamenService service;
 
-        @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO')")
-        @PostMapping
-        @Tag(name = "Crear Examen", description = "Crea un nuevo examen médico")
-        public ResponseEntity<ExamenResponseDTO> crear(
-                        @Valid @RequestBody ExamenRequestDTO dto) {
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO')")
+    @PostMapping
+    @Operation(summary = "Crear examen", description = "Registra un nuevo examen médico asociado a un paciente.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Examen creado correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos en la solicitud"),
+            @ApiResponse(responseCode = "401", description = "Token no enviado o inválido"),
+            @ApiResponse(responseCode = "403", description = "El usuario no tiene permisos para crear exámenes"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<ExamenResponseDTO> crear(
+            @Valid @RequestBody ExamenRequestDTO dto) {
 
-                log.info(
-                                "POST /api/examenes");
+        log.info("POST /api/examenes");
 
-                return ResponseEntity
-                                .status(HttpStatus.CREATED)
-                                .body(service.crear(dto));
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.crear(dto));
+    }
 
-        }
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO')")
+    @GetMapping
+    @Operation(summary = "Listar exámenes", description = "Obtiene el listado completo de exámenes médicos registrados en el sistema.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Listado de exámenes obtenido correctamente"),
+            @ApiResponse(responseCode = "401", description = "Token no enviado o inválido"),
+            @ApiResponse(responseCode = "403", description = "El usuario no tiene permisos para listar exámenes"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<List<ExamenResponseDTO>> listar() {
 
-        @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO')")
-        @GetMapping
-        @Tag(name = "Listar Exámenes", description = "Lista todos los exámenes médicos")
-        public ResponseEntity<List<ExamenResponseDTO>> listar() {
+        log.info("GET /api/examenes");
 
-                log.info(
-                                "GET /api/examenes");
+        return ResponseEntity.ok(
+                service.listar());
+    }
 
-                return ResponseEntity.ok(
-                                service.listar());
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO','PACIENTE')")
+    @GetMapping("/{id}")
+    @Operation(summary = "Buscar examen por ID", description = "Busca un examen médico específico mediante su identificador.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Examen encontrado correctamente"),
+            @ApiResponse(responseCode = "401", description = "Token no enviado o inválido"),
+            @ApiResponse(responseCode = "403", description = "El usuario no tiene permisos para consultar este examen"),
+            @ApiResponse(responseCode = "404", description = "No existe un examen con el ID indicado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<ExamenResponseDTO> buscar(
+            @PathVariable("id") Long id) {
 
-        }
+        log.info("GET examen {}", id);
 
-        @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO','PACIENTE')")
-        @GetMapping("/{id}")
-        @Tag(name = "Buscar Examen por ID", description = "Busca un examen médico por su ID")
-        public ResponseEntity<ExamenResponseDTO> buscar(
-                        @PathVariable("id") Long id) {
+        return ResponseEntity.ok(
+                service.buscarPorId(id));
+    }
 
-                log.info(
-                                "GET examen {}", id);
+    @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO')")
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar examen", description = "Actualiza la información de un examen médico existente.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Examen actualizado correctamente"),
+            @ApiResponse(responseCode = "400", description = "Datos inválidos en la solicitud"),
+            @ApiResponse(responseCode = "401", description = "Token no enviado o inválido"),
+            @ApiResponse(responseCode = "403", description = "El usuario no tiene permisos para actualizar exámenes"),
+            @ApiResponse(responseCode = "404", description = "No existe un examen con el ID indicado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<ExamenResponseDTO> actualizar(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody ExamenRequestDTO dto) {
 
-                return ResponseEntity.ok(
-                                service.buscarPorId(id));
+        log.info("PUT examen {}", id);
 
-        }
+        return ResponseEntity.ok(
+                service.actualizar(id, dto));
+    }
 
-        @PreAuthorize("hasAnyRole('ADMIN', 'MEDICO')")
-        @PutMapping("/{id}")
-        @Tag(name = "Actualizar Examen por ID", description = "Actualiza un examen médico existente por su ID")
-        public ResponseEntity<ExamenResponseDTO> actualizar(
+    @PreAuthorize("hasRole('ADMIN')")
+    @DeleteMapping("/{id}")
+    @Operation(summary = "Eliminar examen", description = "Elimina un examen médico existente mediante su ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Examen eliminado correctamente"),
+            @ApiResponse(responseCode = "401", description = "Token no enviado o inválido"),
+            @ApiResponse(responseCode = "403", description = "El usuario no tiene permisos para eliminar exámenes"),
+            @ApiResponse(responseCode = "404", description = "No existe un examen con el ID indicado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
+    public ResponseEntity<Void> eliminar(
+            @PathVariable("id") Long id) {
 
-                        @PathVariable("id") Long id,
+        log.info("DELETE examen {}", id);
 
-                        @Valid @RequestBody ExamenRequestDTO dto) {
+        service.eliminar(id);
 
-                log.info(
-                                "PUT examen {}", id);
-
-                return ResponseEntity.ok(
-                                service.actualizar(
-                                                id, dto));
-
-        }
-
-        @PreAuthorize("hasRole('ADMIN')")
-        @DeleteMapping("/{id}")
-        @Tag(name = "Eliminar Examen por ID", description = "Elimina un examen médico existente por su ID")
-        public ResponseEntity<Void> eliminar(
-                        @PathVariable("id") Long id) {
-
-                log.info(
-                                "DELETE examen {}", id);
-
-                service.eliminar(id);
-
-                return ResponseEntity
-                                .noContent()
-                                .build();
-
-        }
-
+        return ResponseEntity
+                .noContent()
+                .build();
+    }
 }
