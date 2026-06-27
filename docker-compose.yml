@@ -1,0 +1,180 @@
+version: '3.9'
+
+services:
+  mysql-db:
+    image: mysql:8.0
+    container_name: mysql-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./docs/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD","mysqladmin","ping","-h","localhost","-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  eureka-server:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: eureka-server
+    volumes:
+      - ./apps/eureka-server.jar:/app/app.jar
+    command: ["java","-jar","/app/app.jar"]
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8761:8761"
+    depends_on:
+      mysql-db:
+        condition: service_healthy
+
+  api-gateway:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: api-gateway
+    volumes:
+      - ./apps/api-gateway.jar:/app/app.jar
+    command: ["java","-jar","/app/app.jar"]
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8094:8094"
+    depends_on:
+      - eureka-server
+
+
+  msusuarios:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: msusuarios
+    volumes:
+      - ./apps/msusuarios.jar:/app/app.jar
+    command: ["java","-jar","/app/app.jar"]
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8081:8081"
+    depends_on:
+      - eureka-server
+
+  mspacientes:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: mspacientes
+    volumes:
+      - ./apps/mspacientes.jar:/app/app.jar
+    command: ["java","-jar","/app/app.jar"]
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8082:8082"
+    depends_on:
+      - eureka-server
+
+  msmedicos:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: msmedicos
+    volumes:
+      - ./apps/msmedicos.jar:/app/app.jar
+    command: ["java","-jar","/app/app.jar"]
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8083:8083"
+    depends_on:
+      - eureka-server
+
+  msfarmacia:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: msfarmacia
+    volumes:
+      - ./apps/msfarmacia.jar:/app/app.jar
+    command: ["java","-jar","/app/app.jar"]
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8084:8084"
+    depends_on:
+      - eureka-server
+
+  msreservas:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: msreservas
+    volumes:
+      - ./apps/msreservas.jar:/app/app.jar
+    command: ["java","-jar","/app/app.jar"]
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8085:8085"
+    depends_on:
+      - eureka-server
+
+  msexamenes:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: msexamenes
+    volumes:
+      - ./apps/msexamenes.jar:/app/app.jar
+    command: ["java","-jar","/app/app.jar"]
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8086:8086"
+    depends_on:
+      - eureka-server
+
+  msfichasclinicas:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: msfichasclinicas
+    volumes:
+      - ./apps/msfichasclinicas.jar:/app/app.jar
+    command: ["java","-jar","/app/app.jar"]
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8087:8087"
+    depends_on:
+      - eureka-server
+
+  ms-recetas:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: ms-recetas
+    volumes:
+      - ./apps/ms-recetas.jar:/app/app.jar
+    command: ["java","-jar","/app/app.jar"]
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8089:8089"
+    depends_on:
+      - eureka-server
+
+  ms-notificaciones:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: ms-notificaciones
+    volumes:
+      - ./apps/ms-notificaciones.jar:/app/app.jar
+    command: ["java","-jar","/app/app.jar"]
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8091:8091"
+    depends_on:
+      - eureka-server
+
+  ms-pagos:
+    image: eclipse-temurin:17-jre-alpine
+    container_name: ms-pagos
+    volumes:
+      - ./apps/ms-pagos.jar:/app/app.jar
+    command: ["java","-jar","/app/app.jar"]
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8092:8092"
+    depends_on:
+      - eureka-server
+
+volumes:
+  mysql_data:
