@@ -49,3 +49,8 @@ mysql-data/
 # =========================
 .DS_Store
 Thumbs.db
+
+# Maven Wrapper en módulos hijos
+*/mvnw
+*/mvnw.cmd
+*/.mvn/
