@@ -1,180 +1,291 @@
-version: '3.9'
-
 services:
   mysql-db:
     image: mysql:8.0
     container_name: mysql-db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
     ports:
       - "3307:3306"
     volumes:
       - mysql_data:/var/lib/mysql
       - ./docs/init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD","mysqladmin","ping","-h","localhost","-proot"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 10
 
   eureka-server:
-    image: eclipse-temurin:17-jre-alpine
+    image: eclipse-temurin:21-jre-alpine
     container_name: eureka-server
+    restart: unless-stopped
     volumes:
       - ./apps/eureka-server.jar:/app/app.jar
-    command: ["java","-jar","/app/app.jar"]
+    command: ["java", "-jar", "/app/app.jar", "--eureka.client.register-with-eureka=false", "--eureka.client.fetch-registry=false"]
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8761
+      EUREKA_CLIENT_REGISTER_WITH_EUREKA: "false"
+      EUREKA_CLIENT_FETCH_REGISTRY: "false"
     ports:
       - "8761:8761"
-    depends_on:
-      mysql-db:
-        condition: service_healthy
 
   api-gateway:
-    image: eclipse-temurin:17-jre-alpine
+    image: eclipse-temurin:21-jre-alpine
     container_name: api-gateway
+    restart: unless-stopped
     volumes:
       - ./apps/api-gateway.jar:/app/app.jar
-    command: ["java","-jar","/app/app.jar"]
+    command: ["java", "-jar", "/app/app.jar", "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/"]
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8094
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
       - "8094:8094"
     depends_on:
       - eureka-server
 
-
   msusuarios:
-    image: eclipse-temurin:17-jre-alpine
+    image: eclipse-temurin:21-jre-alpine
     container_name: msusuarios
+    restart: unless-stopped
     volumes:
       - ./apps/msusuarios.jar:/app/app.jar
-    command: ["java","-jar","/app/app.jar"]
+    command: ["java", "-jar", "/app/app.jar", "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/"]
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8081
+      SPRING_DATASOURCE_URL: "jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_USUARIOS}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
       - "8081:8081"
     depends_on:
-      - eureka-server
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
 
   mspacientes:
-    image: eclipse-temurin:17-jre-alpine
+    image: eclipse-temurin:21-jre-alpine
     container_name: mspacientes
+    restart: unless-stopped
     volumes:
       - ./apps/mspacientes.jar:/app/app.jar
-    command: ["java","-jar","/app/app.jar"]
+    command: ["java", "-jar", "/app/app.jar", "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/"]
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8082
+      SPRING_DATASOURCE_URL: "jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_PACIENTES}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
       - "8082:8082"
     depends_on:
-      - eureka-server
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
 
   msmedicos:
-    image: eclipse-temurin:17-jre-alpine
+    image: eclipse-temurin:21-jre-alpine
     container_name: msmedicos
+    restart: unless-stopped
     volumes:
       - ./apps/msmedicos.jar:/app/app.jar
-    command: ["java","-jar","/app/app.jar"]
+    command: ["java", "-jar", "/app/app.jar", "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/"]
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8083
+      SPRING_DATASOURCE_URL: "jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_MEDICOS}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
       - "8083:8083"
     depends_on:
-      - eureka-server
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
 
   msfarmacia:
-    image: eclipse-temurin:17-jre-alpine
+    image: eclipse-temurin:21-jre-alpine
     container_name: msfarmacia
+    restart: unless-stopped
     volumes:
       - ./apps/msfarmacia.jar:/app/app.jar
-    command: ["java","-jar","/app/app.jar"]
+    command: ["java", "-jar", "/app/app.jar", "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/"]
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8084
+      SPRING_DATASOURCE_URL: "jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_FARMACIA}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
       - "8084:8084"
     depends_on:
-      - eureka-server
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
 
   msreservas:
-    image: eclipse-temurin:17-jre-alpine
+    image: eclipse-temurin:21-jre-alpine
     container_name: msreservas
+    restart: unless-stopped
     volumes:
       - ./apps/msreservas.jar:/app/app.jar
-    command: ["java","-jar","/app/app.jar"]
+    command: ["java", "-jar", "/app/app.jar", "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/"]
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8085
+      SPRING_DATASOURCE_URL: "jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_RESERVAS}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
       - "8085:8085"
     depends_on:
-      - eureka-server
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
 
   msexamenes:
-    image: eclipse-temurin:17-jre-alpine
+    image: eclipse-temurin:21-jre-alpine
     container_name: msexamenes
+    restart: unless-stopped
     volumes:
       - ./apps/msexamenes.jar:/app/app.jar
-    command: ["java","-jar","/app/app.jar"]
+    command: ["java", "-jar", "/app/app.jar", "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/"]
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8086
+      SPRING_DATASOURCE_URL: "jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_EXAMENES}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
       - "8086:8086"
     depends_on:
-      - eureka-server
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
 
   msfichasclinicas:
-    image: eclipse-temurin:17-jre-alpine
+    image: eclipse-temurin:21-jre-alpine
     container_name: msfichasclinicas
+    restart: unless-stopped
     volumes:
       - ./apps/msfichasclinicas.jar:/app/app.jar
-    command: ["java","-jar","/app/app.jar"]
+    command: ["java", "-jar", "/app/app.jar", "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/"]
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8087
+      SPRING_DATASOURCE_URL: "jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_FICHAS}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
       - "8087:8087"
     depends_on:
-      - eureka-server
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
 
   ms-recetas:
-    image: eclipse-temurin:17-jre-alpine
+    image: eclipse-temurin:21-jre-alpine
     container_name: ms-recetas
+    restart: unless-stopped
     volumes:
       - ./apps/ms-recetas.jar:/app/app.jar
-    command: ["java","-jar","/app/app.jar"]
+    command: ["java", "-jar", "/app/app.jar", "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/"]
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8089
+      SPRING_DATASOURCE_URL: "jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_RECETAS}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
       - "8089:8089"
     depends_on:
-      - eureka-server
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
 
   ms-notificaciones:
-    image: eclipse-temurin:17-jre-alpine
+    image: eclipse-temurin:21-jre-alpine
     container_name: ms-notificaciones
+    restart: unless-stopped
     volumes:
       - ./apps/ms-notificaciones.jar:/app/app.jar
-    command: ["java","-jar","/app/app.jar"]
+    command: ["java", "-jar", "/app/app.jar", "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/"]
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8091
+      SPRING_DATASOURCE_URL: "jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_NOTIFICACIONES}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
       - "8091:8091"
     depends_on:
-      - eureka-server
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
 
   ms-pagos:
-    image: eclipse-temurin:17-jre-alpine
+    image: eclipse-temurin:21-jre-alpine
     container_name: ms-pagos
+    restart: unless-stopped
     volumes:
       - ./apps/ms-pagos.jar:/app/app.jar
-    command: ["java","-jar","/app/app.jar"]
+    command: ["java", "-jar", "/app/app.jar", "--eureka.client.service-url.defaultZone=http://eureka-server:8761/eureka/"]
     environment:
       SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: 8092
+      SPRING_DATASOURCE_URL: "jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${DB_PAGOS}?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
     ports:
       - "8092:8092"
     depends_on:
-      - eureka-server
+      mysql-db:
+        condition: service_healthy
+      eureka-server:
+        condition: service_started
 
 volumes:
   mysql_data:
