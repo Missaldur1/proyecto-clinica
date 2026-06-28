@@ -1,8 +1,8 @@
-## Descargas y video del proyecto
+## 📥 Recursos
 
-[Ver video del proyecto]()
-[Versión Nativa]()
-[Versión Docker]()
+- 🎥 Ver demostración en video
+- 💻 Descargar versión para ejecución local
+- 🐳 Descargar versión con Docker
 
 
 # 🏥 Sistema de Clínica - Arquitectura de Microservicios con Spring Boot
@@ -85,6 +85,20 @@ Cada microservicio se registra automáticamente en Eureka y es consumido mediant
 
 ---
 
+# Características principales
+
+- Arquitectura basada en microservicios.
+- Registro y descubrimiento de servicios con Eureka.
+- API Gateway como punto único de entrada.
+- Autenticación y autorización mediante JWT.
+- Comunicación entre microservicios con OpenFeign.
+- Documentación automática con Swagger/OpenAPI.
+- Contenedorización mediante Docker y Docker Compose.
+- Persistencia independiente para cada microservicio.
+- Arquitectura Maven Multi-Módulo.
+
+---
+
 # 📁 Estructura del Proyecto
 
 ```txt
@@ -115,15 +129,23 @@ proyecto-clinica/
 
 ```txt
 Cliente
-   │
-   ▼
+      │
+      ▼
 API Gateway
-   │
-   ▼
-Microservicios
-        │
-        ▼
-     Eureka
+      │
+      ├────────► msUsuarios
+      ├────────► msPacientes
+      ├────────► msMedicos
+      ├────────► msFarmacia
+      ├────────► msReservas
+      ├────────► msExámenes
+      ├────────► msFichasClínicas
+      ├────────► msRecetas
+      ├────────► msPagos
+      ├────────► msNotificaciones
+      │
+      ▼
+Todos los microservicios registrados en Eureka Server
 ```
 
 ---
@@ -142,7 +164,7 @@ Características:
 
 ---
 
-# Documentación Swagger
+# Documentación Swagger / OpenAPI
 
 Cada microservicio dispone de documentación OpenAPI.
 
@@ -157,29 +179,32 @@ Cada microservicio dispone de documentación OpenAPI.
 | Fichas Clínicas |	http://localhost:8087/swagger-ui.html |
 | Recetas	        | http://localhost:8089/swagger-ui.html |
 | Pagos	          | http://localhost:8092/swagger-ui.html |
-| Notificaciones	| ------------------------------------- |
+| Notificaciones	|              No aplica                |
 
 ---
 
-# Ejecución con Docker
+# Ejecución con Docker (Principal)
 
 ## Requisitos
 
-* Docker Desktop
+* Windows 10/11
+* Docker Desktop 4.x o superior
 * Docker Compose
 
 ## Contenido del paquete
 
-apps/
-docs/
-backups/
-docker-compose.yml
-.env
-arrancar-docker.bat
-detener-docker.bat
-ver-logs.bat
-backup-db.bat
-restaurar-db.bat
+El paquete Docker contiene:
+
+- apps/
+- docs/
+- backups/
+- docker-compose.yml
+- .env
+- arrancar-docker.bat
+- detener-docker.bat
+- ver-logs.bat
+- backup-db.bat
+- restaurar-db.bat
 
 ## Pasos
 
@@ -229,7 +254,28 @@ restaurar-db.bat
 
 ---
 
+
+# 🚀 Cómo Ejecutar el Proyecto Local (Opcional)
+
+## Requisitos
+
+* Java 21
+* Maven 3.9+
+* MySQL 8
+* Git
+
+Verificar instalación:
+
+```bash
+java -version
+```
+
+```bash
+mvn -version
+```
+
 ---
+
 
 # 🗄️ Configuración de MySQL
 
@@ -263,26 +309,6 @@ MySQL/XAMPP debe estar iniciado antes de levantar los microservicios.
 
 ---
 
-# 🚀 Cómo Ejecutar el Proyecto Local
-
-## Requisitos
-
-* Java 21
-* Maven 3.9+
-* MySQL 8
-* Git
-
-Verificar instalación:
-
-```bash
-java -version
-mvn -version
-```
-
-```bash
-mvn -version
-```
-
 ---
 
 ## 1️⃣ Clonar el repositorio
@@ -315,7 +341,7 @@ proyecto-clinica-main
 
 ---
 
-# 🖥️ Cómo Abrir los Microservicios en VS Code
+# 🖥️ Cómo ejecutar los microservicios desde VS Code
 
 Con la implementación de Maven Multi-Módulo, podemos levantar todos los microservicios con la extensión de Spring Boot Dashboard en VS Code
 
@@ -937,7 +963,9 @@ GET http://localhost:8090/api/notificaciones
 
 ---
 
-# ✅ Verificación Final del Sistema
+# 📌 Notas Finales
+
+## ✅ Verificación Final del Sistema
 
 Si todo funciona correctamente:
 
@@ -950,39 +978,7 @@ Si todo funciona correctamente:
 
 ---
 
-```http
-GET http://localhost:8090/api/notificaciones
-```
-
----
-
-# 🔄 Comunicación Entre Microservicios
-
-El proyecto utiliza:
-
-```txt
-OpenFeign
-```
-
-para comunicación interna.
-
-Ejemplo:
-
-```txt
-msFichasClinicas
-```
-
-consulta:
-
-* msPacientes
-* msMedicos
-* msExamenes
-
-antes de registrar una ficha clínica.
-
----
-
-# 📡 API Gateway
+## 📡 API Gateway
 
 Todas las peticiones pasan por:
 
@@ -994,28 +990,7 @@ El Gateway enruta automáticamente hacia cada microservicio.
 
 ---
 
-# 🧠 Lo Aprendido en el Proyecto
-
-Durante el desarrollo se implementó:
-
-* Arquitectura de microservicios
-* Registro y descubrimiento con Eureka
-* API Gateway
-* JWT Authentication
-* Spring Security
-* FeignClient
-* DTOs
-* Validaciones
-* Manejo global de excepciones
-* MySQL
-* JPA/Hibernate
-* CRUD completos
-* Comunicación entre servicios
-* Arquitectura escalable
-
----
-
-# ✅ Estado del Proyecto
+## ✅ Estado del Proyecto
 
 | Funcionalidad      | Estado  |
 | ------------------ | ------- |
@@ -1034,7 +1009,7 @@ Durante el desarrollo se implementó:
 
 ---
 
-# Próximas Mejoras
+## Próximas Mejoras
 
 * Despliegue en Railway
 * CI/CD con GitHub Actions
@@ -1046,30 +1021,17 @@ Durante el desarrollo se implementó:
 
 ---
 
-# 📌 Notas Finales
-
-Características Implementadas:
-
-* Arquitectura de Microservicios
-* Maven Multi-Módulo
-* Descubrimiento de servicios con Eureka
-* API Gateway
-* Seguridad JWT
-* Spring Security
-* Persistencia con Spring Data JPA
-* Bases de datos independientes
-* Swagger/OpenAPI
-* Docker
-* Docker Compose
-* Comunicación entre microservicios
-* Documentación REST
-
----
-
-# Equipo de Desarrollo
+## Equipo de Desarrollo
 
 Este proyecto fue desarrollado con fines académicos y educativos, aplicando buenas prácticas de arquitectura backend moderna mediante microservicios.
 
-Cada integrante participó en el diseño, implementación e integración de distintos microservicios, aplicando principios de arquitectura distribuida, desarrollo colaborativo y buenas prácticas con Spring Boot y Spring Cloud.
+Cada integrante participó en el diseño, implementación e integración de distintos microservicios, aplicando buenas prácticas de desarrollo backend, arquitectura de microservicios y desarrollo colaborativo con Spring Boot y Spring Cloud.
 
 Autores del proyecto: Marco Carrasco, Jeannette Figueroa y Misael Rojas.
+
+---
+
+## 📄 Licencia
+
+Este proyecto fue desarrollado con fines académicos y educativos.
+Puede utilizarse como referencia para aprendizaje y desarrollo personal.
