@@ -10,7 +10,9 @@
 
 ## 📌 Descripción del Proyecto
 
-Este proyecto corresponde a un sistema backend de gestión clínica desarrollado con arquitectura de microservicios usando Spring Boot.
+Proyecto desarrollado bajo una arquitectura de Microservicios utilizando Spring Boot y Spring Cloud, orientado a la administración integral de una clínica médica.
+
+El sistema implementa una arquitectura distribuida donde cada dominio funcional opera de forma independiente, permitiendo escalabilidad, mantenibilidad y facilidad para futuras integraciones.
 
 El sistema permite administrar:
 
@@ -31,7 +33,11 @@ Además, incluye:
 * Feign Client
 * MySQL
 * Spring Security
+* Spring Data JPA
 * Comunicación entre microservicios
+* Docker
+* Swagger/OpenAPI
+* Maven Multi-Módulo
 
 ---
 
@@ -39,18 +45,22 @@ Además, incluye:
 
 ## Microservicios Implementados
 
-| Microservicio      | Función                                 |
-| ------------------ | --------------------------------------- |
-| ms-usuarios        | Gestión de usuarios y autenticación JWT |
-| ms-pacientes       | Gestión de pacientes                    |
-| ms-medicos         | Gestión de médicos                      |
-| ms-examenes        | Gestión de exámenes médicos             |
-| ms-fichas-clinicas | Gestión de fichas clínicas              |
-| ms-recetas         | Gestión de recetas médicas              |
-| ms-pagos           | Gestión de pagos                        |
-| ms-notificaciones  | Gestión de notificaciones               |
-| api-gateway        | Punto único de entrada                  |
-| eureka-server      | Registro y descubrimiento de servicios  |
+| Microservicio      | Función                                 | Puerto | Base de datos     |    
+| ------------------ | --------------------------------------- | ------ | ----------------- |
+| ms-usuarios        | Gestión de usuarios y autenticación JWT | 8081   | db_usuarios       |
+| ms-pacientes       | Gestión de pacientes                    | 8082   | db_pacientes      | 
+| ms-medicos         | Gestión de médicos                      | 8083   | db_medicos        |
+| ms-farmacia        | Gestión de médicos                      | 8084   | db_farmacia       |
+| ms-reservas        | Gestión de médicos                      | 8085   | db_reservas       |
+| ms-examenes        | Gestión de exámenes médicos             | 8086   | db_examenes       |
+| ms-fichas-clinicas | Gestión de fichas clínicas              | 8087   | db_fichasclinicas |
+| ms-recetas         | Gestión de recetas médicas              | 8089   | db_recetas        |
+| ms-notificaciones  | Gestión de notificaciones               | 8091   | ----------------- |
+| ms-pagos           | Gestión de pagos                        | 8092   | db_pagos          |
+| api-gateway        | Punto único de entrada                  | 8094   | ----------------- |
+| eureka-server      | Registro y descubrimiento de servicios  | 8761   | ----------------- |
+
+Cada microservicio se registra automáticamente en Eureka y es consumido mediante el API Gateway.
 
 ---
 
@@ -65,7 +75,12 @@ Además, incluye:
 | MySQL           | 8.x     |
 | Spring Security | Sí      |
 | JWT             | Sí      |
-| Eureka          | Sí      |
+| Spring Data JPA | Sí      |
+| Eureka Server   | Sí      |
+| Docker          | Sí      |
+| Docker Compose  | Sí      |
+| Swagger/OpenAPI | Sí      |
+| Lombok          | Sí      |
 | OpenFeign       | Sí      |
 
 ---
@@ -77,34 +92,120 @@ proyecto-clinica/
 │
 ├── eureka-server
 ├── api-gateway
+|
 ├── msusuarios
 ├── mspacientes
 ├── msmedicos
+├── msfarmacia
+├── msreservas
 ├── msexamenes
 ├── msfichasclinicas
-├── msrecetas
-├── mspagos
-└── msnotificaciones
+├── ms-recetas
+├── ms-pagos
+├── ms-notificaciones
+│ 
+├── docker-compose.yml 
+└── pom.xml
 ```
 
 ---
 
-# 🚀 Cómo Ejecutar el Proyecto
+# Arquitectura de Comunicación
+Cliente
+    │
+    ▼
+API Gateway
+    │
+    ▼
+ Eureka
+    │
+    ├────────► Usuarios
+    ├────────► Pacientes
+    ├────────► Médicos
+    ├────────► Farmacia
+    ├────────► Reservas
+    ├────────► Exámenes
+    ├────────► Fichas
+    ├────────► Recetas
+    ├────────► Pagos
+    └────────► Notificaciones
+
+---
+
+# Seguridad
+
+El sistema implementa autenticación basada en JWT mediante Spring Security.
+
+Características:
+
+* Login seguro
+* Tokens JWT
+* Roles de usuario
+* Protección de endpoints
+* Autorización basada en roles
+
+---
+
+# Documentación Swagger
+
+Cada microservicio dispone de documentación OpenAPI.
+
+| Servicio        |	Swagger                               |
+| --------------- | ------------------------------------- |
+| Usuarios        |	http://localhost:8081/swagger-ui.html |
+| Pacientes       |	http://localhost:8082/swagger-ui.html |
+| Médicos	        | http://localhost:8083/swagger-ui.html |
+| Farmacia	      | http://localhost:8084/swagger-ui.html | 
+| Reservas	      | http://localhost:8085/swagger-ui.html |
+| Exámenes	      | http://localhost:8086/swagger-ui.html |
+| Fichas Clínicas |	http://localhost:8087/swagger-ui.html |
+| Recetas	        | http://localhost:8089/swagger-ui.html |
+| Pagos	          | http://localhost:8092/swagger-ui.html |
+
+---
+
+# 🚀 Cómo Ejecutar el Proyecto Local
+
+## Requisitos
+
+* Java 21
+* Maven 3.9+
+* MySQL 8
+* Git
+
+Verificar instalación:
+
+```bash
+java -version
+mvn -version
+```
+
+---
 
 ## 1️⃣ Clonar el repositorio
 
 ```bash
 git clone URL_DEL_REPOSITORIO
+
+cd proyecto-clinica
 ```
 
 ---
 
-## 2️⃣ Abrir el proyecto en VS Code
+# Compilar
+
+```bash
+mvn clean install -DskipTests
+```
+
+---
+
+## 2️⃣ Abrir el proyecto padre en VS Code
 
 Abrir la carpeta:
 
 ```txt
-proyecto-clinica
+proyecto-clinica-main
 ```
 
 ---
@@ -143,145 +244,35 @@ MySQL/XAMPP debe estar iniciado antes de levantar los microservicios.
 
 # 🖥️ Cómo Abrir los Microservicios en VS Code
 
-Cada microservicio debe abrirse y ejecutarse de forma independiente.
+Con la implementación de Maven Multi-Módulo, podemos levantar todos los microservicios con la extensión de Spring Boot Dashboard en VS Code
 
 ## Recomendación
 
-Abrir:
+Abrir la carpeta del proyecto padre:
 
 ```txt
-Cada microservicio en una pestaña/ventana separada de VS Code
+Levantar los microservicios siguiendo el orden recomendado de ejecución
 ```
 
 Ejemplo:
 
 ```txt
-VS Code 1 → eureka-server
-VS Code 2 → api-gateway
-VS Code 3 → msusuarios
-VS Code 4 → mspacientes
-VS Code 5 → msmedicos
-VS Code 6 → msexamenes
-VS Code 7 → msfichasclinicas
-VS Code 8 → msrecetas
-VS Code 9 → mspagos
-VS Code 10 → msnotificaciones
-```
-
-Esto ayuda a:
-
-* evitar errores de puertos
-* controlar mejor las terminales
-* reducir conflictos
-* identificar errores rápidamente
-
----
-
-# ▶️ Orden Correcto de Ejecución
-
-Es MUY IMPORTANTE levantar los microservicios en este orden:
-
-## 1. Eureka Server
-
-```bash
-mvn spring-boot:run
-```
-
-Verificar:
-
-```txt
-http://localhost:8761
+1.  MySQL (Xampp)
+2.  Eureka Server
+3.  API Gateway
+4.  MS Usuarios
+5.  MS Pacientes
+6.  MS Médicos
+7.  MS Farmacia
+8.  MS Reservas
+9.  MS Exámenes
+10. MS Fichas Clínicas
+11. MS Recetas
+12. MS Pagos
+13. MS Notificaciones
 ```
 
 ---
-
-## 2. API Gateway
-
-```bash
-mvn spring-boot:run
-```
-
-Puerto:
-
-```txt
-8090
-```
-
----
-
-## 3. msUsuarios
-
-```bash
-mvn spring-boot:run
-```
-
----
-
-## 4. msPacientes
-
-```bash
-mvn spring-boot:run
-```
-
----
-
-## 5. msMedicos
-
-```bash
-mvn spring-boot:run
-```
-
----
-
-## 6. msExamenes
-
-```bash
-mvn spring-boot:run
-```
-
----
-
-## 7. msFichasClinicas
-
-```bash
-mvn spring-boot:run
-```
-
----
-
-## 8. msRecetas
-
-```bash
-mvn spring-boot:run
-```
-
----
-
-## 9. msPagos
-
-```bash
-mvn spring-boot:run
-```
-
----
-
-## 🔟 msNotificaciones
-
-```bash
-mvn spring-boot:run
-```
-
----
-
-# 🌐 Eureka Server
-
-Eureka permite el registro y descubrimiento automático de microservicios.
-
-## URL
-
-```txt
-http://localhost:8761
-```
 
 ## Qué debe aparecer
 
@@ -294,15 +285,17 @@ UP
 Ejemplo:
 
 ```txt
-MS-USUARIOS
-MS-PACIENTES
-MS-MEDICOS
-MS-EXAMENES
-MS-FICHAS-CLINICAS
-MS-RECETAS
-MS-PAGOS
-MS-NOTIFICACIONES
-API-GATEWAY
+API Gateway
+MS Usuarios
+MS Pacientes
+MS Médicos
+MS Farmacia
+MS Reservas
+MS Exámenes
+MS Fichas Clínicas
+MS Recetas
+MS Pagos
+MS Notificaciones
 ```
 
 ---
@@ -969,38 +962,42 @@ Durante el desarrollo se implementó:
 
 ---
 
-# ✅ Estado Final del Proyecto
+# ✅ Estado del Proyecto
 
-| Funcionalidad   | Estado |
-| --------------- | ------ |
-| Eureka          | ✅      |
-| API Gateway     | ✅      |
-| JWT             | ✅      |
-| Usuarios        | ✅      |
-| Pacientes       | ✅      |
-| Médicos         | ✅      |
-| Exámenes        | ✅      |
-| Fichas Clínicas | ✅      |
-| Recetas         | ✅      |
-| Pagos           | ✅      |
-| Notificaciones  | ✅      |
-| FeignClient     | ✅      |
-| MySQL           | ✅      |
-| CRUD Completo   | ✅      |
+| Funcionalidad      | Estado  |
+| ------------------ | ------- |
+| Microservicios     | ✅      |
+| Eureka             | ✅      |
+| API Gateway        | ✅      |
+| Spring Security    | ✅      |
+| JWT                | ✅      |
+| Swagger            | ✅      |
+| Docker             | ✅      |
+| Maven Multi-Módulo | ✅      |
+| OpenAPI            | ✅      |
+| FeignClient        | ✅      |
+| MySQL              | ✅      |
+| CRUD Completo      | ✅      |
 
 ---
 
 # 👨‍💻 Autor
 
-Proyecto desarrollado utilizando:
+Características Implementadas:
 
-* Spring Boot
-* Java 21
 * Arquitectura de Microservicios
-* MySQL
-* JWT
-* Eureka
+* Maven Multi-Módulo
+* Descubrimiento de servicios con Eureka
 * API Gateway
+* Seguridad JWT
+* Spring Security
+* Persistencia con Spring Data JPA
+* Bases de datos independientes
+* Swagger/OpenAPI
+* Docker
+* Docker Compose
+* Comunicación entre microservicios
+* Documentación REST
 
 ---
 
@@ -1008,7 +1005,15 @@ Proyecto desarrollado utilizando:
 
 Este proyecto fue desarrollado con fines académicos y educativos, aplicando buenas prácticas de arquitectura backend moderna mediante microservicios.
 
-Autores del proyecto: Marco Carrasco, Jeannette Figueroa y Misael Rojas
+Cada integrante participó en el diseño, implementación e integración de distintos microservicios, aplicando principios de arquitectura distribuida, desarrollo colaborativo y buenas prácticas con Spring Boot y Spring Cloud.
+
+Autores del proyecto: Marco Carrasco, Jeannette Figueroa y Misael Rojas.
+
+
+
+
+
+
 # Sistema de Gestión Clínica — Arquitectura de Microservicios
 
 ## Descripción del Proyecto
