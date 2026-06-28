@@ -1,6 +1,8 @@
-## 🎥 Video demostrativo del proyecto
+## Descargas y video del proyecto
 
-[Ver video del proyecto](https://drive.google.com/file/d/1un5EfTSzYX4VeTAtjRO4xxrMqc0wL1qU/view?usp=drivesdk)
+[Ver video del proyecto]()
+[Versión Nativa]()
+[Versión Docker]()
 
 
 # 🏥 Sistema de Clínica - Arquitectura de Microservicios con Spring Boot
@@ -48,8 +50,8 @@ Además, incluye:
 | ms-usuarios        | Gestión de usuarios y autenticación JWT | 8081   | db_usuarios       |
 | ms-pacientes       | Gestión de pacientes                    | 8082   | db_pacientes      | 
 | ms-medicos         | Gestión de médicos                      | 8083   | db_medicos        |
-| ms-farmacia        | Gestión de médicos                      | 8084   | db_farmacia       |
-| ms-reservas        | Gestión de médicos                      | 8085   | db_reservas       |
+| ms-farmacia        | Gestión de farmacia                     | 8084   | db_farmacia       |
+| ms-reservas        | Gestión de reservas                     | 8085   | db_reservas       |
 | ms-examenes        | Gestión de exámenes médicos             | 8086   | db_examenes       |
 | ms-fichas-clinicas | Gestión de fichas clínicas              | 8087   | db_fichasclinicas |
 | ms-recetas         | Gestión de recetas médicas              | 8089   | db_recetas        |
@@ -113,28 +115,20 @@ proyecto-clinica/
 
 ```txt
 Cliente
-    │
-    ▼
+   │
+   ▼
 API Gateway
-    │
-    ▼
- Eureka
-    │
-    ├────────► Usuarios
-    ├────────► Pacientes
-    ├────────► Médicos
-    ├────────► Farmacia
-    ├────────► Reservas
-    ├────────► Exámenes
-    ├────────► Fichas
-    ├────────► Recetas
-    ├────────► Pagos
-    └────────► Notificaciones
+   │
+   ▼
+Microservicios
+        │
+        ▼
+     Eureka
 ```
 
 ---
 
-# Seguridad
+# 🔐 Seguridad
 
 El sistema implementa autenticación basada en JWT mediante Spring Security.
 
@@ -163,6 +157,77 @@ Cada microservicio dispone de documentación OpenAPI.
 | Fichas Clínicas |	http://localhost:8087/swagger-ui.html |
 | Recetas	        | http://localhost:8089/swagger-ui.html |
 | Pagos	          | http://localhost:8092/swagger-ui.html |
+| Notificaciones	| ------------------------------------- |
+
+---
+
+# Ejecución con Docker
+
+## Requisitos
+
+* Docker Desktop
+* Docker Compose
+
+## Contenido del paquete
+
+apps/
+docs/
+backups/
+docker-compose.yml
+.env
+arrancar-docker.bat
+detener-docker.bat
+ver-logs.bat
+backup-db.bat
+restaurar-db.bat
+
+## Pasos
+
+1. Descomprimir el archivo ZIP.
+
+2. Abrir Docker Desktop.
+
+3. Esperar que Docker se encuentre iniciado.
+
+4. Ejecutar:
+
+arrancar-docker.bat
+
+5. Esperar aproximadamente 30 segundos.
+
+6. Verificar Eureka
+
+http://localhost:8761
+
+7. Verificar API Gateway
+
+http://localhost:8094
+
+## Detener el sistema
+
+Ejecutar
+
+detener-docker.bat
+
+## Ver logs
+
+Ejecutar
+
+ver-logs.bat
+
+## Backup
+
+Ejecutar
+
+backup-db.bat
+
+## Restauración
+
+Ejecutar
+
+restaurar-db.bat
+
+---
 
 ---
 
@@ -265,19 +330,10 @@ Levantar los microservicios siguiendo el orden recomendado de ejecución:
 Ejemplo:
 
 ```txt
-1.  MySQL (Xampp)
-2.  Eureka Server
-3.  API Gateway
-4.  MS Usuarios
-5.  MS Pacientes
-6.  MS Médicos
-7.  MS Farmacia
-8.  MS Reservas
-9.  MS Exámenes
-10. MS Fichas Clínicas
-11. MS Recetas
-12. MS Pagos
-13. MS Notificaciones
+1. Iniciar MySQL.
+2. Levantar Eureka Server.
+3. Levantar todos los microservicios.
+4. Levantar API Gateway.
 ```
 
 ---
@@ -573,7 +629,7 @@ API Gateway
 Puerto:
 
 ```txt
-8090
+8094
 ```
 
 ---
@@ -926,17 +982,6 @@ antes de registrar una ficha clínica.
 
 ---
 
-# 🔐 Seguridad
-
-El sistema implementa:
-
-* JWT Authentication
-* Spring Security
-* Roles
-* Protección de endpoints
-
----
-
 # 📡 API Gateway
 
 Todas las peticiones pasan por:
@@ -989,7 +1034,19 @@ Durante el desarrollo se implementó:
 
 ---
 
-# 👨‍💻 Autor
+# Próximas Mejoras
+
+* Despliegue en Railway
+* CI/CD con GitHub Actions
+* Observabilidad con Prometheus y Grafana
+* Centralización de configuración con Spring Cloud Config
+* Trazabilidad distribuida (Zipkin/OpenTelemetry)
+* Balanceo de carga avanzado
+* Kubernetes
+
+---
+
+# 📌 Notas Finales
 
 Características Implementadas:
 
@@ -1009,7 +1066,7 @@ Características Implementadas:
 
 ---
 
-# 📌 Notas Finales
+# Equipo de Desarrollo
 
 Este proyecto fue desarrollado con fines académicos y educativos, aplicando buenas prácticas de arquitectura backend moderna mediante microservicios.
 
