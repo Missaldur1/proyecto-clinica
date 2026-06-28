@@ -3,9 +3,6 @@
 [Ver video del proyecto](https://drive.google.com/file/d/1un5EfTSzYX4VeTAtjRO4xxrMqc0wL1qU/view?usp=drivesdk)
 
 
-
-
-
 # 🏥 Sistema de Clínica - Arquitectura de Microservicios con Spring Boot
 
 ## 📌 Descripción del Proyecto
@@ -19,9 +16,11 @@ El sistema permite administrar:
 * Usuarios
 * Pacientes
 * Médicos
+* Farmacia
+* Reservas
 * Exámenes
-* Fichas clínicas
-* Recetas médicas
+* Fichas Clínicas
+* Recetas Médicas
 * Pagos
 * Notificaciones
 
@@ -180,13 +179,19 @@ java -version
 mvn -version
 ```
 
+```bash
+mvn -version
+```
+
 ---
 
 ## 1️⃣ Clonar el repositorio
 
 ```bash
 git clone URL_DEL_REPOSITORIO
+```
 
+```bash
 cd proyecto-clinica
 ```
 
