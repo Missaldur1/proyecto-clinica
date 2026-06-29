@@ -10,10 +10,10 @@ El sistema fue desarrollado con Java 21, Spring Boot, Spring Cloud, Eureka Serve
 
 | Componente               | Descripción                                                                                                                        | Enlace                                        |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| Versión Nativa           | Archivo `.zip` con carpeta `apps/`, archivos `.jar` compilados y script `arrancar-nativo.bat` para ejecutar el sistema sin Docker. | [Descargar ZIP Nativo](https://drive.google.com/file/d/11CRka9-k_E09m1_Ox6V2C9RRJ-jzpDCX/view?usp=drive_link) |
-| Versión Docker           | Archivo `.zip` con `docker-compose.yml`, `.env`, carpeta `apps/`, scripts y configuración para ejecutar el sistema con Docker.     | [Descargar ZIP Docker]([PEGAR_LINK_ZIP_DOCKER]) |
+| Versión Nativa           | Archivo `.zip` con carpeta `apps/`, archivos `.jar` compilados y script `arrancar-nativo.bat` para ejecutar el sistema sin Docker. | [Descargar ZIP Nativo](https://drive.google.com/file/d/1vETnuGLEFPcSEd__yVj0gXanpdAHbQ6x/view?usp=drive_link) |
+| Versión Docker           | Archivo `.zip` con `docker-compose.yml`, `.env`, carpeta `apps/`, scripts y configuración para ejecutar el sistema con Docker.     | [Descargar ZIP Docker](https://drive.google.com/file/d/11CRka9-k_E09m1_Ox6V2C9RRJ-jzpDCX/view?usp=drive_link) |
 | Video de Defensa Técnica | Video explicativo del proyecto, funcionamiento, pruebas, ejecución nativa, Docker y aporte personal.                               | [Ver Video](PEGAR_LINK_VIDEO)                 |
-| Subtítulos / Guion       | Archivo de apoyo para el video de defensa técnica.                                                                                 | `subtitulos-video.txt`                        |
+| Subtítulos / Guion       | Archivo de apoyo para el video de defensa técnica.                                                                                 | [subtitulos-video.txt](https://drive.google.com/file/d/1t-Une3VJOgyOvyBZGwJg-68F6aIT99qM/view?usp=drive_link)                        |
 
 Duración recomendada del video: **15 minutos ideal**, con un máximo de **18 minutos**.
 
