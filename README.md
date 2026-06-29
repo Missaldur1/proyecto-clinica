@@ -383,7 +383,7 @@ Body de ejemplo:
 
 ```json
 {
-  "email": "admin@test.cl",
+  "email": "admin@gmail.com",
   "password": "123456"
 }
 ```
