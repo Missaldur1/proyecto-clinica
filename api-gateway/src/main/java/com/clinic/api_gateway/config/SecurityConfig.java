@@ -216,9 +216,9 @@ public class SecurityConfig {
                                                                         response.getWriter()
                                                                                         .write("""
                                                                                                         {
-                                                                                                            "status":401,
-                                                                                                            "error":"Unauthorized",
-                                                                                                            "message":"Token requerido o inválido"
+                                                                                                                "status":401,
+                                                                                                                "error":"Unauthorized",
+                                                                                                                "message":"Token requerido o inválido"
                                                                                                         }
                                                                                                         """);
                                                                 })
@@ -240,9 +240,9 @@ public class SecurityConfig {
                                                                         response.getWriter()
                                                                                         .write("""
                                                                                                         {
-                                                                                                            "status":403,
-                                                                                                            "error":"Forbidden",
-                                                                                                            "message":"No tiene permisos para acceder a este recurso"
+                                                                                                                "status":403,
+                                                                                                                "error":"Forbidden",
+                                                                                                                "message":"No tiene permisos para acceder a este recurso"
                                                                                                         }
                                                                                                         """);
                                                                 }))
