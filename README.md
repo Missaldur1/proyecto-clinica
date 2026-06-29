@@ -179,7 +179,7 @@ Cada microservicio dispone de documentación OpenAPI.
 | Fichas Clínicas |	http://localhost:8087/swagger-ui.html |
 | Recetas	        | http://localhost:8089/swagger-ui.html |
 | Pagos	          | http://localhost:8092/swagger-ui.html |
-| Notificaciones	| http://localhost:8092/swagger-ui.html |
+| Notificaciones	| http://localhost:8091/swagger-ui.html |
 
 ---
 
