@@ -1,8 +1,8 @@
 ## 📥 Recursos
 
 - 🎥 Ver demostración en video
-- 💻 Descargar versión para ejecución local
-- 🐳 Descargar versión con Docker
+- 💻 Descargar versión para ejecución local (https://drive.google.com/file/d/1vETnuGLEFPcSEd__yVj0gXanpdAHbQ6x/view?usp=drivesdk)
+- 🐳 Descargar versión con Docker (https://drive.google.com/file/d/11CRka9-k_E09m1_Ox6V2C9RRJ-jzpDCX/view?usp=drivesdk)
 
 
 # 🏥 Sistema de Clínica - Arquitectura de Microservicios con Spring Boot
