@@ -15,7 +15,23 @@ El sistema fue desarrollado con Java 21, Spring Boot, Spring Cloud, Eureka Serve
 | Video de Defensa Técnica | Video explicativo del proyecto, funcionamiento, pruebas, ejecución nativa, Docker y aporte personal.                               | [Ver Video](PEGAR_LINK_VIDEO)                 |
 | Subtítulos / Guion       | Archivo de apoyo para el video de defensa técnica.                                                                                 | [subtitulos-video.txt](https://drive.google.com/file/d/1t-Une3VJOgyOvyBZGwJg-68F6aIT99qM/view?usp=drive_link)                        |
 
-Duración recomendada del video: **15 minutos ideal**, con un máximo de **18 minutos**.
+---
+
+## Evidencias del proyecto
+
+Las evidencias del proyecto se encuentran disponibles en una carpeta externa de Google Drive.
+
+| Evidencia | Descripción | Enlace |
+|---|---|---|
+| Evidencias completas | Carpeta con capturas de Maven, Eureka, Swagger, Postman, Docker, ZIP nativo, ZIP Docker, GitHub y pruebas de seguridad JWT. | [Ver evidencias](PEGAR_LINK_DRIVE_EVIDENCIAS) |
+
+---
+
+## Integrantes del equipo
+
+- Misael Rojas
+- Jeannette Figueroa
+- Marco Carrasco
 
 ---
 
