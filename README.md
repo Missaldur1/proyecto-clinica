@@ -55,7 +55,7 @@ Además, incluye:
 | ms-examenes        | Gestión de exámenes médicos             | 8086   | db_examenes       |
 | ms-fichas-clinicas | Gestión de fichas clínicas              | 8087   | db_fichasclinicas |
 | ms-recetas         | Gestión de recetas médicas              | 8089   | db_recetas        |
-| ms-notificaciones  | Gestión de notificaciones               | 8091   | ----------------- |
+| ms-notificaciones  | Gestión de notificaciones               | 8091   | db_notificaciones |
 | ms-pagos           | Gestión de pagos                        | 8092   | db_pagos          |
 | api-gateway        | Punto único de entrada                  | 8094   | ----------------- |
 | eureka-server      | Registro y descubrimiento de servicios  | 8761   | ----------------- |
@@ -106,7 +106,7 @@ proyecto-clinica/
 │
 ├── eureka-server
 ├── api-gateway
-|
+│
 ├── msusuarios
 ├── mspacientes
 ├── msmedicos
@@ -179,7 +179,7 @@ Cada microservicio dispone de documentación OpenAPI.
 | Fichas Clínicas |	http://localhost:8087/swagger-ui.html |
 | Recetas	        | http://localhost:8089/swagger-ui.html |
 | Pagos	          | http://localhost:8092/swagger-ui.html |
-| Notificaciones	|              No aplica                |
+| Notificaciones	| http://localhost:8092/swagger-ui.html |
 
 ---
 
