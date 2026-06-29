@@ -1023,8 +1023,6 @@ El Gateway enruta automáticamente hacia cada microservicio.
 
 ## Equipo de Desarrollo
 
-Este proyecto fue desarrollado con fines académicos y educativos, aplicando buenas prácticas de arquitectura backend moderna mediante microservicios.
-
 Cada integrante participó en el diseño, implementación e integración de distintos microservicios, aplicando buenas prácticas de desarrollo backend, arquitectura de microservicios y desarrollo colaborativo con Spring Boot y Spring Cloud.
 
 Autores del proyecto: Marco Carrasco, Jeannette Figueroa y Misael Rojas.
