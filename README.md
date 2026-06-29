@@ -27,6 +27,19 @@ Las evidencias del proyecto se encuentran disponibles en una carpeta externa de 
 
 ---
 
+## Importaciones de Postman
+
+Los archivos necesarios para importar y ejecutar las pruebas en Postman se encuentran disponibles en una carpeta externa de Google Drive.
+
+| Archivo                  | Descripción                                                                                                                                                          | Enlace                                                                |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Colección Postman        | Archivo `.postman_collection.json` con las pruebas HTTP completas del proyecto, incluyendo login, JWT, CRUD, validaciones, errores generales y pruebas de seguridad. | [Descargar colección Postman](PEGAR_LINK_DRIVE_COLECCION_POSTMAN)     |
+| Environment Postman      | Archivo `.postman_environment.json` con las variables necesarias para ejecutar las pruebas, incluyendo `base_url`, `token` y `tokenNoAdmin`.                         | [Descargar environment Postman](PEGAR_LINK_DRIVE_ENVIRONMENT_POSTMAN) |
+| Carpeta completa Postman | Carpeta de Google Drive con todos los archivos de importación de Postman utilizados para las pruebas del sistema.                                                    | [Ver carpeta Postman en Google Drive](PEGAR_LINK_DRIVE_POSTMAN)       |
+
+
+---
+
 ## Integrantes del equipo
 
 - Misael Rojas
