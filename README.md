@@ -23,7 +23,7 @@ Las evidencias del proyecto se encuentran disponibles en una carpeta externa de 
 
 | Evidencia | Descripción | Enlace |
 |---|---|---|
-| Evidencias completas | Carpeta con capturas de Maven, Eureka, Swagger, Postman, Docker, ZIP nativo, ZIP Docker, GitHub y pruebas de seguridad JWT. | [Ver evidencias](PEGAR_LINK_DRIVE_EVIDENCIAS) |
+| Evidencias completas | Carpeta con capturas de Maven, Eureka, Swagger, Postman, Docker, ZIP nativo, ZIP Docker, GitHub y pruebas de seguridad JWT. | [Ver evidencias](https://drive.google.com/drive/folders/1QJI68G_4PckcvoKsy95-9EJiVz2HeBgG?usp=sharing) |
 
 ---
 
@@ -33,8 +33,8 @@ Los archivos necesarios para importar y ejecutar las pruebas en Postman se encue
 
 | Archivo                  | Descripción                                                                                                                                                          | Enlace                                                                |
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Colección Postman        | Archivo `.postman_collection.json` con las pruebas HTTP completas del proyecto, incluyendo login, JWT, CRUD, validaciones, errores generales y pruebas de seguridad. | [Descargar colección Postman](PEGAR_LINK_DRIVE_COLECCION_POSTMAN)     |
-| Environment Postman      | Archivo `.postman_environment.json` con las variables necesarias para ejecutar las pruebas, incluyendo `base_url`, `token` y `tokenNoAdmin`.                         | [Descargar environment Postman](PEGAR_LINK_DRIVE_ENVIRONMENT_POSTMAN) |
+| Colección Postman        | Archivo `.postman_collection.json` con las pruebas HTTP completas del proyecto, incluyendo login, JWT, CRUD, validaciones, errores generales y pruebas de seguridad. | [Descargar colección Postman](https://drive.google.com/file/d/1dYLHKpxn5gmnJuUByMC-8rI8NaAKG9Da/view?usp=drive_link)     |
+| Environment Postman      | Archivo `.postman_environment.json` con las variables necesarias para ejecutar las pruebas, incluyendo `base_url`, `token` y `tokenNoAdmin`.                         | [Descargar environment Postman](https://drive.google.com/file/d/1HttssdbbkbDnKCrX6WLn6XW5lshcNzjk/view?usp=sharing) |
 | Carpeta completa Postman | Carpeta de Google Drive con todos los archivos de importación de Postman utilizados para las pruebas del sistema.                                                    | [Ver carpeta Postman en Google Drive](PEGAR_LINK_DRIVE_POSTMAN)       |
 
 
