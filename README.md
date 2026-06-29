@@ -1,1035 +1,861 @@
-## 📥 Recursos
+# Proyecto Clínica - Sistema de Microservicios
 
-- 🎥 Ver demostración en video
-- 💻 Descargar versión Nativa (https://drive.google.com/file/d/1vETnuGLEFPcSEd__yVj0gXanpdAHbQ6x/view?usp=drivesdk)
-- 🐳 Descargar versión con Docker (https://drive.google.com/file/d/11CRka9-k_E09m1_Ox6V2C9RRJ-jzpDCX/view?usp=drivesdk)
+Sistema backend desarrollado con arquitectura de microservicios para la gestión de procesos clínicos. El proyecto permite administrar usuarios, pacientes, médicos, medicamentos, reservas, exámenes, fichas clínicas, recetas, pagos y notificaciones.
 
-
-# 🏥 Sistema de Clínica - Arquitectura de Microservicios con Spring Boot
-
-## 📌 Descripción del Proyecto
-
-Proyecto desarrollado bajo una arquitectura de Microservicios utilizando Spring Boot y Spring Cloud, orientado a la administración integral de una clínica médica.
-El sistema implementa una arquitectura distribuida donde cada dominio funcional opera de forma independiente, permitiendo escalabilidad, mantenibilidad y facilidad para futuras integraciones.
-
-El sistema permite administrar:
-
-* Usuarios
-* Pacientes
-* Médicos
-* Farmacia
-* Reservas
-* Exámenes
-* Fichas Clínicas
-* Recetas Médicas
-* Pagos
-* Notificaciones
-
-Además, incluye:
-
-* Eureka Server
-* API Gateway
-* JWT Authentication
-* Feign Client
-* MySQL
-* Spring Security
-* Spring Data JPA
-* Comunicación entre microservicios
-* Docker
-* Swagger/OpenAPI
-* Maven Multi-Módulo
+El sistema fue desarrollado con Java 21, Spring Boot, Spring Cloud, Eureka Server, API Gateway, JWT, MySQL, Swagger/OpenAPI, Maven, Postman y Docker.
 
 ---
 
-# 🧱 Arquitectura General
+## Componentes de distribución y defensa técnica
 
-## Microservicios Implementados
+| Componente               | Descripción                                                                                                                        | Enlace                                        |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Versión Nativa           | Archivo `.zip` con carpeta `apps/`, archivos `.jar` compilados y script `arrancar-nativo.bat` para ejecutar el sistema sin Docker. | [Descargar ZIP Nativo](PEGAR_LINK_ZIP_NATIVO) |
+| Versión Docker           | Archivo `.zip` con `docker-compose.yml`, `.env`, carpeta `apps/`, scripts y configuración para ejecutar el sistema con Docker.     | [Descargar ZIP Docker](PEGAR_LINK_ZIP_DOCKER) |
+| Video de Defensa Técnica | Video explicativo del proyecto, funcionamiento, pruebas, ejecución nativa, Docker y aporte personal.                               | [Ver Video](PEGAR_LINK_VIDEO)                 |
+| Subtítulos / Guion       | Archivo de apoyo para el video de defensa técnica.                                                                                 | `subtitulos-video.txt`                        |
 
-| Microservicio      | Función                                 | Puerto | Base de datos     |    
-| ------------------ | --------------------------------------- | ------ | ----------------- |
-| ms-usuarios        | Gestión de usuarios y autenticación JWT | 8081   | db_usuarios       |
-| ms-pacientes       | Gestión de pacientes                    | 8082   | db_pacientes      | 
-| ms-medicos         | Gestión de médicos                      | 8083   | db_medicos        |
-| ms-farmacia        | Gestión de farmacia                     | 8084   | db_farmacia       |
-| ms-reservas        | Gestión de reservas                     | 8085   | db_reservas       |
-| ms-examenes        | Gestión de exámenes médicos             | 8086   | db_examenes       |
-| ms-fichas-clinicas | Gestión de fichas clínicas              | 8087   | db_fichasclinicas |
-| ms-recetas         | Gestión de recetas médicas              | 8089   | db_recetas        |
-| ms-notificaciones  | Gestión de notificaciones               | 8091   | db_notificaciones |
-| ms-pagos           | Gestión de pagos                        | 8092   | db_pagos          |
-| api-gateway        | Punto único de entrada                  | 8094   | ----------------- |
-| eureka-server      | Registro y descubrimiento de servicios  | 8761   | ----------------- |
-
-Cada microservicio se registra automáticamente en Eureka y es consumido mediante el API Gateway.
+Duración recomendada del video: **15 minutos ideal**, con un máximo de **18 minutos**.
 
 ---
 
-# ⚙️ Tecnologías Utilizadas
+## 1. Objetivo del proyecto
 
-| Tecnología      | Versión |
-| --------------- | ------- |
-| Java            | 21      |
-| Spring Boot     | 3.5.x   |
-| Spring Cloud    | 2025.x  |
-| Maven           | 3.9+    |
-| MySQL           | 8.x     |
-| Spring Security | Sí      |
-| JWT             | Sí      |
-| Spring Data JPA | Sí      |
-| Eureka Server   | Sí      |
-| Docker          | Sí      |
-| Docker Compose  | Sí      |
-| Swagger/OpenAPI | Sí      |
-| Lombok          | Sí      |
-| OpenFeign       | Sí      |
+El objetivo del Proyecto Clínica es construir un sistema backend distribuido mediante microservicios, capaz de gestionar los procesos principales de una clínica.
 
----
+El sistema permite:
 
-# Características principales
-
-- Arquitectura basada en microservicios.
-- Registro y descubrimiento de servicios con Eureka.
-- API Gateway como punto único de entrada.
-- Autenticación y autorización mediante JWT.
-- Comunicación entre microservicios con OpenFeign.
-- Documentación automática con Swagger/OpenAPI.
-- Contenedorización mediante Docker y Docker Compose.
-- Persistencia independiente para cada microservicio.
-- Arquitectura Maven Multi-Módulo.
+1. Administrar usuarios del sistema.
+2. Autenticar usuarios mediante JWT.
+3. Gestionar pacientes.
+4. Gestionar médicos.
+5. Administrar medicamentos.
+6. Crear y administrar reservas médicas.
+7. Registrar y consultar exámenes.
+8. Crear fichas clínicas.
+9. Administrar recetas médicas.
+10. Registrar pagos.
+11. Administrar notificaciones.
+12. Centralizar el acceso mediante API Gateway.
+13. Registrar y descubrir servicios mediante Eureka Server.
 
 ---
 
-# 📁 Estructura del Proyecto
+## 2. Arquitectura general
 
-```txt
-proyecto-clinica/
-│
-├── eureka-server
-├── api-gateway
-│
-├── msusuarios
-├── mspacientes
-├── msmedicos
-├── msfarmacia
-├── msreservas
-├── msexamenes
-├── msfichasclinicas
-├── ms-recetas
-├── ms-pagos
-├── ms-notificaciones
-│ 
-├── docker-compose.yml 
-├── README.md
-└── pom.xml
+El sistema utiliza una arquitectura basada en microservicios. Cada microservicio tiene una responsabilidad específica, su propio puerto y su propia configuración de base de datos.
+
+```text
+Cliente externo / Postman / Navegador
+        |
+        v
+API Gateway :8094
+        |
+        +--> msusuarios          :8081  -> db_usuarios
+        +--> mspacientes         :8082  -> db_pacientes
+        +--> msmedicos           :8083  -> db_medicos
+        +--> msfarmacia          :8084  -> db_farmacia
+        +--> msreservas          :8085  -> db_reservas
+        +--> msexamenes          :8086  -> db_examenes
+        +--> msfichasclinicas    :8087  -> db_fichas_clinicas
+        +--> ms-recetas          :8089  -> db_recetas
+        +--> ms-notificaciones   :8091  -> db_notificaciones
+        +--> ms-pagos            :8092  -> db_pagos
+
+Eureka Server :8761
 ```
 
+Flujo general:
+
+1. El cliente realiza una petición HTTP.
+2. La petición llega al API Gateway.
+3. Si la ruta está protegida, se valida el token JWT.
+4. El Gateway redirige la solicitud al microservicio correspondiente.
+5. El microservicio procesa la lógica de negocio.
+6. Si corresponde, se comunica con otros microservicios mediante Feign Client.
+7. El microservicio consulta o guarda información en MySQL.
+8. Se devuelve la respuesta al cliente.
+
 ---
 
-# Arquitectura de Comunicación
+## 3. Tecnologías utilizadas
 
-```txt
-Cliente
-      │
-      ▼
-API Gateway
-      │
-      ├────────► msUsuarios
-      ├────────► msPacientes
-      ├────────► msMedicos
-      ├────────► msFarmacia
-      ├────────► msReservas
-      ├────────► msExámenes
-      ├────────► msFichasClínicas
-      ├────────► msRecetas
-      ├────────► msPagos
-      ├────────► msNotificaciones
-      │
-      ▼
-Todos los microservicios registrados en Eureka Server
+| Tecnología              | Uso                                    |
+| ----------------------- | -------------------------------------- |
+| Java 21                 | Lenguaje principal del backend         |
+| Spring Boot 3.5.x       | Framework principal                    |
+| Spring Cloud 2025.x     | Gateway, Eureka y Feign                |
+| Eureka Server           | Registro y descubrimiento de servicios |
+| Spring Cloud Gateway    | Punto único de entrada                 |
+| Spring Security         | Seguridad de endpoints                 |
+| JWT                     | Autenticación y autorización           |
+| Spring Data JPA         | Persistencia                           |
+| MySQL 8                 | Base de datos                          |
+| Maven                   | Compilación y gestión de dependencias  |
+| Lombok                  | Reducción de código repetitivo         |
+| Jakarta Validation      | Validación de DTOs                     |
+| Swagger/OpenAPI         | Documentación de endpoints             |
+| Postman                 | Pruebas HTTP                           |
+| Docker / Docker Compose | Ejecución contenerizada                |
+| Git / GitHub            | Control de versiones                   |
+
+---
+
+## 4. Microservicios del sistema
+
+| Módulo              | Puerto | Responsabilidad                                 |
+| ------------------- | -----: | ----------------------------------------------- |
+| `eureka-server`     |   8761 | Registro y descubrimiento de microservicios     |
+| `api-gateway`       |   8094 | Punto único de entrada a las APIs               |
+| `msusuarios`        |   8081 | Gestión de usuarios, roles, autenticación y JWT |
+| `mspacientes`       |   8082 | Administración de pacientes                     |
+| `msmedicos`         |   8083 | Administración de médicos                       |
+| `msfarmacia`        |   8084 | Administración de medicamentos                  |
+| `msreservas`        |   8085 | Administración de reservas médicas              |
+| `msexamenes`        |   8086 | Administración de exámenes médicos              |
+| `msfichasclinicas`  |   8087 | Administración de fichas clínicas               |
+| `ms-recetas`        |   8089 | Administración de recetas médicas               |
+| `ms-notificaciones` |   8091 | Administración de notificaciones                |
+| `ms-pagos`          |   8092 | Administración de pagos                         |
+
+---
+
+## 5. Bases de datos
+
+El proyecto utiliza MySQL. Cada microservicio trabaja con una base de datos independiente o separada lógicamente.
+
+| Microservicio       | Base de datos        | Tabla principal esperada |
+| ------------------- | -------------------- | ------------------------ |
+| `msusuarios`        | `db_usuarios`        | `usuarios`               |
+| `mspacientes`       | `db_pacientes`       | `pacientes`              |
+| `msmedicos`         | `db_medicos`         | `medicos`                |
+| `msfarmacia`        | `db_farmacia`        | `medicamentos`           |
+| `msreservas`        | `db_reservas`        | `reservas`               |
+| `msexamenes`        | `db_examenes`        | `examenes`               |
+| `msfichasclinicas`  | `db_fichas_clinicas` | `fichas_clinicas`        |
+| `ms-recetas`        | `db_recetas`         | `recetas`                |
+| `ms-notificaciones` | `db_notificaciones`  | `notificaciones`         |
+| `ms-pagos`          | `db_pagos`           | `pagos`                  |
+
+---
+
+## 6. Ejecución nativa del sistema
+
+La versión nativa permite ejecutar el sistema sin Docker, usando Java 21 instalado en el equipo y MySQL local mediante XAMPP.
+
+### Requisitos
+
+* Java 21.
+* Maven.
+* MySQL 8.
+* XAMPP con MySQL activo.
+* Puertos disponibles.
+* ZIP nativo descargado.
+
+### Puerto MySQL usado en entorno local
+
+```text
+3307
 ```
 
----
-
-# 🔐 Seguridad
-
-El sistema implementa autenticación basada en JWT mediante Spring Security.
-
-Características:
-
-* Login seguro
-* Tokens JWT
-* Roles de usuario
-* Protección de endpoints
-* Autorización basada en roles
+Si el equipo usa MySQL en el puerto `3306`, se debe ajustar la configuración de los microservicios.
 
 ---
 
-# Documentación Swagger / OpenAPI
+## 7. Ejecución nativa mediante script .bat
 
-Cada microservicio dispone de documentación OpenAPI.
+La versión nativa incluye el archivo:
 
-| Servicio        |	Swagger                               |
-| --------------- | ------------------------------------- |
-| Usuarios        |	http://localhost:8081/swagger-ui.html |
-| Pacientes       |	http://localhost:8082/swagger-ui.html |
-| Médicos	        | http://localhost:8083/swagger-ui.html |
-| Farmacia	      | http://localhost:8084/swagger-ui.html | 
-| Reservas	      | http://localhost:8085/swagger-ui.html |
-| Exámenes	      | http://localhost:8086/swagger-ui.html |
-| Fichas Clínicas |	http://localhost:8087/swagger-ui.html |
-| Recetas	        | http://localhost:8089/swagger-ui.html |
-| Pagos	          | http://localhost:8092/swagger-ui.html |
-| Notificaciones	| http://localhost:8091/swagger-ui.html |
+```text
+arrancar-nativo.bat
+```
 
----
+Este script inicia el sistema respetando el orden jerárquico requerido:
 
-# Ejecución con Docker (Principal)
+1. Eureka Server.
+2. Microservicios de negocio.
+3. API Gateway.
 
-## Requisitos
+Este orden es importante porque los microservicios necesitan registrarse en Eureka antes de que el Gateway pueda redirigir las solicitudes correctamente.
 
-* Windows 10/11
-* Docker Desktop 4.x o superior
-* Docker Compose
+### Pasos para ejecutar la versión nativa
 
-## Contenido del paquete
+1. Descargar el ZIP nativo desde el enlace indicado al inicio del README.
+2. Descomprimir el archivo.
+3. Verificar que exista la carpeta `apps/`.
+4. Verificar que dentro de `apps/` estén los archivos `.jar`.
+5. Abrir XAMPP.
+6. Activar MySQL.
+7. Ejecutar el archivo:
 
-El paquete Docker contiene:
+```text
+arrancar-nativo.bat
+```
 
-- apps/
-- docs/
-- backups/
-- docker-compose.yml
-- .env
-- arrancar-docker.bat
-- detener-docker.bat
-- ver-logs.bat
-- backup-db.bat
-- restaurar-db.bat
+8. Esperar a que se levanten los servicios.
+9. Abrir Eureka:
 
-## Pasos
-
-1. Descomprimir el archivo ZIP.
-
-2. Abrir Docker Desktop.
-
-3. Esperar que Docker se encuentre iniciado.
-
-4. Ejecutar:
-
-arrancar-docker.bat
-
-5. Esperar aproximadamente 30 segundos.
-
-6. Verificar Eureka
-
+```text
 http://localhost:8761
+```
 
-7. Verificar API Gateway
+10. Verificar que los microservicios aparezcan registrados.
+11. Probar el Gateway:
 
+```text
 http://localhost:8094
-
-## Detener el sistema
-
-Ejecutar
-
-detener-docker.bat
-
-## Ver logs
-
-Ejecutar
-
-ver-logs.bat
-
-## Backup
-
-Ejecutar
-
-backup-db.bat
-
-## Restauración
-
-Ejecutar
-
-restaurar-db.bat
+```
 
 ---
 
+## 8. Orden de ejecución nativa manual
 
-# 🚀 Cómo Ejecutar el Proyecto Local (Opcional)
+Si no se utiliza el script `.bat`, el sistema debe ejecutarse manualmente en este orden:
 
-## Requisitos
+| Orden | Servicio            | Puerto |
+| ----: | ------------------- | -----: |
+|     1 | `eureka-server`     |   8761 |
+|     2 | `msusuarios`        |   8081 |
+|     3 | `mspacientes`       |   8082 |
+|     4 | `msmedicos`         |   8083 |
+|     5 | `msfarmacia`        |   8084 |
+|     6 | `msreservas`        |   8085 |
+|     7 | `msexamenes`        |   8086 |
+|     8 | `msfichasclinicas`  |   8087 |
+|     9 | `ms-recetas`        |   8089 |
+|    10 | `ms-notificaciones` |   8091 |
+|    11 | `ms-pagos`          |   8092 |
+|    12 | `api-gateway`       |   8094 |
 
-* Java 21
-* Maven 3.9+
-* MySQL 8
-* Git
+Ejemplo de ejecución manual:
 
-Verificar instalación:
+```bash
+cd eureka-server
+mvn spring-boot:run
+```
+
+---
+
+## 9. Compilación del proyecto con Maven
+
+Desde la raíz del proyecto:
+
+```bash
+mvn clean install
+```
+
+Este comando:
+
+1. Limpia compilaciones anteriores.
+2. Compila todos los módulos.
+3. Ejecuta las pruebas configuradas.
+4. Genera los artefactos del proyecto.
+
+Para ejecutar solo las pruebas:
+
+```bash
+mvn clean test
+```
+
+Para generar los `.jar`:
+
+```bash
+mvn clean package
+```
+
+En caso de que las pruebas ya hayan sido validadas previamente y solo se necesite empaquetar rápidamente:
+
+```bash
+mvn clean package -DskipTests
+```
+
+---
+
+## 10. Pruebas unitarias
+
+El proyecto incluye una suite de pruebas unitarias desarrolladas con:
+
+* JUnit 5.
+* Mockito.
+* MockMvc para pruebas de controllers cuando corresponde.
+
+Estas pruebas permiten validar:
+
+1. Lógica de servicios.
+2. Comportamiento de controllers.
+3. Respuestas HTTP esperadas.
+4. Simulación de dependencias mediante Mockito.
+5. Correcta compilación del proyecto multimódulo.
+
+Comando principal para validar el proyecto completo:
+
+```bash
+mvn clean install
+```
+
+Resultado esperado:
+
+```text
+BUILD SUCCESS
+```
+
+---
+
+## 11. Eureka Server
+
+La consola de Eureka está disponible en:
+
+```text
+http://localhost:8761
+```
+
+Cuando el sistema está levantado correctamente, deben aparecer registrados los servicios:
+
+```text
+API-GATEWAY
+MS-USUARIOS
+MS-PACIENTES
+MS-MEDICOS
+MS-FARMACIA
+MS-RESERVAS
+MS-EXAMENES
+MS-FICHAS-CLINICAS
+MS-RECETAS
+MS-NOTIFICACIONES
+MS-PAGOS
+```
+
+Si un servicio no aparece en Eureka, se debe revisar:
+
+1. Que el microservicio esté ejecutándose.
+2. Que no haya fallado al iniciar.
+3. Que el puerto esté disponible.
+4. Que MySQL esté activo.
+5. Que la URL de Eureka esté correctamente configurada.
+
+---
+
+## 12. API Gateway
+
+El API Gateway permite consumir los microservicios desde un único puerto:
+
+```text
+http://localhost:8094
+```
+
+Rutas principales:
+
+| Recurso         | URL                                        |
+| --------------- | ------------------------------------------ |
+| Login           | `http://localhost:8094/auth/login`         |
+| Usuarios        | `http://localhost:8094/api/usuarios`       |
+| Pacientes       | `http://localhost:8094/api/pacientes`      |
+| Médicos         | `http://localhost:8094/api/medicos`        |
+| Medicamentos    | `http://localhost:8094/api/medicamentos`   |
+| Reservas        | `http://localhost:8094/api/reservas`       |
+| Exámenes        | `http://localhost:8094/api/examenes`       |
+| Fichas clínicas | `http://localhost:8094/api/fichas`         |
+| Recetas         | `http://localhost:8094/api/recetas`        |
+| Notificaciones  | `http://localhost:8094/api/notificaciones` |
+| Pagos           | `http://localhost:8094/api/pagos`          |
+
+---
+
+## 13. Seguridad JWT
+
+El proyecto utiliza JWT para proteger endpoints.
+
+Flujo general:
+
+1. El usuario realiza login.
+2. El sistema valida email y contraseña.
+3. Si las credenciales son correctas, se genera un token JWT.
+4. El token se envía en las siguientes peticiones usando Bearer Token.
+
+Endpoint de login:
+
+```http
+POST http://localhost:8094/auth/login
+Content-Type: application/json
+```
+
+Body de ejemplo:
+
+```json
+{
+  "email": "admin@test.cl",
+  "password": "123456"
+}
+```
+
+Respuesta esperada:
+
+```text
+200 OK
+```
+
+Las rutas protegidas deben incluir:
+
+```http
+Authorization: Bearer TOKEN_GENERADO
+```
+
+Códigos esperados:
+
+| Caso                 | Código HTTP |
+| -------------------- | ----------: |
+| Login correcto       |         200 |
+| Login incorrecto     |         401 |
+| Acceso sin token     |         401 |
+| Token inválido       |         401 |
+| Usuario sin permisos |         403 |
+
+---
+
+## 14. Documentación de endpoints con Swagger / OpenAPI
+
+El proyecto utiliza Swagger/OpenAPI para documentar los endpoints REST de los microservicios.
+
+Swagger permite revisar:
+
+1. Endpoints disponibles.
+2. Métodos HTTP.
+3. Parámetros.
+4. Body esperado.
+5. Respuestas esperadas.
+6. Códigos HTTP documentados.
+
+Swagger por microservicio:
+
+| Microservicio       | Swagger                                 |
+| ------------------- | --------------------------------------- |
+| `msusuarios`        | `http://localhost:8081/swagger-ui.html` |
+| `mspacientes`       | `http://localhost:8082/swagger-ui.html` |
+| `msmedicos`         | `http://localhost:8083/swagger-ui.html` |
+| `msfarmacia`        | `http://localhost:8084/swagger-ui.html` |
+| `msreservas`        | `http://localhost:8085/swagger-ui.html` |
+| `msexamenes`        | `http://localhost:8086/swagger-ui.html` |
+| `msfichasclinicas`  | `http://localhost:8087/swagger-ui.html` |
+| `ms-recetas`        | `http://localhost:8089/swagger-ui.html` |
+| `ms-notificaciones` | `http://localhost:8091/swagger-ui.html` |
+| `ms-pagos`          | `http://localhost:8092/swagger-ui.html` |
+
+---
+
+## 15. Arquitectura de capas
+
+Cada microservicio sigue una arquitectura por capas. La estructura puede variar levemente según el microservicio, pero la organización principal es:
+
+```text
+controller
+service
+service.impl
+repository
+model
+dto
+mapper
+exception
+client
+config
+```
+
+### Controller
+
+La capa Controller recibe las peticiones HTTP.
+
+Responsabilidades:
+
+* Definir endpoints.
+* Recibir parámetros y body.
+* Aplicar `@Valid`.
+* Llamar al Service.
+* Retornar `ResponseEntity`.
+
+### Service
+
+La capa Service contiene la lógica de negocio.
+
+Responsabilidades:
+
+* Validar reglas del sistema.
+* Coordinar operaciones.
+* Llamar al Repository.
+* Invocar Feign Clients si corresponde.
+* Usar Mapper para convertir datos.
+* Lanzar excepciones controladas.
+
+### Repository
+
+La capa Repository se comunica con la base de datos usando Spring Data JPA.
+
+Responsabilidades:
+
+* Guardar entidades.
+* Buscar por ID.
+* Listar registros.
+* Eliminar registros.
+* Definir consultas personalizadas cuando sea necesario.
+
+### Model
+
+La capa Model representa las entidades persistentes del sistema.
+
+Responsabilidades:
+
+* Definir la tabla.
+* Definir los atributos.
+* Usar anotaciones JPA como `@Entity`, `@Id` y `@GeneratedValue`.
+
+### DTO
+
+Los DTOs se usan para transferir datos entre el cliente y el backend.
+
+Tipos comunes:
+
+```text
+Request DTO
+Response DTO
+```
+
+Ventajas:
+
+* Evitan exponer directamente las entidades.
+* Permiten validar datos de entrada.
+* Controlan qué información se recibe y se devuelve.
+* Mejoran la seguridad y mantenibilidad.
+
+### Mapper
+
+El Mapper convierte entre DTOs y entidades.
+
+Ejemplo:
+
+```text
+PacienteRequest -> Paciente
+Paciente -> PacienteResponse
+```
+
+### Exception
+
+La capa Exception permite manejar errores de forma controlada.
+
+Ejemplos:
+
+```text
+PacienteNoEncontradoException
+FichaClinicaNoEncontradaException
+RecursoNoEncontradoException
+ForbiddenException
+GlobalExceptionHandler
+```
+
+### Client
+
+La capa Client se usa para comunicación entre microservicios mediante Feign Client.
+
+Ejemplos:
+
+```text
+PacienteClient
+MedicoClient
+ExamenClient
+```
+
+---
+
+## 16. Comunicación entre microservicios
+
+El proyecto utiliza OpenFeign para que algunos microservicios puedan validar información en otros servicios.
+
+| Servicio origen    | Servicio destino | Objetivo                                          |
+| ------------------ | ---------------- | ------------------------------------------------- |
+| `msfichasclinicas` | `mspacientes`    | Validar que el paciente exista                    |
+| `msfichasclinicas` | `msmedicos`      | Validar que el médico exista                      |
+| `msfichasclinicas` | `msexamenes`     | Validar que el examen exista                      |
+| `msreservas`       | `mspacientes`    | Validar que el paciente exista                    |
+| `msreservas`       | `msmedicos`      | Validar que el médico exista                      |
+| `ms-recetas`       | `mspacientes`    | Asociar o validar paciente según regla de negocio |
+| `ms-recetas`       | `msmedicos`      | Asociar o validar médico según regla de negocio   |
+| `ms-pagos`         | `mspacientes`    | Asociar pago a paciente según regla de negocio    |
+
+Ejemplo conceptual de Feign Client:
+
+```java
+@FeignClient(name = "MS-PACIENTES")
+public interface PacienteClient {
+
+    @GetMapping("/api/pacientes/{id}")
+    PacienteResponse obtenerPacientePorId(@PathVariable Long id);
+}
+```
+
+---
+
+## 17. Manejo de errores
+
+Cada microservicio maneja errores de forma controlada mediante excepciones personalizadas y/o `@RestControllerAdvice`.
+
+Códigos HTTP esperados:
+
+| Código | Caso                                                |
+| -----: | --------------------------------------------------- |
+|    200 | Operación exitosa                                   |
+|    201 | Recurso creado                                      |
+|    204 | Recurso eliminado sin contenido                     |
+|    400 | Datos inválidos o JSON mal formado                  |
+|    401 | Sin autenticación o token inválido                  |
+|    403 | Usuario autenticado sin permisos                    |
+|    404 | Recurso no encontrado                               |
+|    409 | Conflicto de negocio, por ejemplo reserva duplicada |
+|    500 | Error interno no controlado                         |
+|    503 | Servicio remoto no disponible                       |
+
+Ejemplo de respuesta de error:
+
+```json
+{
+  "mensaje": "Paciente no encontrado con ID 999999",
+  "status": 404
+}
+```
+
+---
+
+## 18. Logs
+
+Los microservicios incorporan o pueden incorporar logs mediante Lombok:
+
+```java
+@Slf4j
+```
+
+Ejemplos de uso:
+
+```java
+log.info("Creando paciente");
+log.warn("Paciente no encontrado con ID {}", id);
+log.error("Error al comunicarse con otro microservicio", ex);
+```
+
+Uso recomendado:
+
+| Nivel       | Uso                                                        |
+| ----------- | ---------------------------------------------------------- |
+| `log.info`  | Operaciones normales como crear, listar o actualizar       |
+| `log.warn`  | Casos esperados pero anormales, como recurso no encontrado |
+| `log.error` | Errores inesperados o fallas de comunicación               |
+
+---
+
+## 19. Pruebas con Postman
+
+El proyecto cuenta con pruebas HTTP mediante Postman.
+
+Se recomienda usar:
+
+```text
+base_url = http://localhost:8094
+```
+
+Flujo recomendado:
+
+1. Importar la colección Postman.
+2. Importar el environment local.
+3. Seleccionar el environment.
+4. Ejecutar login.
+5. Verificar que se guarde el token.
+6. Ejecutar las pruebas CRUD.
+7. Ejecutar pruebas de errores.
+8. Ejecutar Collection Runner si corresponde.
+
+Pruebas mínimas recomendadas:
+
+| Prueba                     | Resultado esperado |
+| -------------------------- | -----------------: |
+| Login correcto             |                200 |
+| Login incorrecto           |                401 |
+| Acceso sin token           |                401 |
+| Token inválido             |                401 |
+| Listar recursos            |                200 |
+| Crear recurso válido       |                201 |
+| Crear recurso inválido     |                400 |
+| Buscar recurso inexistente |                404 |
+| Eliminar recurso           |                204 |
+| Reserva duplicada          |                409 |
+
+---
+
+## 20. Versión Docker
+
+Además de la ejecución nativa, el proyecto incluye una versión Docker distribuida en un ZIP externo.
+
+La versión Docker contiene:
+
+* `docker-compose.yml`.
+* `.env`.
+* Carpeta `apps/` con los archivos `.jar`.
+* Configuración de MySQL en contenedor.
+* Eureka Server.
+* API Gateway.
+* Microservicios del sistema.
+* Scripts auxiliares de ejecución o detención si corresponde.
+
+### Comando principal
+
+Desde la carpeta donde se encuentra el archivo `docker-compose.yml`:
+
+```bash
+docker compose up -d
+```
+
+### Verificar contenedores
+
+```bash
+docker compose ps
+```
+
+### Ver logs
+
+```bash
+docker compose logs msusuarios --tail=100
+```
+
+### Detener el sistema
+
+```bash
+docker compose down
+```
+
+### URLs principales en Docker
+
+| Servicio    | URL                     |
+| ----------- | ----------------------- |
+| Eureka      | `http://localhost:8761` |
+| API Gateway | `http://localhost:8094` |
+
+Notas importantes para Docker:
+
+* En Docker, los microservicios no deben usar `localhost` para comunicarse entre contenedores.
+* Para MySQL se usa el nombre del servicio: `mysql-db:3306`.
+* Para Eureka se usa el nombre del servicio: `eureka-server:8761`.
+* Los contenedores Java deben usar Java 21, ya que los `.jar` fueron compilados con Java 21.
+
+---
+
+## 21. Video de defensa técnica
+
+El proyecto incluye un video de defensa técnica con duración ideal de 15 minutos y máximo de 18 minutos.
+
+El video debe explicar:
+
+1. Arquitectura general del sistema.
+2. Eureka Server.
+3. API Gateway.
+4. Microservicios implementados.
+5. Seguridad JWT.
+6. Ejecución nativa.
+7. Ejecución con Docker.
+8. Pruebas con Postman.
+9. Documentación Swagger/OpenAPI.
+10. Pruebas unitarias con JUnit 5 y Mockito.
+11. Aporte personal de los integrantes.
+
+Además, se incluye el archivo:
+
+```text
+subtitulos-video.txt
+```
+
+Este archivo contiene los subtítulos o guion textual utilizado para apoyar la defensa técnica.
+
+---
+
+## 22. Estado actual del proyecto
+
+| Elemento                  | Estado                                    |
+| ------------------------- | ----------------------------------------- |
+| Proyecto padre Maven      | Implementado                              |
+| Eureka Server             | Implementado                              |
+| API Gateway               | Implementado                              |
+| `msusuarios`              | Implementado                              |
+| `mspacientes`             | Implementado                              |
+| `msmedicos`               | Implementado                              |
+| `msfarmacia`              | Implementado                              |
+| `msreservas`              | Implementado                              |
+| `msexamenes`              | Implementado                              |
+| `msfichasclinicas`        | Implementado                              |
+| `ms-recetas`              | Implementado                              |
+| `ms-notificaciones`       | Implementado                              |
+| `ms-pagos`                | Implementado                              |
+| JWT                       | Implementado                              |
+| Swagger por microservicio | Implementado                              |
+| Feign Client              | Implementado                              |
+| Manejo de errores         | Implementado                              |
+| Validaciones              | Implementado                              |
+| Logs                      | Implementado                              |
+| Pruebas Postman           | Implementado                              |
+| Pruebas unitarias         | Implementado                              |
+| Ejecución nativa          | Implementado                              |
+| Docker                    | Implementado y distribuido en ZIP externo |
+
+---
+
+## 23. Comandos útiles finales
+
+### Verificar versión de Java
 
 ```bash
 java -version
 ```
 
-```bash
-mvn -version
-```
+Debe mostrar Java 21.
 
----
-
-
-# 🗄️ Configuración de MySQL
-
-## Configuración utilizada
-
-```txt
-Puerto MySQL: 3307
-```
-
-## Creación Automática de Bases de Datos
-
-Las bases de datos NO necesitan crearse manualmente.
-
-Cada microservicio utiliza:
-
-```yaml
-createDatabaseIfNotExist=true
-```
-
-Ejemplo:
-
-```yaml
-url: jdbc:mysql://localhost:3307/db_notificaciones?createDatabaseIfNotExist=true&useSSL=false&serverTimezone=UTC
-```
-
-Esto permite que MySQL cree automáticamente la base de datos al iniciar el microservicio.
-
-⚠️ IMPORTANTE:
-
-MySQL/XAMPP debe estar iniciado antes de levantar los microservicios.
-
----
-
----
-
-## 1️⃣ Clonar el repositorio
+### Verificar Maven
 
 ```bash
-git clone URL_DEL_REPOSITORIO
+mvn -v
 ```
+
+### Compilar todo
 
 ```bash
-cd proyecto-clinica
+mvn clean install
 ```
 
----
-
-# Compilar
+### Ejecutar pruebas
 
 ```bash
-mvn clean install -DskipTests
+mvn clean test
+```
+
+### Levantar un microservicio
+
+```bash
+cd NOMBRE_MICROSERVICIO
+mvn spring-boot:run
+```
+
+### Abrir Eureka
+
+```text
+http://localhost:8761
+```
+
+### Probar Gateway
+
+```text
+http://localhost:8094
 ```
 
 ---
 
-## 2️⃣ Abrir el proyecto padre en VS Code
-
-Abrir la carpeta:
-
-```txt
-proyecto-clinica-main
-```
-
----
-
-# 🖥️ Cómo ejecutar los microservicios desde VS Code
-
-Con la implementación de Maven Multi-Módulo, podemos levantar todos los microservicios con la extensión de Spring Boot Dashboard en VS Code
-
-## Recomendación
-
-Abrir la carpeta del proyecto padre:
-
-```txt
-Levantar los microservicios siguiendo el orden recomendado de ejecución:
-```
-
-Ejemplo:
-
-```txt
-1. Iniciar MySQL.
-2. Levantar Eureka Server.
-3. Levantar todos los microservicios.
-4. Levantar API Gateway.
-```
-
----
-
-## Qué debe aparecer
-
-Todos los servicios deben mostrarse con estado:
-
-```txt
-UP
-```
-
-Ejemplo:
-
-```txt
-API Gateway
-MS Usuarios
-MS Pacientes
-MS Médicos
-MS Farmacia
-MS Reservas
-MS Exámenes
-MS Fichas Clínicas
-MS Recetas
-MS Pagos
-MS Notificaciones
-```
-
----
-
-# 🔐 Autenticación JWT
-
-La autenticación se realiza mediante:
-
-```txt
-msUsuarios
-```
-
----
-
-# 👨‍💻 Crear Usuario ADMIN Manualmente desde MySQL o phpMyAdmin
-
-## ⚠️ IMPORTANTE
-
-Antes de iniciar sesión por primera vez, se recomienda crear el usuario administrador directamente desde MySQL o phpMyAdmin.
-
-Esto evita problemas iniciales de autenticación y permite obtener el primer token JWT.
-
----
-
-# 🗄️ Opción 1 — Crear ADMIN desde phpMyAdmin
-
-## 1. Abrir phpMyAdmin
-
-```txt
-http://localhost/phpmyadmin
-```
-
----
-
-## 2. Abrir base de datos
-
-```txt
-ms_usuarios
-```
-
----
-
-## 3. Abrir tabla
-
-```txt
-usuarios
-```
-
----
-
-## 4. Ir a la pestaña SQL
-
----
-
-## 5. Ejecutar el siguiente script
-
-```sql
-INSERT INTO usuarios (
-    nombre,
-    email,
-    password,
-    rol,
-    activo
-)
-VALUES (
-    'Administrador',
-    'admin@gmail.com',
-    '$2a$10$AvKfNXupTWburBM/tVRcRefoFxgDjrYYLeapPdpXihILzn5Ayj.SC',
-    'ROLE_ADMIN',
-    1
-);
-```
-
----
-
-# 🔐 Credenciales del Usuario ADMIN
-
-```txt
-Email: admin@gmail.com
-Password: 123456
-```
-
----
-
-# ⚠️ IMPORTANTE
-
-La contraseña utilizada en el INSERT fue generada previamente utilizando:
-
-```txt
-PasswordGenerator.java en msUsuarios
-```
-
-El proyecto incluye una clase para generar hashes BCrypt automáticamente.
-
-Ejemplo:
-
-```java
-package com.clinic.msusuarios;
-
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
-public class PasswordGenerator {
-
-    public static void main(String[] args) {
-
-        BCryptPasswordEncoder encoder =
-                new BCryptPasswordEncoder();
-
-        String password = encoder.encode("123456");
-
-        System.out.println(password);
-    }
-}
-```
-
-Al ejecutar la clase se generará un hash similar a:
-
-```txt
-$2a$10$AvKfNXupTWburBM/tVRcRefoFxgDjrYYLeapPdpXihILzn5Ayj.SC
-```
-
-Ese hash es el que se utiliza en el INSERT SQL.
-
-⚠️ IMPORTANTE:
-
-La contraseña almacenada en MySQL siempre debe estar encriptada con BCrypt.
-
-NO debe guardarse texto plano en la base de datos.
-
----
-
-# 🖥️ Opción 2 — Crear ADMIN desde MySQL Workbench o consola SQL
-
-## Ejecutar:
-
-```sql
-INSERT INTO usuarios (
-    nombre,
-    email,
-    password,
-    rol,
-    activo
-)
-VALUES (
-    'Administrador',
-    'admin@gmail.com',
-    '$2a$10$AvKfNXupTWburBM/tVRcRefoFxgDjrYYLeapPdpXihILzn5Ayj.SC',
-    'ROLE_ADMIN',
-    1
-);
-```
-
----
-
-# 🔑 Obtener Token JWT
-
-## ⚠️ IMPORTANTE ANTES DE PROBAR
-
-Antes de utilizar cualquier endpoint protegido, el usuario debe:
-
-1. Crear un usuario ADMIN
-2. Iniciar sesión
-3. Obtener el token JWT
-4. Utilizar el token en Postman
-
----
-
-## Endpoint
-
-```http
-POST http://localhost:8090/auth/login
-```
-
-## Body
-
-```json
-{
-  "email": "admin@gmail.com",
-  "password": "123456"
-}
-```
-
-## Respuesta esperada
-
-```json
-{
-  "token": "TOKEN_JWT"
-}
-```
-
----
-
-# 🔐 Cómo Utilizar el Token en Postman
-
-Después de obtener el token:
-
-## 1. Copiar el token
-
-```txt
-TOKEN_JWT
-```
-
----
-
-## 2. Ir a la pestaña Authorization en Postman
-
-Seleccionar:
-
-```txt
-Bearer Token
-```
-
----
-
-## 3. Pegar el token
-
-```txt
-TOKEN_JWT
-```
-
----
-
-## 4. Enviar la petición
-
-Esto permitirá acceder a los endpoints protegidos.
-
----
-
-# 🧪 Cómo Probar el Sistema en Postman
-
-## Recomendación Importante
-
-Crear:
-
-```txt
-Una pestaña nueva de Postman para cada microservicio
-```
-
-Ejemplo:
-
-```txt
-Pestaña 1 → Login JWT
-Pestaña 2 → Usuarios
-Pestaña 3 → Pacientes
-Pestaña 4 → Médicos
-Pestaña 5 → Exámenes
-Pestaña 6 → Fichas Clínicas
-Pestaña 7 → Recetas
-Pestaña 8 → Pagos
-Pestaña 9 → Notificaciones
-```
-
-Esto facilita:
-
-* reutilizar el token
-* mantener ordenadas las pruebas
-* evitar errores
-
----
-
-Todas las pruebas se realizan desde:
-
-```txt
-API Gateway
-```
-
-Puerto:
-
-```txt
-8094
-```
-
----
-
-# 👤 Pruebas msUsuarios
-
-## Crear Usuario
-
-### Endpoint
-
-```http
-POST http://localhost:8090/api/usuarios
-```
-
-### Explicación
-
-Este microservicio permite:
-
-* registrar usuarios
-* iniciar sesión
-* generar JWT
-* administrar roles
-* proteger endpoints
-
-### Body
-
-```json
-{
-  "nombre": "IngreseSuNombreAqui",
-  "email": "ingrese_su_correo_aqui@gmail.com",
-  "password": "IngreseSuPasswordAqui",
-  "rol": "ROLE_ADMIN",
-  "activo": true
-}
-```
-
-### Explicación de Campos
-
-| Campo    | Descripción                 |
-| -------- | --------------------------- |
-| nombre   | Nombre del usuario          |
-| email    | Correo utilizado para login |
-| password | Contraseña del usuario      |
-| rol      | Rol del sistema             |
-| activo   | Estado del usuario          |
-
-### Roles disponibles
-
-```txt
-ROLE_ADMIN
-ROLE_MEDICO
-ROLE_RECEPCIONISTA
-```
-
----
-
-## Listar Usuarios
-
-```http
-GET http://localhost:8090/api/usuarios
-```
-
----
-
-# 🧍‍♂️ Pruebas msPacientes
-
-## Crear Paciente
-
-```http
-POST http://localhost:8090/api/pacientes
-```
-
-### Body
-
-```json
-{
-  "nombre": "Juan",
-  "apellido": "Perez",
-  "rut": "11111111-1",
-  "telefono": "987654321",
-  "email": "juan@gmail.com",
-  "direccion": "Santiago",
-  "edad": 30,
-  "prevision": "Fonasa"
-}
-```
-
----
-
-## Listar Pacientes
-
-```http
-GET http://localhost:8090/api/pacientes
-```
-
----
-
-# 👨‍⚕️ Pruebas msMedicos
-
-## Crear Médico
-
-```http
-POST http://localhost:8090/api/medicos
-```
-
-### Body
-
-```json
-{
-  "nombre": "Carlos",
-  "apellido": "Soto",
-  "rut": "22222222-2",
-  "telefono": "987654321",
-  "correo": "carlos@clinic.com",
-  "especialidad": "Cardiologia",
-  "disponible": true
-}
-```
-
----
-
-## Listar Médicos
-
-```http
-GET http://localhost:8090/api/medicos
-```
-
----
-
-# 🧪 Pruebas msExamenes
-
-## Crear Examen
-
-```http
-POST http://localhost:8090/api/examenes
-```
-
-### Body
-
-```json
-{
-  "pacienteId": 1,
-  "tipoExamen": "Examen de Sangre",
-  "fecha": "2026-05-17",
-  "resultado": "Pendiente",
-  "estado": "EN_PROCESO"
-}
-```
-
----
-
-## Listar Exámenes
-
-```http
-GET http://localhost:8090/api/examenes
-```
-
----
-
-# ⚠️ Orden Correcto para las Pruebas Integradas
-
-Para que las relaciones funcionen correctamente se recomienda seguir este orden:
-
-1. Crear Usuario
-2. Crear Paciente
-3. Crear Médico
-4. Crear Examen
-5. Crear Ficha Clínica
-6. Crear Receta
-7. Crear Pago
-8. Crear Notificación
-
----
-
-# 📋 Pruebas msFichasClinicas
-
-## Crear Ficha Clínica
-
-```http
-POST http://localhost:8090/api/fichas
-```
-
-### Body
-
-```json
-{
-  "pacienteId": 1,
-  "medicoId": 1,
-  "examenId": 1,
-  "diagnostico": "Paciente con anemia leve",
-  "tratamiento": "Suplementos de hierro",
-  "observaciones": "Control en 30 dias",
-  "fecha": "2026-05-17"
-}
-```
-
----
-
-## Qué hace este microservicio
-
-Valida automáticamente:
-
-* existencia del paciente
-* existencia del médico
-* existencia del examen
-
-utilizando:
-
-```txt
-FeignClient
-```
-
----
-
-# 💊 Pruebas msRecetas
-
-## Crear Receta
-
-```http
-POST http://localhost:8090/api/recetas
-```
-
-### Body
-
-```json
-{
-  "pacienteId": 1,
-  "medicoId": 1,
-  "medicamento": "Paracetamol",
-  "dosis": "500mg",
-  "indicaciones": "Tomar cada 8 horas",
-  "fechaEmision": "2026-05-17",
-  "activa": true
-}
-```
-
----
-
-## Listar Recetas
-
-```http
-GET http://localhost:8090/api/recetas
-```
-
----
-
-# 💳 Pruebas msPagos
-
-## Crear Pago
-
-```http
-POST http://localhost:8090/api/pagos
-```
-
-### Body
-
-```json
-{
-  "pacienteId": 1,
-  "concepto": "Pago consulta cardiologia",
-  "monto": 25000,
-  "metodoPago": "TARJETA",
-  "estado": "PAGADO",
-  "fechaPago": "2026-05-17"
-}
-```
-
----
-
-## Listar Pagos
-
-```http
-GET http://localhost:8090/api/pagos
-```
-
----
-
-# 🔔 Pruebas msNotificaciones
-
-## Crear Notificación
-
-```http
-POST http://localhost:8090/api/notificaciones
-```
-
-### Body
-
-```json
-{
-  "destinatario": "misael@gmail.com",
-  "titulo": "Pago registrado",
-  "mensaje": "Su pago fue registrado correctamente",
-  "tipo": "EMAIL",
-  "estado": "ENVIADO"
-}
-```
-
----
-
-## Listar Notificaciones
-
-```http
-GET http://localhost:8090/api/notificaciones
-```
-
----
-
-# 📌 Notas Finales
-
-## ✅ Verificación Final del Sistema
-
-Si todo funciona correctamente:
-
-* Eureka mostrará todos los servicios en estado UP
-* El API Gateway responderá correctamente
-* Los CRUD funcionarán desde Postman
-* Las bases de datos se crearán automáticamente
-* FeignClient validará relaciones entre microservicios
-* JWT permitirá autenticación segura
-
----
-
-## 📡 API Gateway
-
-Todas las peticiones pasan por:
-
-```txt
-http://localhost:8090
-```
-
-El Gateway enruta automáticamente hacia cada microservicio.
-
----
-
-## ✅ Estado del Proyecto
-
-| Funcionalidad      | Estado  |
-| ------------------ | ------- |
-| Microservicios     | ✅      |
-| Eureka             | ✅      |
-| API Gateway        | ✅      |
-| Spring Security    | ✅      |
-| JWT                | ✅      |
-| Swagger            | ✅      |
-| Docker             | ✅      |
-| Maven Multi-Módulo | ✅      |
-| OpenAPI            | ✅      |
-| FeignClient        | ✅      |
-| MySQL              | ✅      |
-| CRUD Completo      | ✅      |
-
----
-
-## Próximas Mejoras
-
-* Despliegue en Railway
-* CI/CD con GitHub Actions
-* Observabilidad con Prometheus y Grafana
-* Centralización de configuración con Spring Cloud Config
-* Trazabilidad distribuida (Zipkin/OpenTelemetry)
-* Balanceo de carga avanzado
-* Kubernetes
-
----
-
-## Equipo de Desarrollo
-
-Cada integrante participó en el diseño, implementación e integración de distintos microservicios, aplicando buenas prácticas de desarrollo backend, arquitectura de microservicios y desarrollo colaborativo con Spring Boot y Spring Cloud.
-
-Autores del proyecto: Marco Carrasco, Jeannette Figueroa y Misael Rojas.
-
----
-
-## 📄 Licencia
-
-Este proyecto fue desarrollado con fines académicos y educativos.
-Puede utilizarse como referencia para aprendizaje y desarrollo personal.
+## 24. Próximas mejoras sugeridas
+
+* Mejorar cobertura de pruebas unitarias.
+* Agregar más pruebas con MockMvc.
+* Mejorar logs por microservicio.
+* Estandarizar respuestas de error.
+* Centralizar documentación Swagger si se requiere.
+* Revisar seguridad por roles en todos los microservicios.
+* Agregar monitoreo o Actuator en una futura versión.
+* Mejorar documentación técnica por cada microservicio.
