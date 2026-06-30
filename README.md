@@ -891,4 +891,4 @@ Desde la Entrega 2, el proyecto fue reforzado para cumplir con los requerimiento
 * Organización de perfiles y configuraciones YAML para ejecución local y ejecución con Docker.
 * Preparación de una versión nativa con archivos `.jar` y script `arrancar-nativo.bat`.
 * Organización de evidencias técnicas en Google Drive, incluyendo Maven, Eureka, Swagger, Postman, Docker, GitHub, ZIP nativo y ZIP Docker.
-* Implementacion de Proyecto Padre
+* Implementación del proyecto padre Maven Multi-Módulo.
