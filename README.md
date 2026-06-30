@@ -35,7 +35,17 @@ Los archivos necesarios para importar y ejecutar las pruebas en Postman se encue
 | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | Colección Postman        | Archivo `.postman_collection.json` con las pruebas HTTP completas del proyecto, incluyendo login, JWT, CRUD, validaciones, errores generales y pruebas de seguridad. | [Descargar colección Postman](https://drive.google.com/file/d/1dYLHKpxn5gmnJuUByMC-8rI8NaAKG9Da/view?usp=drive_link)     |
 | Environment Postman      | Archivo `.postman_environment.json` con las variables necesarias para ejecutar las pruebas, incluyendo `base_url`, `token` y `tokenNoAdmin`.                         | [Descargar environment Postman](https://drive.google.com/file/d/1HttssdbbkbDnKCrX6WLn6XW5lshcNzjk/view?usp=sharing) |
-| Carpeta completa Postman | Carpeta de Google Drive con todos los archivos de importación de Postman utilizados para las pruebas del sistema.                                                    | [Ver carpeta Postman en Google Drive](https://drive.google.com/drive/folders/1YEMuUGqwvHlyvpMr2fVTRZsrrXhDgXGO?usp=drive_link)       |
+| Carpeta completa Postman | Carpeta de Google Drive con todos los archivos de importación de Postman utilizados para las pruebas del sistema.                                                    | [Ver carpeta Postman](https://drive.google.com/drive/folders/1YEMuUGqwvHlyvpMr2fVTRZsrrXhDgXGO?usp=drive_link)       |
+
+---
+
+## Tablón de tareas / Scrum
+
+La planificación, distribución de tareas y seguimiento del avance del equipo se encuentra documentada en un tablón de tareas Scrum.
+
+| Recurso                | Descripción                                                                                                                   | Enlace                                                                 |
+| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| Tablón de tareas Scrum | Archivo con las tareas del proyecto, responsables, estados de avance, observaciones y evidencias de participación del equipo. | [Ver tablón de tareas](https://docs.google.com/spreadsheets/d/10piEPVq8IvtFMhhRuaaPTNFcL69-gFyn7j9xNEuytYE/edit?usp=sharing) |
 
 
 ---
