@@ -19,6 +19,7 @@ El sistema fue desarrollado con Java 21, Spring Boot, Spring Cloud, Eureka Serve
 | Environment Postman | Archivo `.postman_environment.json` con `base_url`, `token` y `tokenNoAdmin`.              | [Descargar](https://drive.google.com/file/d/1HttssdbbkbDnKCrX6WLn6XW5lshcNzjk/view?usp=sharing)                    |
 | Carpeta Postman     | Carpeta con los archivos necesarios para importar las pruebas en Postman.                  | [Ver carpeta](https://drive.google.com/drive/folders/1YEMuUGqwvHlyvpMr2fVTRZsrrXhDgXGO?usp=drive_link)             |
 | Tablón Scrum        | Archivo con tareas, responsables, estados, observaciones y seguimiento del equipo.         | [Ver tablón](https://docs.google.com/spreadsheets/d/10piEPVq8IvtFMhhRuaaPTNFcL69-gFyn7j9xNEuytYE/edit?usp=sharing) |
+| Repositorio GitHub | Código fuente del proyecto con microservicios, Gateway, Eureka, configuración, README y documentación técnica. | [Ver repositorio](https://github.com/Missaldur1/proyecto-clinica.git) |
 
 ---
 
