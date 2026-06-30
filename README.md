@@ -755,7 +755,7 @@ Notas importantes para Docker:
 
 ## 21. Video de defensa técnica
 
-El proyecto incluye un video de defensa técnica con una duración máxima recomendada de 15 minutos por estudiante, de acuerdo con la pauta de evaluación.
+El proyecto incluye un video de defensa técnica con una duración aproximada de 11 minutos, manteniéndose dentro del tiempo máximo establecido para la defensa individual.
 
 El video presenta el funcionamiento general del sistema, las mejoras implementadas desde la Entrega 2 y los aportes técnicos de cada integrante del equipo.
 
@@ -790,6 +790,7 @@ El video presenta el funcionamiento general del sistema, las mejoras implementad
 ### Subtítulos / Guion
 
 El video cuenta con un archivo de subtítulos y guion de apoyo llamado `subtitulos-video.txt`, donde se detalla la participación de cada integrante y el orden de exposición utilizado durante la defensa técnica.
+
 
 
 ---
