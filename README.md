@@ -860,13 +860,20 @@ http://localhost:8094
 
 ---
 
-## 24. Próximas mejoras sugeridas
+## Mejoras implementadas desde la Entrega 2
 
-* Mejorar cobertura de pruebas unitarias.
-* Agregar más pruebas con MockMvc.
-* Mejorar logs por microservicio.
-* Estandarizar respuestas de error.
-* Centralizar documentación Swagger si se requiere.
-* Revisar seguridad por roles en todos los microservicios.
-* Agregar monitoreo o Actuator en una futura versión.
-* Mejorar documentación técnica por cada microservicio.
+Desde la Entrega 2, el proyecto fue reforzado para cumplir con los requerimientos técnicos de la Evaluación Parcial 3. Las principales mejoras implementadas fueron:
+
+* Estandarización de códigos HTTP en los endpoints, incorporando respuestas coherentes como `200 OK`, `201 Created`, `204 No Content`, `400 Bad Request`, `401 Unauthorized`, `403 Forbidden`, `404 Not Found` y `409 Conflict`.
+* Incorporación y mejora de logs para facilitar el seguimiento de operaciones, errores, registros en Eureka y comportamiento de los microservicios durante la ejecución.
+* Refuerzo de reglas de negocio, validaciones y manejo de excepciones para controlar datos inválidos, recursos inexistentes y conflictos funcionales.
+* Implementación de seguridad con JWT y control de acceso basado en roles mediante RBAC, validando accesos con token válido, token inválido, ausencia de token y permisos insuficientes.
+* Configuración del API Gateway como punto central de entrada para enrutar las solicitudes hacia los microservicios.
+* Integración de documentación Swagger/OpenAPI para facilitar la revisión y prueba de endpoints.
+* Creación de colección Postman y environment para validar login, CRUD, JWT, errores generales y seguridad.
+* Incorporación de pruebas unitarias con JUnit y Mockito para validar lógica de negocio.
+* Dockerización del proyecto mediante `docker-compose`, incluyendo microservicios, Gateway, Eureka y MySQL.
+* Organización de perfiles y configuraciones YAML para ejecución local y ejecución con Docker.
+* Preparación de una versión nativa con archivos `.jar` y script `arrancar-nativo.bat`.
+* Organización de evidencias técnicas en Google Drive, incluyendo Maven, Eureka, Swagger, Postman, Docker, GitHub, ZIP nativo y ZIP Docker.
+* Implementacion de Proyecto Padre
