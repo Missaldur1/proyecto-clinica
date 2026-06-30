@@ -6,47 +6,19 @@ El sistema fue desarrollado con Java 21, Spring Boot, Spring Cloud, Eureka Serve
 
 ---
 
-## Componentes de distribución y defensa técnica
+## Recursos de entrega y evidencias
 
-| Componente               | Descripción                                                                                                                        | Enlace                                        |
-| ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| Versión Nativa           | Archivo `.zip` con carpeta `apps/`, archivos `.jar` compilados y script `arrancar-nativo.bat` para ejecutar el sistema sin Docker. | [Descargar ZIP Nativo](https://drive.google.com/file/d/1vETnuGLEFPcSEd__yVj0gXanpdAHbQ6x/view?usp=drive_link) |
-| Versión Docker           | Archivo `.zip` con `docker-compose.yml`, `.env`, carpeta `apps/`, scripts y configuración para ejecutar el sistema con Docker.     | [Descargar ZIP Docker](https://drive.google.com/file/d/11CRka9-k_E09m1_Ox6V2C9RRJ-jzpDCX/view?usp=drive_link) |
-| Video de Defensa Técnica | Video explicativo del proyecto, funcionamiento, pruebas, ejecución nativa, Docker y aporte personal.                               | [Ver Video](PEGAR_LINK_VIDEO)                 |
-| Subtítulos / Guion       | Archivo de apoyo para el video de defensa técnica.                                                                                 | [subtitulos-video.txt](https://drive.google.com/file/d/1t-Une3VJOgyOvyBZGwJg-68F6aIT99qM/view?usp=drive_link)                        |
-
----
-
-## Evidencias del proyecto
-
-Las evidencias del proyecto se encuentran disponibles en una carpeta externa de Google Drive.
-
-| Evidencia | Descripción | Enlace |
-|---|---|---|
-| Evidencias completas | Carpeta con capturas de Maven, Eureka, Swagger, Postman, Docker, ZIP nativo, ZIP Docker, GitHub y pruebas de seguridad JWT. | [Ver evidencias](https://drive.google.com/drive/folders/1QJI68G_4PckcvoKsy95-9EJiVz2HeBgG?usp=sharing) |
-
----
-
-## Importaciones de Postman
-
-Los archivos necesarios para importar y ejecutar las pruebas en Postman se encuentran disponibles en una carpeta externa de Google Drive.
-
-| Archivo                  | Descripción                                                                                                                                                          | Enlace                                                                |
-| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| Colección Postman        | Archivo `.postman_collection.json` con las pruebas HTTP completas del proyecto, incluyendo login, JWT, CRUD, validaciones, errores generales y pruebas de seguridad. | [Descargar colección Postman](https://drive.google.com/file/d/1dYLHKpxn5gmnJuUByMC-8rI8NaAKG9Da/view?usp=drive_link)     |
-| Environment Postman      | Archivo `.postman_environment.json` con las variables necesarias para ejecutar las pruebas, incluyendo `base_url`, `token` y `tokenNoAdmin`.                         | [Descargar environment Postman](https://drive.google.com/file/d/1HttssdbbkbDnKCrX6WLn6XW5lshcNzjk/view?usp=sharing) |
-| Carpeta completa Postman | Carpeta de Google Drive con todos los archivos de importación de Postman utilizados para las pruebas del sistema.                                                    | [Ver carpeta Postman](https://drive.google.com/drive/folders/1YEMuUGqwvHlyvpMr2fVTRZsrrXhDgXGO?usp=drive_link)       |
-
----
-
-## Tablón de tareas / Scrum
-
-La planificación, distribución de tareas y seguimiento del avance del equipo se encuentra documentada en un tablón de tareas Scrum.
-
-| Recurso                | Descripción                                                                                                                   | Enlace                                                                 |
-| ---------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Tablón de tareas Scrum | Archivo con las tareas del proyecto, responsables, estados de avance, observaciones y evidencias de participación del equipo. | [Ver tablón de tareas](https://docs.google.com/spreadsheets/d/10piEPVq8IvtFMhhRuaaPTNFcL69-gFyn7j9xNEuytYE/edit?usp=sharing) |
-
+| Recurso             | Contenido                                                                                  | Enlace                                                                                                             |
+| ------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------ |
+| Versión Nativa      | ZIP con carpeta `apps`, archivos `.jar` y script `arrancar-nativo.bat`.                    | [Descargar](https://drive.google.com/file/d/1vETnuGLEFPcSEd__yVj0gXanpdAHbQ6x/view?usp=drive_link)                 |
+| Versión Docker      | ZIP con `docker-compose.yml`, `.env`, carpeta `apps` y configuración Docker.               | [Descargar](https://drive.google.com/file/d/11CRka9-k_E09m1_Ox6V2C9RRJ-jzpDCX/view?usp=drive_link)                 |
+| Video de defensa    | Video explicativo del funcionamiento, pruebas, Docker, ejecución nativa y aporte personal. | [Ver video](PEGAR_LINK_VIDEO)                                                                                      |
+| Subtítulos / Guion  | Archivo de apoyo utilizado para la defensa técnica.                                        | [Ver archivo](https://drive.google.com/file/d/1t-Une3VJOgyOvyBZGwJg-68F6aIT99qM/view?usp=drive_link)               |
+| Evidencias          | Capturas de Maven, Eureka, Swagger, Postman, Docker, GitHub, ZIPs y seguridad JWT.         | [Ver carpeta](https://drive.google.com/drive/folders/1QJI68G_4PckcvoKsy95-9EJiVz2HeBgG?usp=sharing)                |
+| Colección Postman   | Archivo `.postman_collection.json` con pruebas HTTP completas del sistema.                 | [Descargar](https://drive.google.com/file/d/1dYLHKpxn5gmnJuUByMC-8rI8NaAKG9Da/view?usp=drive_link)                 |
+| Environment Postman | Archivo `.postman_environment.json` con `base_url`, `token` y `tokenNoAdmin`.              | [Descargar](https://drive.google.com/file/d/1HttssdbbkbDnKCrX6WLn6XW5lshcNzjk/view?usp=sharing)                    |
+| Carpeta Postman     | Carpeta con los archivos necesarios para importar las pruebas en Postman.                  | [Ver carpeta](https://drive.google.com/drive/folders/1YEMuUGqwvHlyvpMr2fVTRZsrrXhDgXGO?usp=drive_link)             |
+| Tablón Scrum        | Archivo con tareas, responsables, estados, observaciones y seguimiento del equipo.         | [Ver tablón](https://docs.google.com/spreadsheets/d/10piEPVq8IvtFMhhRuaaPTNFcL69-gFyn7j9xNEuytYE/edit?usp=sharing) |
 
 ---
 
