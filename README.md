@@ -755,29 +755,42 @@ Notas importantes para Docker:
 
 ## 21. Video de defensa técnica
 
-El proyecto incluye un video de defensa técnica con duración ideal de 15 minutos y máximo de 18 minutos.
+El proyecto incluye un video de defensa técnica con una duración máxima recomendada de 15 minutos por estudiante, de acuerdo con la pauta de evaluación.
 
-El video debe explicar:
+El video presenta el funcionamiento general del sistema, las mejoras implementadas desde la Entrega 2 y los aportes técnicos de cada integrante del equipo.
 
-1. Arquitectura general del sistema.
-2. Eureka Server.
-3. API Gateway.
-4. Microservicios implementados.
-5. Seguridad JWT.
-6. Ejecución nativa.
-7. Ejecución con Docker.
-8. Pruebas con Postman.
-9. Documentación Swagger/OpenAPI.
-10. Pruebas unitarias con JUnit 5 y Mockito.
-11. Aporte personal de los integrantes.
+### Contenido abordado en el video
 
-Además, se incluye el archivo:
+1. Introducción del proyecto y contexto del Sistema Clínico.
+2. Arquitectura de microservicios y estructura Maven Multi-Módulo.
+3. Organización del repositorio GitHub y buenas prácticas de versionamiento.
+4. Eureka Server como servicio de descubrimiento.
+5. API Gateway como punto de entrada único del sistema.
+6. Seguridad con JWT y control de acceso basado en roles mediante RBAC.
+7. Estandarización de códigos HTTP y manejo global de excepciones.
+8. Documentación técnica con Swagger/OpenAPI.
+9. Reglas de negocio implementadas en los microservicios.
+10. Comunicación REST entre microservicios mediante Feign Client.
+11. Validaciones, DTOs e interoperabilidad entre servicios.
+12. Configuración mediante archivos YAML y perfiles de ejecución.
+13. Pruebas unitarias con JUnit 5 y Mockito.
+14. Ejecución nativa mediante archivos `.jar` y script `arrancar-nativo.bat`.
+15. Contenerización del proyecto mediante Docker y `docker-compose`.
+16. Recursos de entrega disponibles en Google Drive.
+17. Aporte personal de los integrantes.
 
-```text
-subtitulos-video.txt
-```
+### Participación de los integrantes
 
-Este archivo contiene los subtítulos o guion textual utilizado para apoyar la defensa técnica.
+| Integrante         | Participación principal en el video                                                                                                                  |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Marco Carrasco     | Presenta la introducción del proyecto, la estructura Maven Multi-Módulo, el proyecto padre, reglas de negocio en microservicios y pruebas unitarias. |
+| Jeannette Figueroa | Explica Eureka Server, API Gateway, seguridad perimetral, JWT, RBAC, perfiles YAML y avance en Docker.                                               |
+| Misael Rojas       | Explica estandarización de excepciones, logs, Swagger/OpenAPI, interoperabilidad entre servicios, ejecución nativa y cierre de la defensa.           |
+
+### Subtítulos / Guion
+
+El video cuenta con un archivo de subtítulos y guion de apoyo llamado `subtitulos-video.txt`, donde se detalla la participación de cada integrante y el orden de exposición utilizado durante la defensa técnica.
+
 
 ---
 
